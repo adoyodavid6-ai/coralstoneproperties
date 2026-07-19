@@ -1,0 +1,322 @@
+@import "tailwindcss";
+
+/*
+  CoralStone Properties Listings — design system
+  Light cinematic: airy architectural greys, deep navy ink, the slate-blue
+  brand accent — with the full motion/experience layer kept. Trust through
+  restraint. No ad-hoc hex in components — everything below is a theme token.
+  Core palette: surface #EDEFF0 · ink #172B3E · brand #2D4E6C · line #C2C9CC.
+*/
+
+@theme {
+  /* ---- Brand surfaces (warm cream — soft, light-filled pages) ---- */
+  --color-surface: #f7f2e9; /* warm cream — the page background across the whole site */
+  --color-surface-raised: #fffdf8; /* warm white — cards/panels lift off the cream */
+  --color-surface-muted: #f2ebdd; /* deeper cream — subtle alternating sections */
+  --color-surface-dark: #172b3e; /* inverted band (footer, CTA) — deep navy */
+
+  /* ---- Brand accent: slate-blue (#2D4E6C) — a key site colour ---- */
+  --color-brand: #2d4e6c; /* the slate-blue brand accent */
+  --color-brand-bright: #43719a; /* mid slate — bridges brand #2D4E6C ↔ on-dark #7BA4CF; glow + dark-scope accent */
+  --color-brand-hover: #24405a; /* darker — filled-button/link hover */
+  --color-brand-soft: #e5ebf1; /* light tint — chips, icon wells, backgrounds */
+  --color-header: #1a2e41; /* the header band — deep navy, matches the footer/CTA register */
+
+  /* ---- Warmth: coral (appeal) — small doses; marks, accents ---- */
+  --color-rose: #ff8559; /* the coral appeal colour */
+  --color-rose-soft: #ffece4; /* very light coral wash — section rhythm, tinted cards */
+
+  /* ---- Brand ink / primary ---- */
+  --color-primary: #172b3e; /* deep navy — headings, body text, ink accents */
+  --color-primary-hover: #2c2f31; /* lifted near-black — button hover */
+  --color-ink: #172b3e;
+  --color-ink-soft: #7b8285; /* mid grey for secondary copy / labels / meta */
+  --color-ink-black: #191b1c; /* pure near-black, reserved for button fills */
+
+  /* ---- Accent (links, secondary, active) — the slate-blue brand accent ---- */
+  --color-accent: var(--color-brand); /* interactive/brand colour site-wide */
+  --color-accent-hover: var(--color-brand-hover); /* darkens on hover */
+  --color-accent-soft: var(--color-brand-soft); /* light blue tint for chips/backgrounds */
+  --color-accent-on-dark: #7ba4cf; /* lighter slate — accents on the navy footer/CTA bands */
+
+  /* ---- Lines & focus (warmed to sit on cream) ---- */
+  --color-line: #ddd5c6; /* borders/dividers */
+  --color-line-strong: #bdb4a1; /* stronger borders / input outlines */
+  --color-ring: #172b3e; /* focus ring = ink navy */
+
+  /* ---- Semantic (status only — never decoration; muted to harmonise) ---- */
+  --color-verified: #2f6e57; /* harmonised green — the verified tick */
+  --color-verified-soft: #e4ede9;
+  --color-warning: #8a6d2e; /* muted amber */
+  --color-warning-soft: #efe9da;
+  --color-danger: #9a4636; /* muted brick red */
+  --color-danger-soft: #efe0dc;
+
+  /* ---- Glow (shared: card underlay, cursor, hero pin) — brand-bright based ---- */
+  --color-glow: rgb(67 113 154 / 0.22);
+
+  /* ---- Typography registers (all-sans system — geometric Poppins) ----
+     --font-display and --font-serif intentionally alias the sans stack so
+     every heading/display usage across the site renders sans-serif. */
+  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", sans-serif; /* geometric UI/body */
+  --font-display: var(--font-sans); /* cinematic display headlines */
+  --font-serif: var(--font-sans); /* editorial headings (now sans by design) */
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, "SFMono-Regular",
+    "Menlo", monospace; /* all figures */
+
+  /* ---- Radii & shadows (restrained, premium) ---- */
+  --radius-lg: 0.9rem;
+  --radius-xl: 1.25rem;
+  --shadow-card: 0 1px 2px rgba(23, 43, 62, 0.06),
+    0 8px 24px -12px rgba(23, 43, 62, 0.18);
+  --shadow-float: 0 14px 44px -14px rgba(23, 43, 62, 0.32);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /*
+    Scoped dark cinematic theme — applied to the landing HERO section only.
+    Tailwind v4 utilities resolve var(--color-*) at usage, so overriding the
+    custom properties here re-themes every token-based class inside the scope.
+    Accent: --color-brand-bright #43719A becomes the luminous brand on dark.
+  */
+  .theme-dark {
+    color-scheme: dark;
+    --color-surface: #0b0d0e;
+    --color-surface-raised: #14181b;
+    --color-surface-muted: #0f1214;
+    --color-surface-dark: #060708;
+    --color-brand: var(--color-brand-bright); /* #43719A — luminous on near-black */
+    --color-brand-hover: #6f9fce; /* hover goes LIGHTER on dark */
+    --color-brand-soft: #16222e;
+    --color-rose-soft: #2a1712;
+    --color-primary: #e8e4dc; /* warm bone */
+    --color-primary-hover: #fffdf7;
+    --color-ink: #e8e4dc;
+    --color-ink-soft: #9aa0a2;
+    --color-accent-on-dark: #8fb6de;
+    --color-line: #23282c;
+    --color-line-strong: #343b40;
+    --color-ring: #8fb6de;
+    --color-verified: #4e9c7c;
+    --color-verified-soft: #10201a;
+    --color-warning: #c9a557;
+    --color-warning-soft: #241d0f;
+    --color-danger: #c96a55;
+    --color-danger-soft: #26120d;
+    --color-glow: rgb(67 113 154 / 0.35);
+    --shadow-card: 0 0 0 1px rgb(232 228 220 / 0.05),
+      0 24px 48px -24px rgb(0 0 0 / 0.8);
+    --shadow-float: 0 0 0 1px rgb(143 182 222 / 0.14),
+      0 30px 70px -20px rgb(0 0 0 / 0.9),
+      0 0 40px -12px rgb(67 113 154 / 0.25);
+  }
+
+  body {
+    background-color: var(--color-surface);
+    color: var(--color-ink); /* small/long-form text is always navy on the light surface */
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-serif); /* aliased to the sans stack */
+    color: var(--color-primary);
+    letter-spacing: -0.02em;
+  }
+
+  /* Monospace for every figure — prices, yields, sizes, coordinates, instalments */
+  .figure {
+    font-family: var(--font-mono);
+    font-feature-settings: "tnum" 1;
+    letter-spacing: -0.02em;
+  }
+
+  /* Accessible focus — luminous slate ring, visible on keyboard nav (WCAG 2.2 AA) */
+  :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background: var(--color-accent-soft);
+    color: var(--color-primary);
+  }
+}
+
+@layer utilities {
+  /* ---- Cinematic type scale ---- */
+  .display-1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.4rem, 5.6vw, 4.6rem);
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    font-weight: 600;
+  }
+  .display-2 {
+    font-family: var(--font-display);
+    font-size: clamp(2.25rem, 5vw, 3.75rem);
+    line-height: 1.06;
+    letter-spacing: -0.025em;
+    font-weight: 600;
+  }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: var(--color-accent);
+  }
+  /* On the dark landing, eyebrows step up to the lighter slate for contrast */
+  .theme-dark .eyebrow {
+    color: var(--color-accent-on-dark);
+  }
+
+  /* Section rhythm helper */
+  .container-page {
+    width: 100%;
+    max-width: 80rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .container-page {
+      padding-inline: 2rem;
+    }
+  }
+
+  /* Restrained motion — gentle fade/rise on entry */
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-rise {
+    animation: rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* Gentle float for the 3D hero visual */
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-12px);
+    }
+  }
+  .animate-float {
+    animation: float 7s ease-in-out infinite;
+  }
+
+  /* Luminous brand glow underneath a card — lifts on hover */
+  .card-underlay::before {
+    content: "";
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    bottom: -14px;
+    height: 20px;
+    z-index: -1;
+    border-radius: 999px;
+    background: radial-gradient(
+      closest-side,
+      var(--color-glow),
+      transparent 80%
+    );
+    filter: blur(10px);
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  .card-underlay:hover::before {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-rise,
+    .animate-float {
+      animation: none;
+    }
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  /* GSAP scroll choreography — elements opt in with data-animate attributes.
+     Hidden ONLY once the motion runtime is live (html.motion-ready), so
+     crawlers and no-JS visitors always see full content. */
+  html.motion-ready [data-animate]:not([data-animated]),
+  html.motion-ready [data-animate-group]:not([data-animated]) > * {
+    opacity: 0;
+  }
+
+  /* Skeleton shimmer (low-key) */
+  @keyframes shimmer {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+  .skeleton {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-line);
+  }
+  .skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.45),
+      transparent
+    );
+    animation: shimmer 1.6s infinite;
+  }
+
+  /* Film grain — fixed SVG-noise overlay for cinematic bands (pointer-safe) */
+  .grain {
+    position: relative;
+  }
+  .grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 160px 160px;
+  }
+
+  /* Gradient hairline — a 1px divider that fades at both ends */
+  .hairline-gradient {
+    height: 1px;
+    border: 0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--color-line-strong),
+      transparent
+    );
+  }
+}
