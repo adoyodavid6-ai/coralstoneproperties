@@ -60,7 +60,7 @@ function CursorInner() {
       label.textContent = view ? "View" : "";
       gsap.to(ring, {
         scale: view ? 2.8 : interactive ? 1.55 : 1,
-        backgroundColor: view ? "rgba(45, 78, 108, 0.18)" : "rgba(45, 78, 108, 0)",
+        backgroundColor: view ? "rgba(255, 133, 89, 0.15)" : "rgba(255, 133, 89, 0)",
         duration: 0.3,
       });
       gsap.to(dot, { scale: view ? 0 : 1, duration: 0.3 });

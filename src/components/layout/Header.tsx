@@ -2,147 +2,370 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 import { LOCALES } from "@/lib/i18n/dictionaries";
 import type { DisplayCurrency } from "@/lib/types";
 import { ButtonLink } from "@/components/ui/Button";
 import { Logo } from "@/components/ui/Logo";
-import { Globe, Chevron, Close } from "@/components/ui/icons";
+import { Globe, Close, Chevron } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
 
-// "Local" shows each listing in its own East African currency; USD/GBP convert for the diaspora.
 const CURRENCIES: { value: DisplayCurrency; label: string }[] = [
   { value: "local", label: "Local" },
   { value: "USD", label: "USD" },
   { value: "GBP", label: "GBP" },
 ];
 
+function HamburgerIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.75}
+      strokeLinecap="round"
+    >
+      <line x1="3" y1="6" x2="21" y2="6" />
+      <line x1="3" y1="12" x2="16" y2="12" />
+      <line x1="3" y1="18" x2="21" y2="18" />
+    </svg>
+  );
+}
+
+type NavChild = { label: string; href: string };
+type NavItem = { key: string; href: string; children?: NavChild[] };
+
+const NAV: NavItem[] = [
+  {
+    key: "nav.buy",
+    href: "/search?intent=sale",
+    children: [
+      { label: "🇰🇪 Kenya",    href: "/search?intent=sale&country=Kenya" },
+      { label: "🇺🇬 Uganda",   href: "/search?intent=sale&country=Uganda" },
+      { label: "🇹🇿 Tanzania", href: "/search?intent=sale&country=Tanzania" },
+      { label: "🇷🇼 Rwanda",   href: "/search?intent=sale&country=Rwanda" },
+    ],
+  },
+  {
+    key: "nav.rent",
+    href: "/search?intent=rent",
+    children: [
+      { label: "Apartments",          href: "/search?intent=rent&type=apartment" },
+      { label: "Houses & Villas",     href: "/search?intent=rent&type=house" },
+      { label: "Serviced Residences", href: "/search?intent=rent" },
+      { label: "Commercial",          href: "/search?intent=rent&type=commercial" },
+    ],
+  },
+  {
+    key: "nav.land",
+    href: "/search?type=land",
+    children: [
+      { label: "Residential Plots",  href: "/search?type=land" },
+      { label: "Agricultural Land",  href: "/search?type=land" },
+      { label: "Commercial Land",    href: "/search?type=land" },
+      { label: "Beach & Lake Plots", href: "/search?type=land" },
+    ],
+  },
+  {
+    key: "nav.commercial",
+    href: "/search?type=commercial",
+    children: [
+      { label: "Office Spaces",        href: "/search?type=commercial" },
+      { label: "Retail & Showrooms",   href: "/search?type=commercial" },
+      { label: "Warehouses & Go-Downs",href: "/search?type=commercial" },
+      { label: "Mixed-Use Buildings",  href: "/search?type=commercial" },
+    ],
+  },
+  {
+    key: "nav.offplan",
+    href: "/search?type=off_plan",
+    children: [
+      { label: "Apartments",         href: "/search?type=off_plan" },
+      { label: "Gated Communities",  href: "/search?type=off_plan" },
+      { label: "Mixed Developments", href: "/search?type=off_plan" },
+      { label: "Student Housing",    href: "/search?type=off_plan" },
+    ],
+  },
+  {
+    key: "nav.shortlet",
+    href: "/search?intent=short_let",
+    children: [
+      { label: "Event Spaces",          href: "/search?intent=short_let&type=venue" },
+      { label: "Short-Stay Apartments", href: "/search?intent=short_let&type=apartment" },
+      { label: "Weekend Villas",        href: "/search?intent=short_let&type=house" },
+      { label: "Serviced Suites",       href: "/search?intent=short_let" },
+      { label: "Beachfront Cottages",   href: "/search?intent=short_let" },
+    ],
+  },
+];
+
 export function Header() {
   const { t, locale, setLocale, currency, setCurrency } = useLocale();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen]         = useState(false);
+  const [expanded, setExpanded] = useState<string | null>(null);
+  const [activeNav, setActiveNav] = useState<string | null>(null);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pathname = usePathname();
 
-  // The admin console runs its own chrome — hide the public header there.
   if (pathname?.startsWith("/admin")) return null;
 
-  const nav = [
-    { key: "nav.buy", href: "/search?intent=sale" },
-    { key: "nav.rent", href: "/search?intent=rent" },
-    { key: "nav.land", href: "/search?type=land" },
-    { key: "nav.commercial", href: "/search?type=commercial" },
-    { key: "nav.offplan", href: "/search?type=off_plan" },
-    { key: "nav.shortlet", href: "/search?intent=short_let" },
-  ];
+  function openNav(key: string) {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    setActiveNav(key);
+  }
+
+  function scheduleClose() {
+    closeTimer.current = setTimeout(() => setActiveNav(null), 180);
+  }
 
   return (
-    <header className="sticky top-0 z-40 bg-header/95 backdrop-blur-md">
-      {/* Fading white hairline along the header's bottom edge */}
+    <header className="sticky top-0 z-40 bg-header/95 backdrop-blur-lg">
+      {/* White fading hairline */}
       <span
         aria-hidden
         className="pointer-events-none absolute inset-x-0 bottom-0 h-px"
         style={{
           background:
-            "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.55) 50%, transparent 100%)",
+            "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.35) 25%, rgba(255,255,255,0.35) 75%, transparent 100%)",
         }}
       />
-      <div className="container-page flex h-16 items-center justify-between gap-4">
+
+      <div className="container-page flex h-16 items-center gap-6">
         <Logo variant="full-dark" />
 
-        <nav className="hidden items-center gap-1 lg:flex" aria-label="Property categories">
-          {nav.map((n) => (
-            <Link
-              key={n.key}
-              href={n.href}
-              className="relative px-3 py-2 text-sm font-medium text-white/85 transition-colors after:absolute after:inset-x-3 after:bottom-0.5 after:h-px after:origin-left after:scale-x-0 after:bg-rose after:transition-transform after:duration-300 after:ease-out hover:text-white hover:after:scale-x-100"
-            >
-              {t(n.key)}
-            </Link>
-          ))}
+        {/* Desktop nav */}
+        <nav
+          className="hidden flex-1 items-center justify-center gap-0.5 lg:flex"
+          aria-label="Property categories"
+        >
+          {NAV.map((n) => {
+            const isOpen = activeNav === n.key;
+            return (
+              <div
+                key={n.key}
+                className="relative"
+                onMouseEnter={() => n.children && openNav(n.key)}
+                onMouseLeave={() => n.children && scheduleClose()}
+              >
+                {/* Nav link + chevron */}
+                <Link
+                  href={n.href}
+                  className={cn(
+                    "flex items-center gap-1 rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors",
+                    isOpen
+                      ? "bg-white/10 text-white"
+                      : "text-white/70 hover:bg-white/10 hover:text-white",
+                  )}
+                >
+                  {t(n.key)}
+                  {n.children && (
+                    <Chevron
+                      className={cn(
+                        "h-3 w-3 opacity-50 transition-transform duration-200",
+                        isOpen && "rotate-180",
+                      )}
+                    />
+                  )}
+                </Link>
+
+                {/* Dropdown panel — shown/hidden via JS state, not CSS hover */}
+                {n.children && isOpen && (
+                  <div
+                    className="absolute left-1/2 top-full z-50 mt-1.5 w-52 -translate-x-1/2 rounded-xl border border-line bg-surface-raised shadow-float animate-rise"
+                    onMouseEnter={() => openNav(n.key)}
+                    onMouseLeave={scheduleClose}
+                  >
+                    <ul className="py-1.5">
+                      {n.children.map((child) => (
+                        <li key={child.label}>
+                          <Link
+                            href={child.href}
+                            onClick={() => setActiveNav(null)}
+                            className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-ink-soft transition-colors hover:bg-accent-soft hover:text-accent"
+                          >
+                            {child.label}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                    <div className="border-t border-line px-4 py-2.5">
+                      <Link
+                        href={n.href}
+                        onClick={() => setActiveNav(null)}
+                        className="text-xs font-semibold text-accent hover:brightness-90"
+                      >
+                        View all →
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </nav>
 
-        <div className="flex items-center gap-2">
-          {/* Currency toggle (diaspora) */}
-          <div className="hidden items-center rounded-full border border-line-strong bg-surface-raised p-0.5 sm:flex">
-            {CURRENCIES.map((c) => (
-              <button
-                key={c.value}
-                onClick={() => setCurrency(c.value)}
-                aria-pressed={currency === c.value}
-                className={cn(
-                  "figure rounded-full px-2.5 py-1 text-xs font-medium transition-colors",
-                  currency === c.value ? "bg-ink-black text-white" : "text-ink-soft hover:text-primary",
+        {/* Utility — right */}
+        <div className="ml-auto flex items-center gap-4 lg:ml-0">
+          {/* Currency */}
+          <div className="hidden items-center sm:flex">
+            {CURRENCIES.map((c, i) => (
+              <span key={c.value} className="flex items-center">
+                {i > 0 && (
+                  <span className="mx-1.5 select-none text-white/20">·</span>
                 )}
-              >
-                {c.label}
-              </button>
+                <button
+                  onClick={() => setCurrency(c.value)}
+                  aria-pressed={currency === c.value}
+                  className={cn(
+                    "figure text-xs font-semibold transition-colors",
+                    currency === c.value
+                      ? "text-rose"
+                      : "text-white/40 hover:text-white/75",
+                  )}
+                >
+                  {c.label}
+                </button>
+              </span>
             ))}
           </div>
 
-          {/* Language toggle */}
+          {/* Language */}
           <button
             onClick={() => setLocale(locale === "en" ? "sw" : "en")}
-            className="hidden items-center gap-1.5 rounded-full border border-line-strong bg-surface-raised px-3 py-1.5 text-sm font-medium text-primary hover:border-accent hover:text-accent sm:inline-flex"
             aria-label="Switch language"
+            className="hidden items-center gap-1 text-xs font-semibold text-white/40 transition-colors hover:text-white/80 sm:inline-flex"
           >
-            <Globe className="h-4 w-4" />
+            <Globe className="h-3.5 w-3.5" />
             {LOCALES.find((l) => l.code === locale)?.short}
           </button>
 
-          {/* white fill reads best on the brand-bright band */}
-          <ButtonLink href="/search" variant="inverse" size="sm" className="hidden md:inline-flex">
+          <Link
+            href="/pricing"
+            className="hidden text-sm font-medium text-white/65 transition-colors hover:text-white lg:inline-flex"
+          >
+            Pricing
+          </Link>
+
+          <ButtonLink
+            href="/list"
+            variant="coral"
+            size="sm"
+            className="hidden md:inline-flex"
+          >
             {t("nav.list")}
           </ButtonLink>
 
+          {/* Hamburger */}
           <button
-            onClick={() => setOpen((v) => !v)}
-            className="grid h-10 w-10 place-items-center rounded-full border border-white/25 text-white lg:hidden"
-            aria-label="Menu"
+            onClick={() => { setOpen((v) => !v); setExpanded(null); }}
+            aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
+            className="grid h-9 w-9 place-items-center rounded-full text-white/80 transition-colors hover:bg-white/10 hover:text-white lg:hidden"
           >
-            {open ? <Close className="h-5 w-5" /> : <Chevron className="h-5 w-5" />}
+            {open ? (
+              <Close className="h-5 w-5" />
+            ) : (
+              <HamburgerIcon className="h-5 w-5" />
+            )}
           </button>
         </div>
       </div>
 
       {/* Mobile menu */}
       {open && (
-        <div className="border-t border-line bg-surface-raised lg:hidden">
-          <nav className="container-page grid gap-1 py-3" aria-label="Mobile navigation">
-            {nav.map((n) => (
-              <Link
-                key={n.key}
-                href={n.href}
-                onClick={() => setOpen(false)}
-                className="rounded-lg px-3 py-2.5 text-base font-medium text-primary hover:bg-accent-soft"
-              >
-                {t(n.key)}
-              </Link>
-            ))}
-            <div className="mt-2 flex items-center justify-between gap-2 border-t border-line pt-3">
-              <div className="flex items-center rounded-full border border-line-strong p-0.5">
-                {CURRENCIES.map((c) => (
-                  <button
-                    key={c.value}
-                    onClick={() => setCurrency(c.value)}
-                    className={cn(
-                      "figure rounded-full px-3 py-1.5 text-sm",
-                      currency === c.value ? "bg-ink-black text-white" : "text-ink-soft",
-                    )}
+        <div className="border-t border-white/10 bg-header lg:hidden">
+          <nav className="container-page py-3" aria-label="Mobile navigation">
+            {NAV.map((n) => (
+              <div key={n.key}>
+                <div className="flex items-center">
+                  <Link
+                    href={n.href}
+                    onClick={() => setOpen(false)}
+                    className="flex-1 rounded-xl px-4 py-3 text-sm font-medium text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                   >
-                    {c.label}
-                  </button>
-                ))}
+                    {t(n.key)}
+                  </Link>
+                  {n.children && (
+                    <button
+                      onClick={() =>
+                        setExpanded((v) => (v === n.key ? null : n.key))
+                      }
+                      aria-expanded={expanded === n.key}
+                      className="grid h-9 w-9 place-items-center rounded-full text-white/40 transition-colors hover:bg-white/10 hover:text-white"
+                    >
+                      <Chevron
+                        className={cn(
+                          "h-3.5 w-3.5 transition-transform duration-200",
+                          expanded === n.key && "rotate-180",
+                        )}
+                      />
+                    </button>
+                  )}
+                </div>
+
+                {/* Accordion children */}
+                {n.children && expanded === n.key && (
+                  <div className="mb-2 ml-4 border-l border-white/10 pl-4">
+                    {n.children.map((child) => (
+                      <Link
+                        key={child.label}
+                        href={child.href}
+                        onClick={() => setOpen(false)}
+                        className="flex items-center gap-2 py-2.5 text-sm text-white/50 transition-colors hover:text-accent"
+                      >
+                        {child.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
               </div>
+            ))}
+
+            <Link
+              href="/pricing"
+              onClick={() => setOpen(false)}
+              className="block rounded-xl px-4 py-3 text-sm font-medium text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+            >
+              Pricing
+            </Link>
+          </nav>
+
+          <div className="container-page flex items-center justify-between border-t border-white/10 py-4">
+            <div className="flex items-center gap-3">
+              {CURRENCIES.map((c) => (
+                <button
+                  key={c.value}
+                  onClick={() => setCurrency(c.value)}
+                  className={cn(
+                    "figure text-sm font-semibold transition-colors",
+                    currency === c.value
+                      ? "text-rose"
+                      : "text-white/40 hover:text-white/75",
+                  )}
+                >
+                  {c.label}
+                </button>
+              ))}
+              <span className="h-4 w-px bg-white/15" />
               <button
                 onClick={() => setLocale(locale === "en" ? "sw" : "en")}
-                className="inline-flex items-center gap-1.5 rounded-full border border-line-strong px-4 py-1.5 text-sm font-medium text-primary"
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-white/40 transition-colors hover:text-white/75"
               >
                 <Globe className="h-4 w-4" />
                 {LOCALES.find((l) => l.code === locale)?.label}
               </button>
             </div>
-          </nav>
+            <ButtonLink
+              href="/list"
+              variant="coral"
+              size="sm"
+              onClick={() => setOpen(false)}
+            >
+              {t("nav.list")}
+            </ButtonLink>
+          </div>
         </div>
       )}
     </header>

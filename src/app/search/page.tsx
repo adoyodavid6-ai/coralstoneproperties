@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { PropertyCard } from "@/components/ui/PropertyCard";
 import { FilterPanel } from "@/components/search/FilterPanel";
 import { MobileFilters } from "@/components/search/MobileFilters";
@@ -11,6 +12,15 @@ import { SearchViewToggle } from "@/components/search/SearchViewToggle";
 import { parseFilters, searchProperties, locationOptions } from "@/lib/search";
 import type { ListingIntent } from "@/lib/types";
 import { Search as SearchIcon } from "@/components/ui/icons";
+import { cn } from "@/lib/cn";
+
+const SALE_COUNTRIES = [
+  { label: "All countries", country: undefined, flag: "" },
+  { label: "Kenya", country: "Kenya", flag: "🇰🇪" },
+  { label: "Uganda", country: "Uganda", flag: "🇺🇬" },
+  { label: "Tanzania", country: "Tanzania", flag: "🇹🇿" },
+  { label: "Rwanda", country: "Rwanda", flag: "🇷🇼" },
+];
 
 export const metadata: Metadata = {
   title: "Search verified properties",
@@ -79,6 +89,37 @@ export default async function SearchPage({
         </aside>
 
         <section>
+          {/* Country tabs — only when browsing for sale */}
+          {intent === "sale" && (
+            <div className="mb-5 flex flex-wrap gap-2">
+              {SALE_COUNTRIES.map(({ label, country: c, flag }) => {
+                const params = new URLSearchParams();
+                for (const [k, v] of Object.entries(sp)) {
+                  if (k === "country" || k === "page") continue;
+                  if (Array.isArray(v)) v.forEach((x) => params.append(k, x));
+                  else if (v != null) params.set(k, v);
+                }
+                if (c) params.set("country", c);
+                const active = c ? filters.country === c : !filters.country;
+                return (
+                  <Link
+                    key={label}
+                    href={`/search?${params.toString()}`}
+                    className={cn(
+                      "inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition-colors",
+                      active
+                        ? "bg-accent text-white"
+                        : "border border-line-strong bg-surface-raised text-ink-soft hover:border-accent hover:text-accent",
+                    )}
+                  >
+                    {flag && <span>{flag}</span>}
+                    {label}
+                  </Link>
+                );
+              })}
+            </div>
+          )}
+
           {/* Results toolbar */}
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3">

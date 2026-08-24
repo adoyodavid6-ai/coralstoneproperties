@@ -213,7 +213,7 @@ function Slider({
         step={step}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="w-full accent-[#2D4E6C]"
+        className="w-full accent-[#FF8559]"
         aria-label={label}
       />
     </div>

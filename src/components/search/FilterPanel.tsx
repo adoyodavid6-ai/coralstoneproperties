@@ -236,7 +236,7 @@ export function FilterPanel({
               type="checkbox"
               name={c.name}
               defaultChecked={get(c.name) === "1"}
-              className="h-4 w-4 rounded border-line-strong text-accent accent-[#2D4E6C]"
+              className="h-4 w-4 rounded border-line-strong text-accent accent-[#FF8559]"
             />
             {c.label}
           </label>

@@ -58,7 +58,7 @@ export function ImmersiveGallery({ images, title }: { images: string[]; title: s
           className="pointer-events-none absolute inset-0 opacity-80"
           style={{
             background:
-              "radial-gradient(120% 90% at 50% 16%, rgb(67 113 154 / 0.26), transparent 60%)",
+              "radial-gradient(120% 90% at 50% 16%, rgb(22 66 91 / 0.26), transparent 60%)",
           }}
         />
         <div className="relative h-[clamp(300px,44vh,460px)]">

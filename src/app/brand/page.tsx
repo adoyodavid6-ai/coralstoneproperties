@@ -7,12 +7,12 @@ export const metadata: Metadata = {
 };
 
 const SWATCHES = [
-  { name: "Ink / primary", hex: "#172B3E", role: "Headings, body, buttons" },
-  { name: "Brand / accent", hex: "#2D4E6C", role: "Links, accents" },
-  { name: "Brand bright", hex: "#43719A", role: "Header band, glow, dark-hero accent" },
-  { name: "Coral (appeal)", hex: "#FF8559", role: "Logo Stone, marks, accents" },
-  { name: "Surface (cream)", hex: "#F7F2E9", role: "Page background" },
-  { name: "Paper (warm)", hex: "#FFFDF8", role: "Cards / panels" },
+  { name: "Surface", hex: "#F3F4F2", role: "Page background — light sage" },
+  { name: "Paper", hex: "#FFFFFF", role: "Cards / panels" },
+  { name: "Navy-teal", hex: "#16425B", role: "Header, footer, dark section bands" },
+  { name: "Sage grey", hex: "#D9DCD6", role: "Mid sections, lines, borders" },
+  { name: "Coral", hex: "#FF8559", role: "Tabs, CTAs, links, form accents, logo gem" },
+  { name: "Ink soft", hex: "#5C7F96", role: "Secondary text, labels, meta" },
 ];
 
 function Card({ label, children }: { label: string; children: React.ReactNode }) {
@@ -40,10 +40,10 @@ export default function BrandPage() {
         <p className="text-sm font-semibold uppercase tracking-[0.14em] text-accent">Brand sign-off</p>
         <h1 className="mt-2 font-serif text-4xl font-semibold text-primary">CoralStone Properties Listings — logo &amp; colour</h1>
         <p className="mt-3 text-ink-soft">
-          Warm cream light-filled pages, deep navy ink, the slate-blue accent{" "}
-          <span className="figure">#2D4E6C</span> and the brand-bright header band{" "}
-          <span className="figure">#43719A</span> — the CoralStone mark carries the coral{" "}
-          <span className="figure">#FF8559</span>.
+          Navy-teal <span className="figure">#16425B</span> for structure, sage-grey{" "}
+          <span className="figure">#D9DCD6</span> for blend sections, coral{" "}
+          <span className="figure">#FF8559</span> for all interactive elements, on a light sage{" "}
+          <span className="figure">#F3F4F2</span> surface.
           All colours are Tailwind theme tokens — no ad-hoc hex.
         </p>
       </header>

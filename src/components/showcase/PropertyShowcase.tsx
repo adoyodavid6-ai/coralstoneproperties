@@ -123,7 +123,7 @@ export function PropertyShowcase({
             className="pointer-events-none absolute inset-0 opacity-80"
             style={{
               background:
-                "radial-gradient(120% 90% at 50% 18%, rgb(67 113 154 / 0.28), transparent 60%)",
+                "radial-gradient(120% 90% at 50% 18%, rgb(22 66 91 / 0.28), transparent 60%)",
             }}
           />
           <ShowcaseBoundary fallback={<StageLoading />}>

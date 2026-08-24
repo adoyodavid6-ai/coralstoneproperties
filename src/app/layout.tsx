@@ -46,9 +46,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`h-full ${poppins.variable} ${jetbrainsMono.variable}`}
+      className={`${poppins.variable} ${jetbrainsMono.variable}`}
     >
-      <body className="min-h-full flex flex-col bg-surface text-ink antialiased">
+      <body className="min-h-screen flex flex-col bg-surface text-ink antialiased">
         <LocaleProvider>
           <CompareProvider>
             <BookingProvider>
