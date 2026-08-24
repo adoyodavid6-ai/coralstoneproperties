@@ -37,6 +37,14 @@ export const metadata: Metadata = {
     description:
       "East Africa's trust-first property portal. Verified agents, listings and titles across Kenya, Uganda, Tanzania and Rwanda.",
     type: "website",
+    siteName: "CoralStone Properties Listings",
+    locale: "en_KE",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "CoralStone Properties Listings",
+    description:
+      "East Africa's trust-first property portal. Verified agents, listings and titles across Kenya, Uganda, Tanzania and Rwanda.",
   },
 };
 
