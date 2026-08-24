@@ -8,6 +8,7 @@ import { MotionProvider } from "@/lib/motion/MotionProvider";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { CompareBar } from "@/components/ui/CompareBar";
+import { Analytics } from "@vercel/analytics/next";
 import { SITE_URL } from "@/lib/site";
 
 // Self-hosted, optimised fonts (no render-blocking <link> to Google).
@@ -78,6 +79,7 @@ export default function RootLayout({
             </BookingProvider>
           </CompareProvider>
         </LocaleProvider>
+        <Analytics />
       </body>
     </html>
   );
