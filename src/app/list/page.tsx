@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ButtonLink } from "@/components/ui/Button";
 import { CheckShield, Check, Pin, Camera, Phone, Users, Sparkle, Chevron } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
+import { sendListingLead } from "@/lib/leads/actions";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 type Intent = "sale" | "rent" | "short_let";
@@ -155,9 +156,22 @@ export default function ListPropertyPage() {
   const [step, setStep]       = useState<1 | 2 | 3 | 4 | 5>(1);
   const [data, setData]       = useState<FormData>(EMPTY);
   const [submitted, setSubmit] = useState(false);
+  const [pending, setPending]  = useState(false);
+  const [error, setError]      = useState("");
+  const [company, setCompany]  = useState(""); // honeypot
 
   const set = <K extends keyof FormData>(k: K, v: FormData[K]) =>
     setData((d) => ({ ...d, [k]: v }));
+
+  async function submit() {
+    if (!canAdvance() || pending) return;
+    setPending(true);
+    setError("");
+    const res = await sendListingLead({ ...data, company });
+    setPending(false);
+    if (res.ok) setSubmit(true);
+    else setError(res.error ?? "Something went wrong. Please try again.");
+  }
 
   const showBedBath = data.propertyType !== "land" && data.propertyType !== "commercial";
 
@@ -546,20 +560,37 @@ export default function ListPropertyPage() {
             ) : (
               <button
                 type="button"
-                onClick={() => { if (canAdvance()) setSubmit(true); }}
-                disabled={!canAdvance()}
+                onClick={submit}
+                disabled={!canAdvance() || pending}
                 className={cn(
                   "flex items-center gap-2 rounded-full px-7 py-2.5 text-sm font-semibold transition-all",
-                  canAdvance()
+                  canAdvance() && !pending
                     ? "bg-accent text-white hover:bg-accent-hover"
                     : "cursor-not-allowed bg-line text-ink-soft",
                 )}
               >
                 <CheckShield className="h-4 w-4" />
-                Submit for verification
+                {pending ? "Submitting…" : "Submit for verification"}
               </button>
             )}
           </div>
+
+          {/* Honeypot — hidden from real users, catches bots */}
+          <input
+            type="text"
+            tabIndex={-1}
+            autoComplete="off"
+            aria-hidden="true"
+            value={company}
+            onChange={(e) => setCompany(e.target.value)}
+            className="hidden"
+          />
+
+          {step === 4 && error && (
+            <p className="mt-4 rounded-lg border border-danger/30 bg-danger-soft px-4 py-3 text-sm text-danger">
+              {error}
+            </p>
+          )}
 
           {step === 1 && (
             <p className="mt-4 text-center text-xs text-ink-soft">

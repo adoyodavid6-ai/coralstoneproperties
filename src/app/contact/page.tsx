@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { CheckShield, Phone, Globe, Pin } from "@/components/ui/icons";
 import { ButtonLink } from "@/components/ui/Button";
+import { sendContactLead } from "@/lib/leads/actions";
 
 const OFFICES = [
   { flag: "🇰🇪", city: "Nairobi", country: "Kenya",    address: "Upper Hill, Nairobi",         phone: "+254 700 000 000", email: "kenya@coralstone.co" },
@@ -15,10 +16,23 @@ const inputCls = "w-full rounded-lg border border-line bg-surface-raised px-3.5 
 
 export default function ContactPage() {
   const [sent, setSent] = useState(false);
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState("");
+  const [company, setCompany] = useState(""); // honeypot
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
 
   const set = (k: keyof typeof form, v: string) => setForm((f) => ({ ...f, [k]: v }));
   const ready = form.name && form.email && form.message;
+
+  async function submit() {
+    if (!ready || pending) return;
+    setPending(true);
+    setError("");
+    const res = await sendContactLead({ ...form, company });
+    setPending(false);
+    if (res.ok) setSent(true);
+    else setError(res.error ?? "Something went wrong. Please try again.");
+  }
 
   return (
     <>
@@ -83,13 +97,28 @@ export default function ContactPage() {
                     onChange={(e) => set("message", e.target.value)}
                   />
                 </div>
+                {/* Honeypot — hidden from real users, catches bots */}
+                <input
+                  type="text"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden="true"
+                  value={company}
+                  onChange={(e) => setCompany(e.target.value)}
+                  className="hidden"
+                />
+                {error && (
+                  <p className="rounded-lg border border-danger/30 bg-danger-soft px-4 py-3 text-sm text-danger">
+                    {error}
+                  </p>
+                )}
                 <button
                   type="button"
-                  disabled={!ready}
-                  onClick={() => ready && setSent(true)}
-                  className={`rounded-full px-8 py-3 text-sm font-semibold transition-all ${ready ? "bg-accent text-white hover:bg-accent-hover" : "cursor-not-allowed bg-line text-ink-soft"}`}
+                  disabled={!ready || pending}
+                  onClick={submit}
+                  className={`rounded-full px-8 py-3 text-sm font-semibold transition-all ${ready && !pending ? "bg-accent text-white hover:bg-accent-hover" : "cursor-not-allowed bg-line text-ink-soft"}`}
                 >
-                  Send message
+                  {pending ? "Sending…" : "Send message"}
                 </button>
               </div>
             )}
