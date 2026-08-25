@@ -17,6 +17,8 @@
  * and the visitor still sees success — no lead is silently lost.
  */
 
+import { getSupabaseAdmin } from "@/lib/supabase/server";
+
 const RESEND_ENDPOINT = "https://api.resend.com/emails";
 const DEFAULT_FROM = "CoralStone Leads <onboarding@resend.dev>";
 
@@ -64,22 +66,55 @@ function wrap(heading: string, rowsHtml: string): string {
   </div>`;
 }
 
-async function deliver(opts: {
+/** A lead as stored in the database. */
+type LeadRecord = {
+  kind: "contact" | "listing";
+  name: string;
+  email: string;
+  phone?: string;
+  subject?: string;
+  message?: string;
+  details?: Record<string, unknown>;
+};
+
+/**
+ * Save a lead to Supabase.
+ * Returns `null` if Supabase isn't configured, otherwise `true`/`false`.
+ */
+async function saveLead(record: LeadRecord): Promise<boolean | null> {
+  const supabase = getSupabaseAdmin();
+  if (!supabase) return null;
+
+  const { error } = await supabase.from("leads").insert({
+    kind: record.kind,
+    name: record.name,
+    email: record.email,
+    phone: record.phone ?? null,
+    subject: record.subject ?? null,
+    message: record.message ?? null,
+    details: record.details ?? null,
+  });
+
+  if (error) {
+    console.error("[leads] Supabase insert failed:", error.message);
+    return false;
+  }
+  return true;
+}
+
+/**
+ * Email a lead notification via Resend.
+ * Returns `null` if Resend isn't configured, otherwise `true`/`false`.
+ */
+async function emailLead(opts: {
   subject: string;
   html: string;
   replyTo?: string;
-}): Promise<LeadResult> {
+}): Promise<boolean | null> {
   const apiKey = process.env.RESEND_API_KEY;
   const to = process.env.LEADS_EMAIL;
   const from = process.env.LEADS_FROM || DEFAULT_FROM;
-
-  if (!apiKey || !to) {
-    // Not configured yet — don't block the visitor or lose the lead.
-    console.warn(
-      `[leads] RESEND_API_KEY / LEADS_EMAIL not set — lead not emailed.\nSubject: ${opts.subject}`,
-    );
-    return { ok: true };
-  }
+  if (!apiKey || !to) return null;
 
   try {
     const res = await fetch(RESEND_ENDPOINT, {
@@ -100,14 +135,38 @@ async function deliver(opts: {
     if (!res.ok) {
       const detail = await res.text().catch(() => "");
       console.error(`[leads] Resend responded ${res.status}: ${detail}`);
-      return { ok: false, error: GENERIC_ERROR };
+      return false;
     }
-
-    return { ok: true };
+    return true;
   } catch (err) {
     console.error("[leads] Resend request failed:", err);
-    return { ok: false, error: GENERIC_ERROR };
+    return false;
   }
+}
+
+/**
+ * Capture a lead across all channels (database + email). Succeeds as long as
+ * the lead is captured somewhere; only fails if every configured channel errors.
+ */
+async function dispatch(
+  record: LeadRecord,
+  emailOpts: { subject: string; html: string; replyTo?: string },
+): Promise<LeadResult> {
+  const [saved, emailed] = await Promise.all([saveLead(record), emailLead(emailOpts)]);
+
+  // Nothing configured yet — don't block the visitor or lose the lead.
+  if (saved === null && emailed === null) {
+    console.warn(
+      `[leads] No delivery channel configured (Supabase/Resend) — lead not stored.\nSubject: ${emailOpts.subject}`,
+    );
+    return { ok: true };
+  }
+
+  // Captured by at least one channel → success.
+  if (saved === true || emailed === true) return { ok: true };
+
+  // Every configured channel failed.
+  return { ok: false, error: GENERIC_ERROR };
 }
 
 // ── Contact form ───────────────────────────────────────────────────────────────
@@ -137,11 +196,10 @@ export async function sendContactLead(input: ContactLead): Promise<LeadResult> {
     row("Name", name) + row("Email", email) + row("Topic", subject) + row("Message", message),
   );
 
-  return deliver({
-    subject: `New enquiry: ${subject} — ${name}`,
-    html,
-    replyTo: email,
-  });
+  return dispatch(
+    { kind: "contact", name, email, subject, message },
+    { subject: `New enquiry: ${subject} — ${name}`, html, replyTo: email },
+  );
 }
 
 // ── List-a-property form ────────────────────────────────────────────────────────
@@ -201,9 +259,28 @@ export async function sendListingLead(input: ListingLead): Promise<LeadResult> {
       row("Verification", clean(input.verifTier, 40)),
   );
 
-  return deliver({
-    subject: `New listing: ${title} — ${name}`,
-    html,
-    replyTo: email,
-  });
+  return dispatch(
+    {
+      kind: "listing",
+      name,
+      email,
+      phone,
+      subject: title,
+      message: clean(input.description, 5000),
+      details: {
+        intent: clean(input.intent, 40),
+        propertyType: clean(input.propertyType, 40),
+        country: clean(input.country, 40),
+        city: clean(input.city, 120),
+        price: clean(input.price, 40),
+        currency: clean(input.currency, 8),
+        beds: clean(input.beds, 10),
+        baths: clean(input.baths, 10),
+        size: clean(input.size, 40),
+        ownerType: clean(input.ownerType, 40),
+        verifTier: clean(input.verifTier, 40),
+      },
+    },
+    { subject: `New listing: ${title} — ${name}`, html, replyTo: email },
+  );
 }
