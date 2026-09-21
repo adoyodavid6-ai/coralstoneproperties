@@ -107,7 +107,7 @@ export function Footer() {
 
       <div className="relative border-t border-white/10">
         <div className="container-page flex flex-col items-center justify-between gap-3 py-6 text-xs text-white/60 sm:flex-row">
-          <p>© 2026 CoralStone Properties Listings. {t("footer.rights")}</p>
+          <p>© {new Date().getFullYear()} CoralStone Properties Listings. {t("footer.rights")}</p>
           <p className="figure">Nairobi · Kampala · Dar es Salaam · Kigali</p>
         </div>
       </div>
