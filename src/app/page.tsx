@@ -7,7 +7,14 @@ import { Magnetic } from "@/lib/motion/Magnetic";
 import { getFeatured } from "@/lib/data/properties";
 import { Chevron } from "@/components/ui/icons";
 
-const COUNTRIES = [
+// Kenya is live; the rest are on the roadmap (see src/lib/countries.ts).
+const COUNTRIES: {
+  name: string;
+  flag: string;
+  tagline: string;
+  href: string;
+  comingSoon?: boolean;
+}[] = [
   {
     name: "Kenya",
     flag: "🇰🇪",
@@ -19,18 +26,21 @@ const COUNTRIES = [
     flag: "🇺🇬",
     tagline: "Kampala, Entebbe, Jinja",
     href: "/search?intent=sale&country=Uganda",
+    comingSoon: true,
   },
   {
     name: "Tanzania",
     flag: "🇹🇿",
     tagline: "Dar es Salaam, Zanzibar, Arusha",
     href: "/search?intent=sale&country=Tanzania",
+    comingSoon: true,
   },
   {
     name: "Rwanda",
     flag: "🇷🇼",
     tagline: "Kigali, Musanze, Rubavu",
     href: "/search?intent=sale&country=Rwanda",
+    comingSoon: true,
   },
 ];
 
@@ -84,8 +94,8 @@ export default function HomePage() {
             className="mx-auto mt-5 max-w-md text-[1.05rem] leading-relaxed text-white/60"
             data-animate="fade"
           >
-            Trusted agents, confirmed listings, clear titles — across Kenya,
-            Uganda, Tanzania and Rwanda.
+            Trusted agents, confirmed listings, clear titles — now live across
+            Kenya.
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Magnetic>
@@ -103,7 +113,7 @@ export default function HomePage() {
             className="mt-10 text-[0.7rem] tracking-[0.2em] text-white/30 uppercase"
             data-animate="fade"
           >
-            Kenya · Uganda · Tanzania · Rwanda
+            Kenya now — Uganda, Tanzania &amp; Rwanda coming soon
           </p>
         </div>
       </section>
@@ -115,26 +125,50 @@ export default function HomePage() {
             Buy by country
           </p>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4" data-animate-group>
-            {COUNTRIES.map((c) => (
-              <Link
-                key={c.name}
-                href={c.href}
-                className="group flex items-center justify-between rounded-xl border border-line bg-surface px-5 py-4 transition-all hover:border-accent hover:shadow-card"
-              >
-                <span className="flex items-center gap-3">
-                  <span className="text-xl leading-none">{c.flag}</span>
-                  <span>
-                    <span className="block font-semibold text-primary transition-colors group-hover:text-accent">
-                      {c.name}
-                    </span>
-                    <span className="mt-0.5 block text-xs text-ink-soft">
-                      {c.tagline}
+            {COUNTRIES.map((c) =>
+              c.comingSoon ? (
+                <div
+                  key={c.name}
+                  aria-disabled
+                  title="Coming soon"
+                  className="flex items-center justify-between rounded-xl border border-dashed border-line bg-surface px-5 py-4 opacity-70"
+                >
+                  <span className="flex items-center gap-3">
+                    <span className="text-xl leading-none grayscale">{c.flag}</span>
+                    <span>
+                      <span className="block font-semibold text-ink-soft">
+                        {c.name}
+                      </span>
+                      <span className="mt-0.5 block text-xs text-ink-soft/70">
+                        {c.tagline}
+                      </span>
                     </span>
                   </span>
-                </span>
-                <Chevron className="h-4 w-4 -rotate-90 text-ink-soft transition-all group-hover:translate-x-0.5 group-hover:text-accent" />
-              </Link>
-            ))}
+                  <span className="shrink-0 rounded-full bg-surface-muted px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-ink-soft">
+                    Coming soon
+                  </span>
+                </div>
+              ) : (
+                <Link
+                  key={c.name}
+                  href={c.href}
+                  className="group flex items-center justify-between rounded-xl border border-line bg-surface px-5 py-4 transition-all hover:border-accent hover:shadow-card"
+                >
+                  <span className="flex items-center gap-3">
+                    <span className="text-xl leading-none">{c.flag}</span>
+                    <span>
+                      <span className="block font-semibold text-primary transition-colors group-hover:text-accent">
+                        {c.name}
+                      </span>
+                      <span className="mt-0.5 block text-xs text-ink-soft">
+                        {c.tagline}
+                      </span>
+                    </span>
+                  </span>
+                  <Chevron className="h-4 w-4 -rotate-90 text-ink-soft transition-all group-hover:translate-x-0.5 group-hover:text-accent" />
+                </Link>
+              ),
+            )}
           </div>
         </div>
       </section>

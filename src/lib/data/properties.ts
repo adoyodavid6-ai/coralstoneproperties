@@ -1,4 +1,5 @@
 import type { AreaGuide, Property } from "@/lib/types";
+import { isCountryLive } from "../countries";
 import { AGENTS } from "./agents";
 
 const img = (id: string, w = 1400) =>
@@ -172,7 +173,9 @@ const AREA: Record<string, AreaGuide> = {
 
 const today = "2026-07-09";
 
-export const PROPERTIES: Property[] = [
+// Full seed set across every East African market — retained so a market can be
+// switched on instantly (see src/lib/countries.ts) without re-adding listings.
+export const ALL_PROPERTIES: Property[] = [
   {
     id: "p_001",
     slug: "4-bed-townhouse-lavington-garden",
@@ -1643,6 +1646,15 @@ export const PROPERTIES: Property[] = [
     saveCount: 118,
   },
 ];
+
+/**
+ * Publicly surfaced inventory — only listings in live markets (currently Kenya).
+ * Every consumer (search, home, showcase, sitemap, PDP, compare, saved) reads
+ * this, so the whole site stays Kenya-only until another market goes live.
+ */
+export const PROPERTIES: Property[] = ALL_PROPERTIES.filter((p) =>
+  isCountryLive(p.country),
+);
 
 // ---- Access helpers (stand-in for the future Supabase query layer) ----
 

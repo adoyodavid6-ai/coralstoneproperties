@@ -14,12 +14,13 @@ import type { ListingIntent } from "@/lib/types";
 import { Search as SearchIcon } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
 
+// Kenya is live; the rest are on the roadmap (see src/lib/countries.ts).
 const SALE_COUNTRIES = [
-  { label: "All countries", country: undefined, flag: "" },
+  { label: "All", country: undefined, flag: "" },
   { label: "Kenya", country: "Kenya", flag: "🇰🇪" },
-  { label: "Uganda", country: "Uganda", flag: "🇺🇬" },
-  { label: "Tanzania", country: "Tanzania", flag: "🇹🇿" },
-  { label: "Rwanda", country: "Rwanda", flag: "🇷🇼" },
+  { label: "Uganda", country: "Uganda", flag: "🇺🇬", comingSoon: true },
+  { label: "Tanzania", country: "Tanzania", flag: "🇹🇿", comingSoon: true },
+  { label: "Rwanda", country: "Rwanda", flag: "🇷🇼", comingSoon: true },
 ];
 
 export const metadata: Metadata = {
@@ -92,7 +93,23 @@ export default async function SearchPage({
           {/* Country tabs — only when browsing for sale */}
           {intent === "sale" && (
             <div className="mb-5 flex flex-wrap gap-2">
-              {SALE_COUNTRIES.map(({ label, country: c, flag }) => {
+              {SALE_COUNTRIES.map(({ label, country: c, flag, comingSoon }) => {
+                if (comingSoon) {
+                  return (
+                    <span
+                      key={label}
+                      aria-disabled
+                      title="Coming soon"
+                      className="inline-flex cursor-not-allowed items-center gap-1.5 rounded-full border border-dashed border-line-strong bg-surface-raised px-4 py-1.5 text-sm font-medium text-ink-soft/60"
+                    >
+                      {flag && <span className="grayscale">{flag}</span>}
+                      {label}
+                      <span className="ml-0.5 rounded-full bg-surface-muted px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-ink-soft">
+                        Soon
+                      </span>
+                    </span>
+                  );
+                }
                 const params = new URLSearchParams();
                 for (const [k, v] of Object.entries(sp)) {
                   if (k === "country" || k === "page") continue;

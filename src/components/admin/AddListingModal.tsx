@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useAdmin, type NewListingInput } from "@/lib/admin/AdminStore";
 import type { Country, Currency, ListingIntent, PricePeriod, PropertyType } from "@/lib/types";
+import { LIVE_COUNTRIES } from "@/lib/countries";
 import { INTENT_LABEL, TYPE_LABEL } from "@/lib/labels";
 import { Button } from "@/components/ui/Button";
 import { Close } from "@/components/ui/icons";
@@ -12,7 +13,8 @@ import { cn } from "@/lib/cn";
 const TYPES = Object.keys(TYPE_LABEL) as PropertyType[];
 const INTENTS = Object.keys(INTENT_LABEL) as ListingIntent[];
 const CURRENCIES: Currency[] = ["KES", "UGX", "TZS", "RWF", "USD", "GBP"];
-const COUNTRIES: Country[] = ["Kenya", "Uganda", "Tanzania", "Rwanda"];
+// Only live markets can receive new listings (see src/lib/countries.ts).
+const COUNTRIES: Country[] = LIVE_COUNTRIES;
 const PERIODS: PricePeriod[] = ["total", "month", "night"];
 
 export function AddListingModal({ onClose }: { onClose: () => void }) {

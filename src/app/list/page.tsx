@@ -57,11 +57,12 @@ const TYPES: { value: PropertyType; label: string; emoji: string }[] = [
   { value: "off_plan",   label: "Off-plan",          emoji: "🏗️" },
 ];
 
-const COUNTRIES: { value: Country; flag: string; cities: string }[] = [
+// Kenya is live; the rest are on the roadmap (see src/lib/countries.ts).
+const COUNTRIES: { value: Country; flag: string; cities: string; comingSoon?: boolean }[] = [
   { value: "Kenya",    flag: "🇰🇪", cities: "Nairobi, Mombasa, Kisumu" },
-  { value: "Uganda",   flag: "🇺🇬", cities: "Kampala, Entebbe, Jinja" },
-  { value: "Tanzania", flag: "🇹🇿", cities: "Dar es Salaam, Zanzibar, Arusha" },
-  { value: "Rwanda",   flag: "🇷🇼", cities: "Kigali, Musanze, Rubavu" },
+  { value: "Uganda",   flag: "🇺🇬", cities: "Kampala, Entebbe, Jinja",       comingSoon: true },
+  { value: "Tanzania", flag: "🇹🇿", cities: "Dar es Salaam, Zanzibar, Arusha", comingSoon: true },
+  { value: "Rwanda",   flag: "🇷🇼", cities: "Kigali, Musanze, Rubavu",       comingSoon: true },
 ];
 
 const OWNER_TYPES: { value: OwnerType; label: string; sub: string }[] = [
@@ -275,21 +276,30 @@ export default function ListPropertyPage() {
                     <button
                       key={c.value}
                       type="button"
+                      disabled={c.comingSoon}
                       onClick={() => set("country", c.value)}
+                      title={c.comingSoon ? "Coming soon" : undefined}
                       className={cn(
                         "flex items-center gap-3 rounded-xl border px-4 py-3 text-left transition-all",
-                        data.country === c.value
+                        c.comingSoon
+                          ? "cursor-not-allowed border-dashed border-line bg-surface-raised opacity-70"
+                          : data.country === c.value
                           ? "border-accent bg-accent-soft ring-1 ring-accent"
                           : "border-line bg-surface-raised hover:border-accent/40",
                       )}
                     >
-                      <span className="text-2xl leading-none">{c.flag}</span>
-                      <div>
-                        <p className={cn("text-sm font-semibold", data.country === c.value ? "text-accent" : "text-primary")}>
+                      <span className={cn("text-2xl leading-none", c.comingSoon && "grayscale")}>{c.flag}</span>
+                      <div className="flex-1">
+                        <p className={cn("text-sm font-semibold", !c.comingSoon && data.country === c.value ? "text-accent" : c.comingSoon ? "text-ink-soft" : "text-primary")}>
                           {c.value}
                         </p>
                         <p className="text-xs text-ink-soft">{c.cities}</p>
                       </div>
+                      {c.comingSoon && (
+                        <span className="shrink-0 rounded-full bg-surface-muted px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-ink-soft">
+                          Coming soon
+                        </span>
+                      )}
                     </button>
                   ))}
                 </div>

@@ -34,7 +34,7 @@ function HamburgerIcon({ className }: { className?: string }) {
   );
 }
 
-type NavChild = { label: string; href: string };
+type NavChild = { label: string; href: string; comingSoon?: boolean };
 type NavItem = { key: string; href: string; children?: NavChild[] };
 
 const NAV: NavItem[] = [
@@ -43,9 +43,9 @@ const NAV: NavItem[] = [
     href: "/search?intent=sale",
     children: [
       { label: "🇰🇪 Kenya",    href: "/search?intent=sale&country=Kenya" },
-      { label: "🇺🇬 Uganda",   href: "/search?intent=sale&country=Uganda" },
-      { label: "🇹🇿 Tanzania", href: "/search?intent=sale&country=Tanzania" },
-      { label: "🇷🇼 Rwanda",   href: "/search?intent=sale&country=Rwanda" },
+      { label: "🇺🇬 Uganda",   href: "/search?intent=sale&country=Uganda",   comingSoon: true },
+      { label: "🇹🇿 Tanzania", href: "/search?intent=sale&country=Tanzania", comingSoon: true },
+      { label: "🇷🇼 Rwanda",   href: "/search?intent=sale&country=Rwanda",   comingSoon: true },
     ],
   },
   {
@@ -178,17 +178,32 @@ export function Header() {
                     onMouseLeave={scheduleClose}
                   >
                     <ul className="py-1.5">
-                      {n.children.map((child) => (
-                        <li key={child.label}>
-                          <Link
-                            href={child.href}
-                            onClick={() => setActiveNav(null)}
-                            className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-ink-soft transition-colors hover:bg-accent-soft hover:text-accent"
-                          >
-                            {child.label}
-                          </Link>
-                        </li>
-                      ))}
+                      {n.children.map((child) =>
+                        child.comingSoon ? (
+                          <li key={child.label}>
+                            <span
+                              aria-disabled
+                              title="Coming soon"
+                              className="flex cursor-not-allowed items-center justify-between gap-2.5 px-4 py-2.5 text-sm text-ink-soft/50"
+                            >
+                              {child.label}
+                              <span className="rounded-full bg-surface-muted px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-ink-soft">
+                                Soon
+                              </span>
+                            </span>
+                          </li>
+                        ) : (
+                          <li key={child.label}>
+                            <Link
+                              href={child.href}
+                              onClick={() => setActiveNav(null)}
+                              className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-ink-soft transition-colors hover:bg-accent-soft hover:text-accent"
+                            >
+                              {child.label}
+                            </Link>
+                          </li>
+                        ),
+                      )}
                     </ul>
                     <div className="border-t border-line px-4 py-2.5">
                       <Link
@@ -308,16 +323,29 @@ export function Header() {
                 {/* Accordion children */}
                 {n.children && expanded === n.key && (
                   <div className="mb-2 ml-4 border-l border-white/10 pl-4">
-                    {n.children.map((child) => (
-                      <Link
-                        key={child.label}
-                        href={child.href}
-                        onClick={() => setOpen(false)}
-                        className="flex items-center gap-2 py-2.5 text-sm text-white/50 transition-colors hover:text-accent"
-                      >
-                        {child.label}
-                      </Link>
-                    ))}
+                    {n.children.map((child) =>
+                      child.comingSoon ? (
+                        <span
+                          key={child.label}
+                          aria-disabled
+                          className="flex items-center justify-between gap-2 py-2.5 text-sm text-white/30"
+                        >
+                          {child.label}
+                          <span className="rounded-full bg-white/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-white/50">
+                            Soon
+                          </span>
+                        </span>
+                      ) : (
+                        <Link
+                          key={child.label}
+                          href={child.href}
+                          onClick={() => setOpen(false)}
+                          className="flex items-center gap-2 py-2.5 text-sm text-white/50 transition-colors hover:text-accent"
+                        >
+                          {child.label}
+                        </Link>
+                      ),
+                    )}
                   </div>
                 )}
               </div>
