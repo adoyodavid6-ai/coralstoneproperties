@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { useEffect, useMemo, useState } from "react";
 import { useMotion } from "@/lib/motion/MotionProvider";
+import { SHOW_REAL_MEDIA } from "@/lib/media";
 import { ShowcaseBoundary } from "./ShowcaseBoundary";
 
 const GalleryStage = dynamic(() => import("./GalleryStage"), {
@@ -42,7 +43,9 @@ export function ImmersiveGallery({ images, title }: { images: string[]; title: s
     [images, title],
   );
 
-  if (tier !== "full" || webgl !== true || items.length < 2) return null;
+  // No real photos to tour while media is off — the 2D gallery placeholder covers it.
+  if (!SHOW_REAL_MEDIA || tier !== "full" || webgl !== true || items.length < 2)
+    return null;
 
   return (
     <section data-animate="fade">

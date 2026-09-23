@@ -5,6 +5,7 @@ import { getPropertyBySlug, getSimilar, PROPERTIES } from "@/lib/data/properties
 import { INTENT_LABEL, TYPE_LABEL } from "@/lib/labels";
 import { daysOnMarket, formatNumber } from "@/lib/format";
 import { SITE_URL } from "@/lib/site";
+import { SHOW_REAL_MEDIA } from "@/lib/media";
 import { Gallery } from "@/components/property/Gallery";
 import { BookingWidget } from "@/components/property/BookingWidget";
 import { ImmersiveGallery } from "@/components/showcase/ImmersiveGallery";
@@ -44,7 +45,11 @@ export async function generateMetadata({
   return {
     title: p.title,
     description: p.description.slice(0, 155),
-    openGraph: { title: p.title, images: [p.images[0]] },
+    // While real media is off, inherit the branded OG card instead of a stock photo.
+    openGraph: {
+      title: p.title,
+      ...(SHOW_REAL_MEDIA ? { images: [p.images[0]] } : {}),
+    },
   };
 }
 
@@ -86,7 +91,8 @@ export default async function PropertyPage({
     "@type": "Product",
     name: property.title,
     description: property.description,
-    image: property.images,
+    // Omit stock image URLs while real media is off (see src/lib/media.ts).
+    ...(SHOW_REAL_MEDIA ? { image: property.images } : {}),
     category: TYPE_LABEL[property.type],
     offers: {
       "@type": "Offer",

@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import type { Property } from "@/lib/types";
 import { SearchBar } from "@/components/search/SearchBar";
 import { SplitHeading } from "@/lib/motion/SplitHeading";
@@ -20,19 +19,7 @@ export function ImmersiveHero({ properties }: { properties: Property[] }) {
       id="hero"
       className="theme-dark relative overflow-hidden bg-surface text-ink"
     >
-      {/* Warm property backdrop — a low, soft wash of architecture blended into
-          the dark base. Lifts the bare black into warmth without competing with
-          the copy or the 3D ring, both of which sit clearly above it. */}
-      <Image
-        src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2000&q=70"
-        alt=""
-        aria-hidden
-        fill
-        priority
-        sizes="100vw"
-        className="pointer-events-none select-none object-cover opacity-25"
-      />
-      {/* Golden light layered over the base to give the black a warm glow */}
+      {/* Golden light over the dark base to give the black a warm glow */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-80"

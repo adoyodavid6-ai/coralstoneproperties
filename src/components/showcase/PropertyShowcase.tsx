@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Property } from "@/lib/types";
 import { useMotion } from "@/lib/motion/MotionProvider";
+import { SHOW_REAL_MEDIA } from "@/lib/media";
 import { cn } from "@/lib/cn";
 import type { ShowcaseGroup } from "./types";
 import { ActivePropertyPanel } from "./ActivePropertyPanel";
@@ -80,7 +81,9 @@ export function PropertyShowcase({
     [list, router],
   );
 
-  const use3D = tier === "full" && webgl === true && list.length >= 2;
+  // No real photos → skip the 3D texture ring and use the placeholder-safe rail.
+  const use3D =
+    SHOW_REAL_MEDIA && tier === "full" && webgl === true && list.length >= 2;
   const active = list[Math.min(activeIndex, list.length - 1)];
 
   return (

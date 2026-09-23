@@ -3,17 +3,11 @@
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 import { useMotion } from "@/lib/motion/MotionProvider";
 import { SearchBar } from "@/components/search/SearchBar";
-import { SmartImage } from "@/components/ui/SmartImage";
 import { HeroVisual } from "./hero3d/HeroVisual";
 import { CheckShield, Chevron } from "@/components/ui/icons";
 import { Counter } from "@/lib/motion/Counter";
 import { SplitHeading } from "@/lib/motion/SplitHeading";
 import { cn } from "@/lib/cn";
-
-// Twilight modern home — Unsplash License (free for commercial use, no
-// attribution required). https://unsplash.com/photos/G48h926L2qo
-const HERO_PHOTO =
-  "https://images.unsplash.com/photo-1757359056339-22968344cce6?q=80&w=2400&auto=format&fit=crop";
 
 export function Hero() {
   const { t } = useLocale();
@@ -23,16 +17,15 @@ export function Hero() {
       id="hero"
       className="theme-dark relative flex min-h-[56svh] items-center overflow-hidden bg-surface text-ink"
     >
-      {/* Twilight home photograph — the cinematic base layer */}
-      <div aria-hidden className="absolute inset-0 opacity-70">
-        <SmartImage
-          src={HERO_PHOTO}
-          alt=""
-          priority
-          sizes="100vw"
-          className="object-cover object-[70%_center]"
-        />
-      </div>
+      {/* Brand gradient base layer (no photo) */}
+      <div
+        aria-hidden
+        className="absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse 90% 70% at 75% 10%, rgb(67 113 154 / 0.35) 0%, transparent 60%)",
+        }}
+      />
 
       {/* WebGL wireframe terrain blended over the photo — full tier only;
           lite/off devices get the photograph alone */}
