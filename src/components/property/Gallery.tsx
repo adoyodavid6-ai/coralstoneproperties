@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { SmartImage } from "@/components/ui/SmartImage";
-import { Camera, Close, Chevron, Video, Cube } from "@/components/ui/icons";
+import { MediaPlaceholder } from "@/components/ui/MediaPlaceholder";
+import { Camera, Close, Chevron } from "@/components/ui/icons";
 import { useMotion } from "@/lib/motion/MotionProvider";
+import { SHOW_REAL_MEDIA } from "@/lib/media";
 import type { Property } from "@/lib/types";
 
 export function Gallery({ property }: { property: Property }) {
@@ -37,6 +39,16 @@ export function Gallery({ property }: { property: Property }) {
     setOpen(true);
   };
 
+  // While real media is off, show a single branded placeholder — no thumbnail
+  // grid, lightbox or photo counts for photography that isn't there yet.
+  if (!SHOW_REAL_MEDIA) {
+    return (
+      <div className="h-56 overflow-hidden rounded-2xl sm:h-[440px]">
+        <MediaPlaceholder label="Photos coming soon" />
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="grid grid-cols-4 grid-rows-2 gap-2 overflow-hidden rounded-2xl sm:h-[440px]">
@@ -46,11 +58,6 @@ export function Gallery({ property }: { property: Property }) {
           aria-label="Open gallery"
         >
           <SmartImage src={images[0]} alt={`${property.title} — main photo`} priority />
-          <span className="absolute bottom-3 left-3 flex items-center gap-2 rounded-full bg-black/55 px-3 py-1.5 text-xs font-medium text-white backdrop-blur">
-            {property.hasVideo && <Video className="h-3.5 w-3.5" />}
-            {property.has3dTour && <Cube className="h-3.5 w-3.5" />}
-            {property.hasDrone && <span>Drone</span>}
-          </span>
         </button>
 
         {images.slice(1, 5).map((src, i) => (

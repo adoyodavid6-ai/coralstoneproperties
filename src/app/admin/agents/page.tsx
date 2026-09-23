@@ -3,7 +3,7 @@
 import { useAdmin } from "@/lib/admin/AdminStore";
 import type { VerificationKind } from "@/lib/types";
 import { VERIFICATION_META } from "@/lib/labels";
-import { SmartImage } from "@/components/ui/SmartImage";
+import { Avatar } from "@/components/ui/Avatar";
 import { Panel, inputClass } from "@/components/admin/ui";
 import { cn } from "@/lib/cn";
 
@@ -41,7 +41,7 @@ export default function AdminAgents() {
                   <td className="px-3 py-3">
                     <div className="flex items-center gap-3">
                       <span className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full">
-                        <SmartImage src={a.avatarUrl} alt="" sizes="40px" />
+                        <Avatar name={a.name} src={a.avatarUrl} sizes="40px" />
                       </span>
                       <span>
                         <span className="block font-medium text-primary">{a.name}</span>

@@ -6,7 +6,7 @@ import { useLocale } from "@/lib/i18n/LocaleProvider";
 import { convertBetween, formatMoney, resolveCurrency } from "@/lib/format";
 import { Price } from "@/components/ui/Price";
 import { SaveButton } from "@/components/ui/SaveButton";
-import { SmartImage } from "@/components/ui/SmartImage";
+import { Avatar } from "@/components/ui/Avatar";
 import { VerifiedStrip } from "@/components/ui/VerifiedBadge";
 import {
   Whatsapp,
@@ -134,7 +134,7 @@ export function ConversionRail({ property }: { property: Property }) {
       <div className="mt-5 border-t border-line pt-5">
         <div className="flex items-center gap-3">
           <div className="h-12 w-12 overflow-hidden rounded-full">
-            <SmartImage src={agent.avatarUrl} alt={agent.name} />
+            <Avatar name={agent.name} src={agent.avatarUrl} />
           </div>
           <div className="min-w-0">
             <p className="truncate font-semibold text-primary">{agent.name}</p>

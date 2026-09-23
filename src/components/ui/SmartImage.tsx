@@ -1,4 +1,6 @@
 import Image from "next/image";
+import { SHOW_REAL_MEDIA } from "@/lib/media";
+import { MediaPlaceholder } from "./MediaPlaceholder";
 
 // A branded gray gradient (inline SVG data URI) used as the blur-up placeholder,
 // so a slow or dead image URL never renders as a jarring blank/broken box.
@@ -20,14 +22,22 @@ interface Props {
   className?: string;
   sizes?: string;
   priority?: boolean;
+  /** Caption for the placeholder shown while real media is off (large surfaces only). */
+  placeholderLabel?: string;
 }
 
 /**
  * Fills its (relatively positioned) parent with an optimised image.
  * Uses next/image for on-demand resizing, modern formats, lazy-loading and a
  * blur-up placeholder — replacing the previous hot-linked <img>.
+ *
+ * While real media is off (see src/lib/media.ts) it renders a branded
+ * placeholder instead, so no stock/placeholder photo ever ships.
  */
-export function SmartImage({ src, alt, className, sizes, priority }: Props) {
+export function SmartImage({ src, alt, className, sizes, priority, placeholderLabel }: Props) {
+  if (!SHOW_REAL_MEDIA) {
+    return <MediaPlaceholder label={placeholderLabel} />;
+  }
   return (
     <span className="relative block h-full w-full overflow-hidden bg-surface-muted">
       <Image

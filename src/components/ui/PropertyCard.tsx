@@ -7,7 +7,8 @@ import { SaveButton } from "./SaveButton";
 import { CompareButton } from "./CompareButton";
 import { VerifiedStrip } from "./VerifiedBadge";
 import { Price } from "./Price";
-import { Bed, Bath, Area, Pin, Camera, Video, Cube, Users } from "./icons";
+import { Bed, Bath, Area, Pin, Camera, Users } from "./icons";
+import { SHOW_REAL_MEDIA } from "@/lib/media";
 import { cn } from "@/lib/cn";
 
 function Stat({
@@ -51,6 +52,7 @@ export function PropertyCard({
             src={property.images[0]}
             alt={property.title}
             priority={priority}
+            placeholderLabel="Photo coming soon"
           />
         </div>
 
@@ -86,14 +88,14 @@ export function PropertyCard({
           <span className="rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-semibold text-primary backdrop-blur">
             {INTENT_LABEL[property.intent]} · {TYPE_LABEL[property.type]}
           </span>
-          <div className="flex items-center gap-2 text-white">
-            <span className="inline-flex items-center gap-1 text-[11px]">
-              <Camera className="h-3.5 w-3.5" />
-              {property.images.length}
-            </span>
-            {property.hasVideo && <Video className="h-3.5 w-3.5" />}
-            {property.has3dTour && <Cube className="h-3.5 w-3.5" />}
-          </div>
+          {SHOW_REAL_MEDIA && (
+            <div className="flex items-center gap-2 text-white">
+              <span className="inline-flex items-center gap-1 text-[11px]">
+                <Camera className="h-3.5 w-3.5" />
+                {property.images.length}
+              </span>
+            </div>
+          )}
         </div>
       </Link>
 

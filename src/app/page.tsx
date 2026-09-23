@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { PropertyCard } from "@/components/ui/PropertyCard";
 import { ButtonLink } from "@/components/ui/Button";
@@ -51,18 +50,17 @@ export default function HomePage() {
     <>
       {/* Hero — short height maintained, rich landscape home */}
       <section className="relative overflow-hidden bg-surface-dark">
-        {/* Background photo with layered overlay for cinematic depth */}
-        <div className="absolute inset-0">
-          <Image
-            src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1800&q=85"
-            alt="Modern luxury home with landscaped garden"
-            fill
-            className="object-cover object-[center_30%]"
-            priority
+        {/* Layered gradient backdrop for cinematic depth (no photo) */}
+        <div aria-hidden className="absolute inset-0">
+          {/* Soft brand glow up top */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(67,113,154,0.35) 0%, transparent 60%)",
+            }}
           />
-          {/* Base teal tone — reduced to 55% so the landscape breathes */}
-          <div className="absolute inset-0 bg-surface-dark/55" />
-          {/* Radial vignette — brightens centre (house), darkens edges */}
+          {/* Radial vignette — darkens edges */}
           <div
             aria-hidden
             className="absolute inset-0"
