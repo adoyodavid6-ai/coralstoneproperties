@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ButtonLink } from "@/components/ui/Button";
 import { CheckShield } from "@/components/ui/icons";
+import { sendValuationLead } from "@/lib/leads/actions";
 
 const inputCls = "w-full rounded-lg border border-line bg-surface-raised px-3.5 py-2.5 text-sm text-primary placeholder:text-ink-soft/60 focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20 transition-colors";
 
@@ -17,17 +18,39 @@ const FACTORS = [
 const BENCHMARKS = [
   { area: "Kilimani, Nairobi",     type: "2BR apartment",    range: "KSh 8M – 18M",    yield: "6–8%" },
   { area: "Karen, Nairobi",        type: "4BR villa",         range: "KSh 30M – 120M",  yield: "3–5%" },
-  { area: "Kololo, Kampala",       type: "3BR house",         range: "UGX 800M – 1.8B", yield: "5–7%" },
-  { area: "Masaki, Dar es Salaam", type: "3BR villa",         range: "USD 280K – 650K", yield: "5–7%" },
-  { area: "Nyarutarama, Kigali",   type: "4BR villa",         range: "USD 180K – 400K", yield: "6–8%" },
-  { area: "Zanzibar (North)",      type: "Plot (0.25 acres)", range: "USD 50K – 180K",  yield: "—" },
+  { area: "Nyali, Mombasa",        type: "3BR villa",         range: "KSh 18M – 55M",   yield: "5–7%" },
+  { area: "Milimani, Kisumu",      type: "4BR house",         range: "KSh 15M – 45M",   yield: "5–7%" },
+  { area: "Runda, Nairobi",        type: "5BR villa",         range: "KSh 60M – 250M",  yield: "3–4%" },
+  { area: "Diani, Kwale",          type: "Plot (0.25 acres)", range: "KSh 3M – 20M",    yield: "—" },
 ];
 
 export default function ValuationPage() {
   const [done, setDone] = useState(false);
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState("");
+  const [company, setCompany] = useState(""); // honeypot
   const [form, setForm] = useState({ country: "", city: "", type: "", size: "", condition: "", name: "", email: "" });
   const set = (k: keyof typeof form, v: string) => setForm((f) => ({ ...f, [k]: v }));
   const ready = form.country && form.city && form.type && form.name && form.email;
+
+  async function submit() {
+    if (!ready || pending) return;
+    setPending(true);
+    setError("");
+    const res = await sendValuationLead({
+      country: form.country,
+      city: form.city,
+      propertyType: form.type,
+      size: form.size,
+      condition: form.condition,
+      name: form.name,
+      email: form.email,
+      company,
+    });
+    setPending(false);
+    if (res.ok) setDone(true);
+    else setError(res.error ?? "Something went wrong. Please try again.");
+  }
 
   return (
     <>
@@ -116,7 +139,7 @@ export default function ValuationPage() {
                       <label className="mb-1.5 block text-sm font-semibold text-primary">Country</label>
                       <select className={inputCls} value={form.country} onChange={(e) => set("country", e.target.value)}>
                         <option value="">Select country…</option>
-                        <option>Kenya</option><option>Uganda</option><option>Tanzania</option><option>Rwanda</option>
+                        <option>Kenya</option><option disabled>Uganda — coming soon</option><option disabled>Tanzania — coming soon</option><option disabled>Rwanda — coming soon</option>
                       </select>
                     </div>
                     <div>
@@ -151,13 +174,28 @@ export default function ValuationPage() {
                       <label className="mb-1.5 block text-sm font-semibold text-primary">Email address</label>
                       <input className={inputCls} type="email" placeholder="you@example.com" value={form.email} onChange={(e) => set("email", e.target.value)} />
                     </div>
+                    {/* Honeypot — hidden from real users, catches bots */}
+                    <input
+                      type="text"
+                      tabIndex={-1}
+                      autoComplete="off"
+                      aria-hidden="true"
+                      value={company}
+                      onChange={(e) => setCompany(e.target.value)}
+                      className="hidden"
+                    />
+                    {error && (
+                      <p className="rounded-lg border border-danger/30 bg-danger-soft px-4 py-3 text-sm text-danger">
+                        {error}
+                      </p>
+                    )}
                     <button
                       type="button"
-                      disabled={!ready}
-                      onClick={() => ready && setDone(true)}
-                      className={`w-full rounded-full py-3 text-sm font-semibold transition-all ${ready ? "bg-accent text-white hover:bg-accent-hover" : "cursor-not-allowed bg-line text-ink-soft"}`}
+                      disabled={!ready || pending}
+                      onClick={submit}
+                      className={`w-full rounded-full py-3 text-sm font-semibold transition-all ${ready && !pending ? "bg-accent text-white hover:bg-accent-hover" : "cursor-not-allowed bg-line text-ink-soft"}`}
                     >
-                      Request valuation
+                      {pending ? "Sending…" : "Request valuation"}
                     </button>
                     <p className="text-xs text-ink-soft text-center">Free for buyers and sellers. No obligation.</p>
                   </div>

@@ -1,5 +1,6 @@
 import type { AreaGuide, Property } from "@/lib/types";
 import { isCountryLive } from "../countries";
+import { SHOW_DEMO_LISTINGS } from "../media";
 import { AGENTS } from "./agents";
 
 const img = (id: string, w = 1400) =>
@@ -1648,13 +1649,16 @@ export const ALL_PROPERTIES: Property[] = [
 ];
 
 /**
- * Publicly surfaced inventory — only listings in live markets (currently Kenya).
- * Every consumer (search, home, showcase, sitemap, PDP, compare, saved) reads
- * this, so the whole site stays Kenya-only until another market goes live.
+ * Publicly surfaced inventory. Every consumer (search, home, showcase,
+ * sitemap, PDP, compare, saved) reads this, so gating here controls the
+ * whole site:
+ * - while demo listings are off (src/lib/media.ts) the public inventory is
+ *   EMPTY — only real client submissions will ever appear;
+ * - once on, only live markets (currently Kenya) are included.
  */
-export const PROPERTIES: Property[] = ALL_PROPERTIES.filter((p) =>
-  isCountryLive(p.country),
-);
+export const PROPERTIES: Property[] = SHOW_DEMO_LISTINGS
+  ? ALL_PROPERTIES.filter((p) => isCountryLive(p.country))
+  : [];
 
 // ---- Access helpers (stand-in for the future Supabase query layer) ----
 

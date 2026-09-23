@@ -3,7 +3,6 @@
 import type { Property } from "@/lib/types";
 import { SearchBar } from "@/components/search/SearchBar";
 import { SplitHeading } from "@/lib/motion/SplitHeading";
-import { Counter } from "@/lib/motion/Counter";
 import { CheckShield } from "@/components/ui/icons";
 import { PropertyShowcase } from "@/components/showcase/PropertyShowcase";
 import { HOME_GROUPS } from "@/components/showcase/groups";
@@ -50,7 +49,7 @@ export function ImmersiveHero({ properties }: { properties: Property[] }) {
               data-animate-delay="0.25"
             >
               Drag through a living gallery of verified listings — houses, land,
-              off-plan and short-lets across Kenya, Uganda, Tanzania and Rwanda.
+              off-plan and short-lets across Kenya.
               Then dive into the true cost, the neighbourhood truth and the title.
             </p>
 
@@ -62,28 +61,6 @@ export function ImmersiveHero({ properties }: { properties: Property[] }) {
               <SearchBar variant="hero" />
             </div>
 
-            <dl
-              className="mt-7 grid max-w-lg grid-cols-3 gap-6"
-              data-animate="fade"
-              data-animate-delay="0.5"
-            >
-              {[
-                { n: 12480, suffix: "+", k: "Verified listings", accent: false },
-                { n: 1900, suffix: "+", k: "Vetted agents", accent: false },
-                { n: 3120, suffix: "", k: "Fraud reports actioned", accent: true },
-              ].map((s) => (
-                <div key={s.k}>
-                  <dt
-                    className={`figure text-xl font-semibold sm:text-2xl ${
-                      s.accent ? "text-rose" : "text-primary"
-                    }`}
-                  >
-                    <Counter to={s.n} suffix={s.suffix} />
-                  </dt>
-                  <dd className="mt-1 text-sm text-ink-soft">{s.k}</dd>
-                </div>
-              ))}
-            </dl>
           </div>
 
           {/* The 3D showcase — extended taller and wider, bleeding up and to the right */}

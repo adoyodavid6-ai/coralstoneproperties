@@ -8,7 +8,7 @@ import { MotionProvider } from "@/lib/motion/MotionProvider";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { CompareBar } from "@/components/ui/CompareBar";
-import { Analytics } from "@vercel/analytics/next";
+import { CookieConsent } from "@/components/layout/CookieConsent";
 import { SITE_URL } from "@/lib/site";
 
 // Self-hosted, optimised fonts (no render-blocking <link> to Google).
@@ -28,15 +28,15 @@ export const metadata: Metadata = {
     "East Africa property",
     "verified listings",
     "houses for sale Nairobi",
-    "apartments to rent Kampala",
-    "property for sale Dar es Salaam",
-    "houses for sale Kigali",
+    "apartments to rent Mombasa",
+    "property for sale Kisumu",
+    "houses for sale Nakuru",
     "off-plan East Africa",
   ],
   openGraph: {
     title: "CoralStone Properties Listings",
     description:
-      "East Africa's trust-first property portal. Verified agents, listings and titles across Kenya, Uganda, Tanzania and Rwanda.",
+      "East Africa's trust-first property portal. Verified agents, listings and titles — launching in Kenya.",
     type: "website",
     siteName: "CoralStone Properties Listings",
     locale: "en_KE",
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "CoralStone Properties Listings",
     description:
-      "East Africa's trust-first property portal. Verified agents, listings and titles across Kenya, Uganda, Tanzania and Rwanda.",
+      "East Africa's trust-first property portal. Verified agents, listings and titles — launching in Kenya.",
   },
 };
 
@@ -79,7 +79,7 @@ export default function RootLayout({
             </BookingProvider>
           </CompareProvider>
         </LocaleProvider>
-        <Analytics />
+        <CookieConsent />
       </body>
     </html>
   );

@@ -88,8 +88,11 @@ function relevanceScore(p: Property): number {
   return s;
 }
 
-export function searchProperties(filters: SearchFilters): Property[] {
-  let list = getAllProperties().filter((p) => {
+export function searchProperties(
+  filters: SearchFilters,
+  source: Property[] = getAllProperties(),
+): Property[] {
+  let list = source.filter((p) => {
     if (filters.q && !matchesKeyword(p, filters.q)) return false;
     if (filters.intent && filters.intent !== "all" && p.intent !== filters.intent)
       return false;

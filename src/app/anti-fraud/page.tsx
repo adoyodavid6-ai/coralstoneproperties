@@ -50,7 +50,7 @@ export default function AntiFraudPage() {
         <div className="mt-8 grid gap-5 sm:grid-cols-2">
           {[
             { title: "No listing goes live unverified", body: "Every property on CoralStone is reviewed by a human verification officer before it is published. We do not auto-publish." },
-            { title: "Agent licence checks", body: "We cross-check every agent against the Estate Agents Registration Boards in Kenya, Uganda, Tanzania and Rwanda." },
+            { title: "Agent licence checks", body: "We cross-check every agent against the Estate Agents Registration Board of Kenya (EARB)." },
             { title: "Title deed searches", body: "For land and high-value sales, we search the relevant Lands Registry and disclose all encumbrances before you proceed." },
             { title: "Fraud reports actioned in 4 hours", body: "Every fraud report is reviewed by our moderation team. Verified fraudulent listings are removed and the agent banned." },
             { title: "Payment protection guidance", body: "We advise all buyers to pay through formal bank channels only — never cash, never mobile money to personal numbers." },
@@ -111,7 +111,7 @@ export default function AntiFraudPage() {
               { n: "1", action: "Stop all payments", detail: "Do not send any money — including viewing fees, reservation deposits or registration fees — until the issue is resolved." },
               { n: "2", action: "Report the listing", detail: "Use our Report a Listing tool. Our team will investigate within 4 business hours and suspend the listing if fraud is confirmed." },
               { n: "3", action: "Contact us directly", detail: "Email fraud@coralstone.co with any evidence — screenshots, payment receipts, conversation records." },
-              { n: "4", action: "Report to authorities", detail: "File a report with the Directorate of Criminal Investigations (Kenya), CIID (Uganda), PCCB (Tanzania) or National Police (Rwanda)." },
+              { n: "4", action: "Report to authorities", detail: "File a report with the Directorate of Criminal Investigations (DCI) in Kenya, and notify your bank immediately if any money changed hands." },
             ].map((step) => (
               <li key={step.n} className="flex gap-4">
                 <span className="figure grid h-8 w-8 shrink-0 place-items-center rounded-full bg-accent-soft text-sm font-semibold text-accent">

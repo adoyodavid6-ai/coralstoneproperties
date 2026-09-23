@@ -388,8 +388,7 @@ export default function PricingPage() {
 
           <p className="mt-6 text-center text-sm text-ink-soft">
             All plans include access to the enquiry inbox, the moderation-reviewed listing process, and
-            basic analytics. Prices are in Kenyan Shillings; Uganda, Tanzania and Rwanda equivalents
-            available on request.
+            basic analytics. Prices are shown in Kenyan Shillings.
           </p>
         </div>
       </section>

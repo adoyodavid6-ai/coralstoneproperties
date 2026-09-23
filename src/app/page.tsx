@@ -171,37 +171,63 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Featured — 3 verified picks */}
+      {/* Featured — 3 verified picks, or the launch state while inventory is empty */}
       <section className="container-page py-14 sm:py-18">
-        <div className="mb-7 flex items-end justify-between gap-4">
-          <div>
+        {featured.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-line-strong bg-surface-raised px-6 py-14 text-center">
             <p className="eyebrow" data-animate="fade">
               Verified &amp; featured
             </p>
-            <SplitHeading className="mt-2 font-serif text-3xl font-semibold text-primary sm:text-4xl">
-              Handpicked homes you can trust
+            <SplitHeading className="mt-3 font-serif text-3xl font-semibold text-primary sm:text-4xl">
+              Verified listings are arriving soon
             </SplitHeading>
+            <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-ink-soft">
+              Every property on CoralStone is checked — the agent, the listing
+              and the title — before it goes live. Selling or letting? Be among
+              the first on the platform.
+            </p>
+            <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+              <ButtonLink href="/list" variant="coral">
+                List your property
+              </ButtonLink>
+              <ButtonLink href="/verification" variant="outline">
+                How verification works
+              </ButtonLink>
+            </div>
           </div>
-          <Link
-            href="/search"
-            className="hidden items-center gap-1 whitespace-nowrap text-sm font-semibold text-accent hover:brightness-90 sm:inline-flex"
-          >
-            Browse all
-            <Chevron className="h-4 w-4 -rotate-90" />
-          </Link>
-        </div>
+        ) : (
+          <>
+            <div className="mb-7 flex items-end justify-between gap-4">
+              <div>
+                <p className="eyebrow" data-animate="fade">
+                  Verified &amp; featured
+                </p>
+                <SplitHeading className="mt-2 font-serif text-3xl font-semibold text-primary sm:text-4xl">
+                  Handpicked homes you can trust
+                </SplitHeading>
+              </div>
+              <Link
+                href="/search"
+                className="hidden items-center gap-1 whitespace-nowrap text-sm font-semibold text-accent hover:brightness-90 sm:inline-flex"
+              >
+                Browse all
+                <Chevron className="h-4 w-4 -rotate-90" />
+              </Link>
+            </div>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-animate-group>
-          {featured.map((p, i) => (
-            <PropertyCard key={p.id} property={p} priority={i < 3} />
-          ))}
-        </div>
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-animate-group>
+              {featured.map((p, i) => (
+                <PropertyCard key={p.id} property={p} priority={i < 3} />
+              ))}
+            </div>
 
-        <div className="mt-8 text-center sm:hidden">
-          <ButtonLink href="/search" variant="outline">
-            Browse all properties
-          </ButtonLink>
-        </div>
+            <div className="mt-8 text-center sm:hidden">
+              <ButtonLink href="/search" variant="outline">
+                Browse all properties
+              </ButtonLink>
+            </div>
+          </>
+        )}
       </section>
 
       {/* CTA — compact dark bar */}

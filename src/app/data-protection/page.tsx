@@ -33,8 +33,7 @@ export default function DataProtectionPage() {
           <Section title="Who we are">
             <p>
               CoralStone Properties Listings Limited is the data controller for all personal data collected
-              through this platform. We are registered in Kenya, with branch operations in Uganda,
-              Tanzania and Rwanda. Our Data Protection Officer can be reached at{" "}
+              through this platform. We are registered in Kenya. Our Data Protection Officer can be reached at{" "}
               <a href="mailto:privacy@coralstone.co" className="text-accent hover:brightness-90">privacy@coralstone.co</a>.
             </p>
           </Section>
@@ -76,7 +75,7 @@ export default function DataProtectionPage() {
           </Section>
 
           <Section title="Your rights">
-            <p>Under the Kenya Data Protection Act 2019 and equivalent legislation in Uganda, Tanzania and Rwanda, you have the right to:</p>
+            <p>Under the Kenya Data Protection Act 2019, you have the right to:</p>
             <ul className="list-disc space-y-1.5 pl-4">
               <li><strong className="text-primary">Access</strong> — request a copy of the personal data we hold about you</li>
               <li><strong className="text-primary">Rectification</strong> — correct inaccurate data</li>

@@ -83,17 +83,12 @@ export default function VerificationPage() {
 
       {/* Why it matters */}
       <section className="border-b border-line bg-surface-muted">
-        <div className="container-page grid divide-y divide-line sm:grid-cols-3 sm:divide-x sm:divide-y-0">
-          {[
-            { figure: "1 in 3", label: "East African property listings contain inaccurate information" },
-            { figure: "KSh 2B+", label: "Lost to ghost listings and fake agents annually in Kenya alone" },
-            { figure: "100%", label: "of CoralStone listings are reviewed by a human before going live" },
-          ].map((s) => (
-            <div key={s.label} className="flex flex-col items-center px-6 py-8 text-center">
-              <span className="figure text-2xl font-semibold text-accent">{s.figure}</span>
-              <span className="mt-2 text-sm text-ink-soft">{s.label}</span>
-            </div>
-          ))}
+        <div className="container-page py-10">
+          <p className="mx-auto max-w-2xl text-center text-sm leading-relaxed text-ink-soft">
+            Ghost listings, fake agents and forged titles are a real risk in East
+            African property. Our answer is simple: every listing is reviewed by
+            a human before it goes live — no exceptions.
+          </p>
         </div>
       </section>
 
@@ -169,7 +164,7 @@ export default function VerificationPage() {
       {/* CTA */}
       <section className="bg-surface-dark py-12 text-center">
         <p className="font-semibold text-white">Ready to get your listing verified?</p>
-        <p className="mt-1 text-sm text-white/55">Verified listings receive 2.5× more enquiries.</p>
+        <p className="mt-1 text-sm text-white/55">A verified badge builds buyer trust before the first enquiry.</p>
         <div className="mt-6 flex flex-wrap justify-center gap-3">
           <ButtonLink href="/list" variant="coral">List a property</ButtonLink>
           <ButtonLink href="/search" variant="inverse">Browse verified listings</ButtonLink>

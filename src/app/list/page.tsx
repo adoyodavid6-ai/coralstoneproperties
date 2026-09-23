@@ -220,7 +220,7 @@ export default function ListPropertyPage() {
         </h1>
         <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-white/65">
           Your property in front of thousands of serious, pre-vetted buyers and
-          tenants across Kenya, Uganda, Tanzania and Rwanda — with a verified badge
+          tenants across Kenya — with a verified badge
           that builds trust before the first enquiry.
         </p>
       </section>

@@ -6,10 +6,7 @@ import { ButtonLink } from "@/components/ui/Button";
 import { sendContactLead } from "@/lib/leads/actions";
 
 const OFFICES = [
-  { flag: "🇰🇪", city: "Nairobi", country: "Kenya",    address: "Upper Hill, Nairobi",         phone: "+254 700 000 000", email: "kenya@coralstone.co" },
-  { flag: "🇺🇬", city: "Kampala", country: "Uganda",   address: "Nakasero, Kampala",            phone: "+256 700 000 000", email: "uganda@coralstone.co" },
-  { flag: "🇹🇿", city: "Dar es Salaam", country: "Tanzania", address: "Masaki, Dar es Salaam", phone: "+255 700 000 000", email: "tanzania@coralstone.co" },
-  { flag: "🇷🇼", city: "Kigali",  country: "Rwanda",   address: "Kiyovu, Kigali",               phone: "+250 700 000 000", email: "rwanda@coralstone.co" },
+  { flag: "🇰🇪", city: "Nairobi", country: "Kenya", address: "Upper Hill, Nairobi", phone: "+254 700 000 000", email: "kenya@coralstone.co" },
 ];
 
 const inputCls = "w-full rounded-lg border border-line bg-surface-raised px-3.5 py-2.5 text-sm text-primary placeholder:text-ink-soft/60 focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20 transition-colors";

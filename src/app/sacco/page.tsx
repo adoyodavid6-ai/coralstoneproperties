@@ -56,8 +56,8 @@ export default function SaccoPage() {
               </p>
               <p>
                 Kenya alone has over 14,000 registered SACCOs with combined assets exceeding KSh 1.1 trillion.
-                In Uganda, Tanzania and Rwanda, similar cooperative structures (chamas, ibimina, tontines)
-                serve millions of families.
+                It is the deepest cooperative savings culture in the region — a natural
+                engine for the group property ownership CoralStone is built to serve.
               </p>
               <p>
                 For property, SACCOs offer two key advantages: low-interest loans for deposits, and collective

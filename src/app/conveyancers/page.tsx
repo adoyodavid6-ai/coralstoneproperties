@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ButtonLink } from "@/components/ui/Button";
 import { CheckShield, Check, Phone, Globe } from "@/components/ui/icons";
+import { LIVE_COUNTRIES } from "@/lib/countries";
 
 export const metadata: Metadata = {
   title: "Verified conveyancers — CoralStone",
-  description: "Find verified, licensed conveyancers and property lawyers across Kenya, Uganda, Tanzania and Rwanda.",
+  description: "Find verified, licensed conveyancers and property lawyers in Kenya — more East African markets coming soon.",
 };
 
 const CONVEYANCERS = [
@@ -113,9 +114,10 @@ export default function ConveyancersPage() {
       <section className="container-page py-14 sm:py-18">
         <p className="eyebrow">Our network</p>
         <h2 className="mt-3 font-serif text-3xl font-semibold text-primary">Verified practices by country</h2>
+        <p className="mt-2 text-sm text-ink-soft">Kenya is live now — Uganda, Tanzania and Rwanda are coming soon.</p>
 
         <div className="mt-10 space-y-10">
-          {CONVEYANCERS.map((c) => (
+          {CONVEYANCERS.filter((c) => (LIVE_COUNTRIES as string[]).includes(c.country)).map((c) => (
             <div key={c.country} className="rounded-2xl border border-line bg-surface-raised p-7 shadow-card">
               <div className="flex items-center gap-3">
                 <span className="text-3xl">{c.flag}</span>

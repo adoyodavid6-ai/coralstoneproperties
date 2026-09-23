@@ -68,7 +68,7 @@ function wrap(heading: string, rowsHtml: string): string {
 
 /** A lead as stored in the database. */
 type LeadRecord = {
-  kind: "contact" | "listing";
+  kind: "contact" | "listing" | "report" | "valuation";
   name: string;
   email: string;
   phone?: string;
@@ -282,5 +282,113 @@ export async function sendListingLead(input: ListingLead): Promise<LeadResult> {
       },
     },
     { subject: `New listing: ${title} — ${name}`, html, replyTo: email },
+  );
+}
+
+// ── Fraud / listing report ──────────────────────────────────────────────────────
+
+export type ReportLead = {
+  listingUrl?: string;
+  reason: string;
+  details: string;
+  name?: string;
+  email?: string;
+  /** Honeypot — real users never fill this; bots do. */
+  company?: string;
+};
+
+export async function sendReportLead(input: ReportLead): Promise<LeadResult> {
+  if (clean(input.company, 100)) return { ok: true }; // silently drop bots
+
+  const reason = clean(input.reason, 120);
+  const details = clean(input.details, 5000);
+  const listingUrl = clean(input.listingUrl, 500);
+  // Reports may be filed anonymously.
+  const name = clean(input.name, 120) || "Anonymous";
+  const email = clean(input.email, 200);
+
+  if (!reason || details.length < 20) {
+    return { ok: false, error: "Please choose a reason and add at least 20 characters of detail." };
+  }
+  if (email && !isEmail(email)) return { ok: false, error: "Please enter a valid email address." };
+
+  const html = wrap(
+    "New listing report",
+    row("Reason", reason) +
+      row("Listing", listingUrl) +
+      row("Details", details) +
+      row("Reported by", name) +
+      row("Email", email),
+  );
+
+  return dispatch(
+    {
+      kind: "report",
+      name,
+      email,
+      subject: `Report: ${reason}`,
+      message: details,
+      details: { reason, listingUrl },
+    },
+    {
+      subject: `⚠ Listing report: ${reason}`,
+      html,
+      replyTo: email || undefined,
+    },
+  );
+}
+
+// ── Valuation request ───────────────────────────────────────────────────────────
+
+export type ValuationLead = {
+  country: string;
+  city: string;
+  propertyType: string;
+  size?: string;
+  condition?: string;
+  name: string;
+  email: string;
+  /** Honeypot — real users never fill this; bots do. */
+  company?: string;
+};
+
+export async function sendValuationLead(input: ValuationLead): Promise<LeadResult> {
+  if (clean(input.company, 100)) return { ok: true }; // silently drop bots
+
+  const name = clean(input.name, 120);
+  const email = clean(input.email, 200);
+  const country = clean(input.country, 40);
+  const city = clean(input.city, 120);
+  const propertyType = clean(input.propertyType, 40);
+  const size = clean(input.size, 40);
+  const condition = clean(input.condition, 40);
+
+  if (!name || !country || !city || !propertyType) {
+    return { ok: false, error: "Please complete country, city, property type and your name." };
+  }
+  if (!isEmail(email)) return { ok: false, error: "Please enter a valid email address." };
+
+  const location = [city, country].filter(Boolean).join(", ");
+
+  const html = wrap(
+    "New valuation request",
+    row("Location", location) +
+      row("Type", propertyType) +
+      row("Size", size) +
+      row("Condition", condition) +
+      row("Requested by", name) +
+      row("Email", email),
+  );
+
+  return dispatch(
+    {
+      kind: "valuation",
+      name,
+      email,
+      subject: `Valuation: ${propertyType} in ${city}`,
+      message: `Indicative valuation request for a ${propertyType} in ${location}.`,
+      details: { country, city, propertyType, size, condition },
+    },
+    { subject: `New valuation request — ${location}`, html, replyTo: email },
   );
 }

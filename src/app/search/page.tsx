@@ -10,8 +10,10 @@ import { SaveSearch } from "@/components/search/SaveSearch";
 import { Pagination } from "@/components/search/Pagination";
 import { SearchViewToggle } from "@/components/search/SearchViewToggle";
 import { parseFilters, searchProperties, locationOptions } from "@/lib/search";
+import { getAllProperties } from "@/lib/data/properties";
+import { ButtonLink } from "@/components/ui/Button";
 import type { ListingIntent } from "@/lib/types";
-import { Search as SearchIcon } from "@/components/ui/icons";
+import { Search as SearchIcon, CheckShield } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
 
 // Kenya is live; the rest are on the roadmap (see src/lib/countries.ts).
@@ -150,17 +152,41 @@ export default async function SearchPage({
           </div>
 
           {results.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-line-strong bg-surface-raised p-14 text-center">
-              <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-accent-soft text-accent">
-                <SearchIcon className="h-7 w-7" />
-              </span>
-              <h2 className="mt-5 font-serif text-xl text-primary">
-                No properties match those filters
-              </h2>
-              <p className="mt-2 text-sm text-ink-soft">
-                Try widening your price range or clearing a filter.
-              </p>
-            </div>
+            getAllProperties().length === 0 ? (
+              /* Launch state — there is no inventory yet at all */
+              <div className="rounded-2xl border border-dashed border-line-strong bg-surface-raised p-14 text-center">
+                <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-accent-soft text-accent">
+                  <CheckShield className="h-7 w-7" />
+                </span>
+                <h2 className="mt-5 font-serif text-xl text-primary">
+                  Verified listings are arriving soon
+                </h2>
+                <p className="mx-auto mt-2 max-w-sm text-sm text-ink-soft">
+                  Every listing is checked before it goes live. Selling or
+                  letting? Be among the first on the platform.
+                </p>
+                <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+                  <ButtonLink href="/list" variant="coral" size="sm">
+                    List your property
+                  </ButtonLink>
+                  <ButtonLink href="/verification" variant="outline" size="sm">
+                    How verification works
+                  </ButtonLink>
+                </div>
+              </div>
+            ) : (
+              <div className="rounded-2xl border border-dashed border-line-strong bg-surface-raised p-14 text-center">
+                <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-accent-soft text-accent">
+                  <SearchIcon className="h-7 w-7" />
+                </span>
+                <h2 className="mt-5 font-serif text-xl text-primary">
+                  No properties match those filters
+                </h2>
+                <p className="mt-2 text-sm text-ink-soft">
+                  Try widening your price range or clearing a filter.
+                </p>
+              </div>
+            )
           ) : (
             <SearchViewToggle results={results}>
               <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3" data-animate-group>

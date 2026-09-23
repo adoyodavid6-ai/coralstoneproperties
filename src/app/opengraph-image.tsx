@@ -77,8 +77,7 @@ export default function OpengraphImage() {
               maxWidth: 760,
             }}
           >
-            Trusted agents, confirmed listings, clear titles — across Kenya,
-            Uganda, Tanzania and Rwanda.
+            Trusted agents, confirmed listings, clear titles — across Kenya.
           </div>
         </div>
 
@@ -92,7 +91,7 @@ export default function OpengraphImage() {
             textTransform: "uppercase",
           }}
         >
-          Kenya · Uganda · Tanzania · Rwanda
+          Nairobi · Mombasa · Kisumu
         </div>
       </div>
     ),

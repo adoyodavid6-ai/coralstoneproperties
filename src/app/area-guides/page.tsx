@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ButtonLink } from "@/components/ui/Button";
 import { Chevron, Pin } from "@/components/ui/icons";
+import { LIVE_COUNTRIES } from "@/lib/countries";
 
 export const metadata: Metadata = {
   title: "Area guides — CoralStone",
-  description: "Neighbourhood guides for East Africa's top property markets — Nairobi, Kampala, Dar es Salaam, Kigali and more.",
+  description: "Neighbourhood guides for Kenya's top property markets — Nairobi, Mombasa, Kisumu and more.",
 };
 
 const AREAS = [
@@ -62,7 +63,7 @@ export default function AreaGuidesPage() {
 
       <section className="container-page py-14 sm:py-18">
         <div className="space-y-14">
-          {AREAS.map((country) => (
+          {AREAS.filter((c) => (LIVE_COUNTRIES as string[]).map((x) => x.toLowerCase()).includes(c.slug)).map((country) => (
             <div key={country.slug}>
               <h2 className="font-serif text-2xl font-semibold text-primary">{country.country}</h2>
               <div className="mt-6 grid gap-5 sm:grid-cols-2">

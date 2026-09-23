@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 const STEPS = [
-  { n: "01", title: "Identify the property", detail: "Browse verified listings on CoralStone. All listings show USD and GBP equivalents in addition to local currency. Video tours available for most Spotlight-tier properties." },
+  { n: "01", title: "Identify the property", detail: "Browse verified listings on CoralStone. All listings show USD and GBP equivalents in addition to local currency." },
   { n: "02", title: "Appoint a local representative", detail: "Grant Power of Attorney (POA) to a trusted person or your conveyancer in-country. They can attend viewings, sign documents and lodge title transfers on your behalf. Your conveyancer can prepare the POA for you to sign abroad." },
   { n: "03", title: "Conduct due diligence", detail: "Your appointed conveyancer will search the title, confirm ownership and check for encumbrances. CoralStone's Full Title verification adds a second layer of independent confirmation." },
   { n: "04", title: "Transfer funds through official channels", detail: "Use your bank's international wire transfer or a regulated FX provider (not informal channels). Retain proof of transfer — it is required for future title resales and to prove legitimate acquisition." },
@@ -19,9 +19,8 @@ const STEPS = [
 
 const CURRENCIES = [
   { pair: "KES", name: "Kenyan Shilling", note: "Most liquid EA market. USD widely accepted for high-value sales." },
-  { pair: "UGX", name: "Ugandan Shilling", note: "Transactions often USD-denominated for foreign buyers." },
-  { pair: "TZS", name: "Tanzanian Shilling", note: "Right of Occupancy purchases commonly priced in USD." },
-  { pair: "RWF", name: "Rwandan Franc", note: "Very stable exchange rate. Rwanda has among lowest property taxes in EA." },
+  { pair: "USD", name: "US Dollar", note: "Common for high-value and diaspora purchases; a hedge against local FX swings." },
+  { pair: "GBP", name: "Pound Sterling", note: "Popular with UK-based diaspora buyers; converted at the point of transfer." },
 ];
 
 export default function DiasporaPage() {
@@ -34,24 +33,8 @@ export default function DiasporaPage() {
         </h1>
         <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-white/65">
           Everything you need to buy, invest in, or rent out property across East Africa —
-          without being on the ground. We have helped hundreds of diaspora buyers close safely.
+          without being on the ground.
         </p>
-      </section>
-
-      {/* Stats */}
-      <section className="border-b border-line bg-surface-muted">
-        <div className="container-page grid divide-y divide-line sm:grid-cols-3 sm:divide-x sm:divide-y-0">
-          {[
-            { figure: "USD 1.4B", label: "Remittances to Kenya in 2024 from the diaspora" },
-            { figure: "40%",       label: "of CoralStone enquiries come from outside East Africa" },
-            { figure: "Video",     label: "tours available on all Spotlight listings" },
-          ].map((s) => (
-            <div key={s.label} className="flex flex-col items-center px-6 py-8 text-center">
-              <span className="figure text-2xl font-semibold text-accent">{s.figure}</span>
-              <span className="mt-2 text-sm text-ink-soft">{s.label}</span>
-            </div>
-          ))}
-        </div>
       </section>
 
       {/* Step by step */}
@@ -102,11 +85,10 @@ export default function DiasporaPage() {
           <h2 className="mt-3 font-serif text-2xl font-semibold text-primary">Power of attorney &amp; foreign ownership</h2>
           <div className="mt-6 space-y-4 text-sm leading-relaxed text-ink-soft">
             <p>
-              <strong className="text-primary">Can foreigners own property in East Africa?</strong> Yes,
-              with some restrictions. In Kenya and Rwanda, foreigners can hold long-term leases (up to 99 years).
-              In Tanzania, the Right of Occupancy system allows foreign nationals to hold residential and
-              commercial land under certain conditions. Uganda permits freehold for citizens; foreigners
-              typically lease. Always consult a licensed conveyancer for country-specific advice.
+              <strong className="text-primary">Can foreigners own property in Kenya?</strong> Yes,
+              with some restrictions. Foreigners can hold long-term leases of up to 99 years and can own
+              apartments (sectional titles) outright; agricultural land is reserved for citizens. Always
+              consult a licensed conveyancer for advice specific to your situation.
             </p>
             <p>
               <strong className="text-primary">Power of Attorney (POA)</strong> allows a trusted individual

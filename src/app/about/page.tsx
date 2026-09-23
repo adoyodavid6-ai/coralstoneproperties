@@ -31,13 +31,6 @@ const VALUES = [
   },
 ];
 
-const STATS = [
-  { figure: "4",    label: "Countries" },
-  { figure: "24h",  label: "Listing verification turnaround" },
-  { figure: "100%", label: "Listings human-reviewed" },
-  { figure: "0",    label: "Ghost listings tolerated" },
-];
-
 export default function AboutPage() {
   return (
     <>
@@ -51,18 +44,6 @@ export default function AboutPage() {
           We built CoralStone after watching buyers lose savings to ghost listings, fake agents
           and forged title deeds. Our answer: verify everything before a single buyer sees it.
         </p>
-      </section>
-
-      {/* Stats */}
-      <section className="border-b border-line bg-surface-muted">
-        <div className="container-page grid divide-y divide-line sm:grid-cols-4 sm:divide-x sm:divide-y-0">
-          {STATS.map((s) => (
-            <div key={s.label} className="flex flex-col items-center py-8 text-center">
-              <span className="figure text-3xl font-semibold text-accent">{s.figure}</span>
-              <span className="mt-1 text-sm text-ink-soft">{s.label}</span>
-            </div>
-          ))}
-        </div>
       </section>
 
       {/* Mission */}
@@ -85,8 +66,8 @@ export default function AboutPage() {
               on our platform.
             </p>
             <p>
-              We operate in Kenya, Uganda, Tanzania and Rwanda, with a team of verification officers,
-              legal partners and licensed conveyancers in each country. Every listing on CoralStone
+              We&apos;re live in Kenya — with verification officers, legal partners and licensed conveyancers
+              on the ground — and expanding across East Africa from there. Every listing on CoralStone
               has been touched by a human reviewer — not just an algorithm.
             </p>
           </div>
@@ -149,14 +130,17 @@ export default function AboutPage() {
         <p className="eyebrow text-white/60">Where we operate</p>
         <div className="mt-6 flex flex-wrap justify-center gap-6 text-white">
           {[
-            { flag: "🇰🇪", name: "Kenya",    cities: "Nairobi · Mombasa · Kisumu · Nakuru" },
-            { flag: "🇺🇬", name: "Uganda",   cities: "Kampala · Entebbe · Jinja · Mbarara" },
-            { flag: "🇹🇿", name: "Tanzania", cities: "Dar es Salaam · Zanzibar · Arusha · Mwanza" },
-            { flag: "🇷🇼", name: "Rwanda",   cities: "Kigali · Musanze · Rubavu · Huye" },
+            { flag: "🇰🇪", name: "Kenya",    cities: "Nairobi · Mombasa · Kisumu · Nakuru", soon: false },
+            { flag: "🇺🇬", name: "Uganda",   cities: "Kampala · Entebbe · Jinja · Mbarara", soon: true },
+            { flag: "🇹🇿", name: "Tanzania", cities: "Dar es Salaam · Zanzibar · Arusha · Mwanza", soon: true },
+            { flag: "🇷🇼", name: "Rwanda",   cities: "Kigali · Musanze · Rubavu · Huye", soon: true },
           ].map((c) => (
-            <div key={c.name} className="rounded-2xl border border-white/10 bg-white/5 px-6 py-5 text-left">
+            <div key={c.name} className={`rounded-2xl border border-white/10 bg-white/5 px-6 py-5 text-left ${c.soon ? "opacity-50" : ""}`}>
               <span className="text-3xl">{c.flag}</span>
-              <p className="mt-2 font-semibold text-white">{c.name}</p>
+              <p className="mt-2 font-semibold text-white">
+                {c.name}
+                {c.soon ? <span className="ml-2 rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-white/70">Soon</span> : null}
+              </p>
               <p className="mt-0.5 text-xs text-white/55">{c.cities}</p>
             </div>
           ))}

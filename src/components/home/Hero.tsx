@@ -5,9 +5,7 @@ import { useMotion } from "@/lib/motion/MotionProvider";
 import { SearchBar } from "@/components/search/SearchBar";
 import { HeroVisual } from "./hero3d/HeroVisual";
 import { CheckShield, Chevron } from "@/components/ui/icons";
-import { Counter } from "@/lib/motion/Counter";
 import { SplitHeading } from "@/lib/motion/SplitHeading";
-import { cn } from "@/lib/cn";
 
 export function Hero() {
   const { t } = useLocale();
@@ -71,25 +69,6 @@ export function Hero() {
             <SearchBar variant="hero" />
           </div>
 
-          <dl className="mt-7 grid max-w-lg grid-cols-3 gap-6" data-animate="fade" data-animate-delay="0.5">
-            {[
-              { n: 12480, suffix: "+", k: t("hero.stat.verified"), accent: false },
-              { n: 1900, suffix: "+", k: t("hero.stat.agents"), accent: false },
-              { n: 3120, suffix: "", k: t("hero.stat.fraud"), accent: true },
-            ].map((s) => (
-              <div key={s.k}>
-                <dt
-                  className={cn(
-                    "figure text-xl font-semibold sm:text-2xl",
-                    s.accent ? "text-rose" : "text-primary",
-                  )}
-                >
-                  <Counter to={s.n} suffix={s.suffix} />
-                </dt>
-                <dd className="mt-1 text-sm text-ink-soft">{s.k}</dd>
-              </div>
-            ))}
-          </dl>
         </div>
       </div>
 

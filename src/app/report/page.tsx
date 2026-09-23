@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { CheckShield, Flag } from "@/components/ui/icons";
 import { ButtonLink } from "@/components/ui/Button";
+import { sendReportLead } from "@/lib/leads/actions";
 
 const REASONS = [
   "Ghost listing — property does not exist",
@@ -19,9 +20,22 @@ const inputCls = "w-full rounded-lg border border-line bg-surface-raised px-3.5 
 
 export default function ReportPage() {
   const [done, setDone] = useState(false);
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState("");
+  const [company, setCompany] = useState(""); // honeypot
   const [form, setForm] = useState({ listingUrl: "", reason: "", details: "", name: "", email: "" });
   const set = (k: keyof typeof form, v: string) => setForm((f) => ({ ...f, [k]: v }));
   const ready = form.reason && form.details.length >= 20;
+
+  async function submit() {
+    if (!ready || pending) return;
+    setPending(true);
+    setError("");
+    const res = await sendReportLead({ ...form, company });
+    setPending(false);
+    if (res.ok) setDone(true);
+    else setError(res.error ?? "Something went wrong. Please try again.");
+  }
 
   if (done) {
     return (
@@ -123,14 +137,31 @@ export default function ReportPage() {
               in bad faith may result in account suspension.
             </p>
 
+            {/* Honeypot — hidden from real users, catches bots */}
+            <input
+              type="text"
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+              value={company}
+              onChange={(e) => setCompany(e.target.value)}
+              className="hidden"
+            />
+
+            {error && (
+              <p className="rounded-lg border border-danger/30 bg-danger-soft px-4 py-3 text-sm text-danger">
+                {error}
+              </p>
+            )}
+
             <button
               type="button"
-              disabled={!ready}
-              onClick={() => ready && setDone(true)}
-              className={`flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm font-semibold transition-all ${ready ? "bg-accent text-white hover:bg-accent-hover" : "cursor-not-allowed bg-line text-ink-soft"}`}
+              disabled={!ready || pending}
+              onClick={submit}
+              className={`flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm font-semibold transition-all ${ready && !pending ? "bg-accent text-white hover:bg-accent-hover" : "cursor-not-allowed bg-line text-ink-soft"}`}
             >
               <Flag className="h-4 w-4" />
-              Submit report
+              {pending ? "Submitting…" : "Submit report"}
             </button>
           </div>
         </div>

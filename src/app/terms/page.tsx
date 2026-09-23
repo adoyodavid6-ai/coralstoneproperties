@@ -48,7 +48,7 @@ export default function TermsPage() {
         <div className="mx-auto max-w-2xl space-y-10">
 
           <Section id="using" title="1. Using the platform">
-            <p>CoralStone Properties Listings (&quot;CoralStone&quot;, &quot;we&quot;, &quot;us&quot;) is a property marketplace operating in Kenya, Uganda, Tanzania and Rwanda. We connect buyers, tenants and investors with verified agents and property owners.</p>
+            <p>CoralStone Properties Listings (&quot;CoralStone&quot;, &quot;we&quot;, &quot;us&quot;) is a property marketplace operating in Kenya. We connect buyers, tenants and investors with verified agents and property owners.</p>
             <p>You must be at least 18 years old to use the platform. By registering or making an enquiry, you confirm you are acting in your own right or with proper authority on behalf of another person.</p>
             <p>You agree not to use the platform to post fraudulent listings, impersonate agents, scrape data, or engage in any activity that harms other users or the integrity of the platform.</p>
           </Section>

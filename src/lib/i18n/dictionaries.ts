@@ -24,12 +24,9 @@ const en: Dict = {
   "hero.eyebrow": "East Africa's trust-first property portal",
   "hero.title": "Every listing verified. So you never chase a ghost again.",
   "hero.subtitle":
-    "We check the agent, the agency, the listing and — for land — the title, before it reaches you. Search with confidence across Kenya, Uganda, Tanzania and Rwanda — sales, rentals, land, commercial and off-plan.",
-  "hero.searchPlaceholder": "Try “3 bed in Kololo” or “land near Nairobi”",
+    "We check the agent, the agency, the listing and — for land — the title, before it reaches you. Search with confidence across Kenya — sales, rentals, land, commercial and off-plan.",
+  "hero.searchPlaceholder": "Try “3 bed in Kilimani” or “land near Nairobi”",
   "hero.search": "Search",
-  "hero.stat.verified": "verified listings",
-  "hero.stat.agents": "vetted agents",
-  "hero.stat.fraud": "fraud reports actioned",
 
   "search.title": "Search properties",
   "search.results": "properties",
@@ -90,12 +87,9 @@ const sw: Dict = {
   "hero.eyebrow": "Lango la mali linaloaminika zaidi Afrika Mashariki",
   "hero.title": "Kila tangazo limehakikiwa. Usifukuzie tangazo la uongo tena.",
   "hero.subtitle":
-    "Tunamhakiki wakala, kampuni, tangazo na — kwa ardhi — hati, kabla halijakufikia. Tafuta kwa uhakika kote Kenya, Uganda, Tanzania na Rwanda: mauzo, kodi, ardhi, biashara na ujenzi mpya.",
-  "hero.searchPlaceholder": "Jaribu “vyumba 3 Kololo” au “ardhi karibu na Nairobi”",
+    "Tunamhakiki wakala, kampuni, tangazo na — kwa ardhi — hati, kabla halijakufikia. Tafuta kwa uhakika kote Kenya: mauzo, kodi, ardhi, biashara na ujenzi mpya.",
+  "hero.searchPlaceholder": "Jaribu “vyumba 3 Kilimani” au “ardhi karibu na Nairobi”",
   "hero.search": "Tafuta",
-  "hero.stat.verified": "matangazo yaliyohakikiwa",
-  "hero.stat.agents": "mawakala waliohakikiwa",
-  "hero.stat.fraud": "ripoti za ulaghai zilizoshughulikiwa",
 
   "search.title": "Tafuta mali",
   "search.results": "mali",
