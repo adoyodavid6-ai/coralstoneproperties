@@ -219,9 +219,9 @@ export default function ListPropertyPage() {
           <span className="text-rose">verified</span> platform
         </h1>
         <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-white/65">
-          Your property in front of thousands of serious, pre-vetted buyers and
-          tenants across Kenya — with a verified badge
-          that builds trust before the first enquiry.
+          Put your property in front of serious buyers and tenants across
+          Kenya — with a verified badge that builds trust before the first
+          enquiry.
         </p>
       </section>
 
@@ -231,7 +231,7 @@ export default function ListPropertyPage() {
           {[
             { icon: <CheckShield className="h-5 w-5 text-accent" />, label: "Verified badge", sub: "Builds buyer trust instantly" },
             { icon: <Sparkle className="h-5 w-5 text-accent" />,     label: "Live in 24 hrs",  sub: "After our quick review" },
-            { icon: <Users className="h-5 w-5 text-accent" />,        label: "Serious buyers",  sub: "Pre-qualified audience" },
+            { icon: <Users className="h-5 w-5 text-accent" />,        label: "Direct enquiries", sub: "Buyers contact you directly" },
           ].map((t) => (
             <div key={t.label} className="flex items-center gap-3 px-6 py-5">
               <span className="shrink-0">{t.icon}</span>
@@ -416,8 +416,8 @@ export default function ListPropertyPage() {
                   <div>
                     <p className="text-sm font-semibold text-primary">Drag photos here or click to upload</p>
                     <p className="mt-0.5 text-xs text-ink-soft">
-                      High-quality photos lead to{" "}
-                      <span className="font-semibold text-accent">3× more enquiries</span>
+                      High-quality photos attract{" "}
+                      <span className="font-semibold text-accent">far more enquiries</span>
                     </p>
                   </div>
                   <button
@@ -493,9 +493,9 @@ export default function ListPropertyPage() {
                 <div>
                   <h3 className="font-serif text-lg font-semibold text-primary">Verification tier</h3>
                   <p className="mt-1 text-sm text-ink-soft">
-                    Verified listings receive{" "}
-                    <span className="font-semibold text-primary">2.5× more enquiries</span> than
-                    unverified ones.
+                    A verified badge{" "}
+                    <span className="font-semibold text-primary">builds buyer trust</span> before
+                    the first enquiry.
                   </p>
                 </div>
 

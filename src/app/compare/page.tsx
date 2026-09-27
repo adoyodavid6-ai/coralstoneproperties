@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import type { Property } from "@/lib/types";
 import { useCompare } from "@/lib/compare/CompareProvider";
-import { PROPERTIES } from "@/lib/data/properties";
+import { fetchListingsByIds } from "@/lib/data/actions";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 import {
   priceLabel,
@@ -21,9 +22,26 @@ import { Close } from "@/components/ui/icons";
 export default function ComparePage() {
   const { ids, remove, clear } = useCompare();
   const { currency } = useLocale();
-  const items = PROPERTIES.filter((p) => ids.includes(p.id));
+  const [items, setItems] = useState<Property[]>([]);
 
-  if (items.length === 0) {
+  const idKey = ids.join(",");
+  useEffect(() => {
+    let active = true;
+    if (!ids.length) {
+      setItems([]);
+      return;
+    }
+    fetchListingsByIds(ids).then((r) => {
+      if (active) setItems(r);
+    });
+    return () => {
+      active = false;
+    };
+    // idKey captures the id set; ids reference may change each render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [idKey]);
+
+  if (ids.length === 0) {
     return (
       <div className="container-page grid min-h-[50vh] place-items-center py-20 text-center">
         <div className="max-w-md">

@@ -13,13 +13,14 @@ function currency(n: number) {
     : `KSh ${n.toLocaleString()}`;
 }
 
-const LENDERS = [
-  { name: "KCB Bank Kenya", rate: "12.5%", max: "KSh 50M", term: "25 years", note: "Largest mortgage book in Kenya" },
-  { name: "Stanbic Bank Kenya", rate: "13%", max: "KSh 100M", term: "20 years", note: "Strong for USD-denominated mortgages" },
-  { name: "Absa Bank Kenya", rate: "12.5%", max: "KSh 30M", term: "25 years", note: "Fast processing; online applications" },
-  { name: "NCBA Bank", rate: "13%", max: "KSh 50M", term: "20 years", note: "Good diaspora mortgage options" },
-  { name: "Housing Finance Group", rate: "12%", max: "KSh 20M", term: "25 years", note: "Specialises in residential mortgages" },
-  { name: "SACCO loan", rate: "7–12%", max: "3× share capital", term: "10 years", note: "Lowest rate — requires SACCO membership" },
+// Practical guidance in place of a rates table — we don't publish lender
+// rates until we can source and maintain real, current figures.
+const LENDER_TIPS = [
+  { title: "Compare at least three lenders", note: "Rates, arrangement fees and early-repayment terms vary widely between banks — small differences compound over a 20-year term." },
+  { title: "Ask for the total cost of credit", note: "Kenyan lenders must disclose it. Compare that figure, not just the headline rate." },
+  { title: "Consider a SACCO loan", note: "SACCO borrowing is often cheaper than a bank mortgage for members, especially for deposits and plots." },
+  { title: "Check diaspora options", note: "Several Kenyan banks run dedicated diaspora mortgage desks with USD-denominated products." },
+  { title: "Negotiate — rates are not fixed", note: "A strong deposit, salary account or employer scheme can earn a lower rate than the advertised one." },
 ];
 
 export default function MortgagePage() {
@@ -139,26 +140,19 @@ export default function MortgagePage() {
             </div>
           </div>
 
-          {/* Side: lender comparison */}
+          {/* Side: choosing a lender */}
           <div>
-            <p className="eyebrow">Lender comparison</p>
-            <h2 className="mt-3 font-serif text-xl font-semibold text-primary">Kenya mortgage market 2026</h2>
+            <p className="eyebrow">Choosing a lender</p>
+            <h2 className="mt-3 font-serif text-xl font-semibold text-primary">How to shop for a mortgage in Kenya</h2>
             <div className="mt-5 space-y-3">
-              {LENDERS.map((l) => (
-                <div key={l.name} className="rounded-xl border border-line bg-surface-raised p-4">
-                  <div className="flex items-start justify-between gap-2">
-                    <p className="text-sm font-semibold text-primary">{l.name}</p>
-                    <span className="figure shrink-0 rounded-full bg-accent-soft px-2.5 py-0.5 text-xs font-semibold text-accent">{l.rate}</span>
-                  </div>
-                  <div className="mt-2 grid grid-cols-2 gap-x-4 text-xs text-ink-soft">
-                    <span>Max: {l.max}</span>
-                    <span>Term: {l.term}</span>
-                  </div>
-                  <p className="mt-1.5 text-xs text-ink-soft">{l.note}</p>
+              {LENDER_TIPS.map((l) => (
+                <div key={l.title} className="rounded-xl border border-line bg-surface-raised p-4">
+                  <p className="text-sm font-semibold text-primary">{l.title}</p>
+                  <p className="mt-1.5 text-xs leading-relaxed text-ink-soft">{l.note}</p>
                 </div>
               ))}
             </div>
-            <p className="mt-4 text-xs text-ink-soft">Rates indicative as of Q1 2026. Contact lenders directly for current terms.</p>
+            <p className="mt-4 text-xs text-ink-soft">Always confirm current rates and terms directly with lenders before committing.</p>
           </div>
         </div>
       </section>

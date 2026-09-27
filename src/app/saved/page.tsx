@@ -1,22 +1,32 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { PROPERTIES } from "@/lib/data/properties";
+import type { Property } from "@/lib/types";
+import { fetchListingsByIds } from "@/lib/data/actions";
 import { PropertyCard } from "@/components/ui/PropertyCard";
 import { ButtonLink } from "@/components/ui/Button";
 
 export default function SavedPage() {
-  const [ids, setIds] = useState<string[] | null>(null);
+  const [items, setItems] = useState<Property[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let stored: string[] = [];
     try {
-      setIds(JSON.parse(localStorage.getItem("vpl.saved") ?? "[]"));
+      stored = JSON.parse(localStorage.getItem("vpl.saved") ?? "[]");
     } catch {
-      setIds([]);
+      stored = [];
     }
+    if (!stored.length) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setLoading(false);
+      return;
+    }
+    fetchListingsByIds(stored).then((r) => {
+      setItems(r);
+      setLoading(false);
+    });
   }, []);
-
-  const items = ids ? PROPERTIES.filter((p) => ids.includes(p.id)) : [];
 
   return (
     <div className="container-page py-8">
@@ -26,7 +36,7 @@ export default function SavedPage() {
         Saved on this device. Sign-in sync across devices is coming with accounts.
       </p>
 
-      {ids !== null && items.length === 0 ? (
+      {!loading && items.length === 0 ? (
         <div className="mt-8 rounded-2xl border border-dashed border-line-strong bg-surface-raised p-14 text-center">
           <h2 className="font-serif text-xl text-primary">Nothing saved yet</h2>
           <p className="mt-2 text-sm text-ink-soft">

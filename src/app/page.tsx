@@ -3,8 +3,13 @@ import { PropertyCard } from "@/components/ui/PropertyCard";
 import { ButtonLink } from "@/components/ui/Button";
 import { SplitHeading } from "@/lib/motion/SplitHeading";
 import { Magnetic } from "@/lib/motion/Magnetic";
-import { getFeatured } from "@/lib/data/properties";
+import { getFeatured } from "@/lib/data/listings";
 import { Chevron } from "@/components/ui/icons";
+import { HeroVideo } from "@/components/home/HeroVideo";
+
+// Featured picks come from live inventory — render per request so newly
+// published listings appear without a redeploy.
+export const dynamic = "force-dynamic";
 
 // Kenya is live; the rest are on the roadmap (see src/lib/countries.ts).
 const COUNTRIES: {
@@ -43,45 +48,37 @@ const COUNTRIES: {
   },
 ];
 
-export default function HomePage() {
-  const featured = getFeatured(3);
+export default async function HomePage() {
+  const featured = await getFeatured(3);
 
   return (
     <>
-      {/* Hero — short height maintained, rich landscape home */}
-      <section className="relative overflow-hidden bg-surface-dark">
-        {/* Layered gradient backdrop for cinematic depth (no photo) */}
+      {/* Hero — cinematic villa video (Higgsfield / Veo 3.1) behind the copy */}
+      <section className="relative flex min-h-[72svh] items-center overflow-hidden bg-surface-dark">
         <div aria-hidden className="absolute inset-0">
-          {/* Soft brand glow up top */}
+          <HeroVideo />
+          {/* Even dark wash so white copy reads over the bright sunset */}
+          <div className="absolute inset-0 bg-[rgba(11,20,28,0.42)]" />
+          {/* Radial vignette — darkens edges, keeps the centre luminous */}
           <div
             className="absolute inset-0"
             style={{
               background:
-                "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(67,113,154,0.35) 0%, transparent 60%)",
+                "radial-gradient(ellipse 90% 80% at 50% 45%, transparent 20%, rgba(22,66,91,0.6) 100%)",
             }}
           />
-          {/* Radial vignette — darkens edges */}
+          {/* Bottom fade — anchors text legibility and blends into the page */}
           <div
-            aria-hidden
-            className="absolute inset-0"
-            style={{
-              background:
-                "radial-gradient(ellipse 90% 80% at 50% 45%, transparent 25%, rgba(22,66,91,0.55) 100%)",
-            }}
-          />
-          {/* Bottom fade — anchors text legibility */}
-          <div
-            aria-hidden
             className="absolute inset-x-0 bottom-0 h-1/2"
             style={{
               background:
-                "linear-gradient(to top, rgba(22,66,91,0.7) 0%, transparent 100%)",
+                "linear-gradient(to top, rgba(22,66,91,0.8) 0%, transparent 100%)",
             }}
           />
         </div>
 
         {/* Content */}
-        <div className="container-page relative py-24 text-center sm:py-32">
+        <div className="container-page relative w-full py-24 text-center [text-shadow:0_1px_14px_rgba(0,0,0,0.35)] sm:py-32">
           <p className="eyebrow text-accent" data-animate="fade">
             East Africa&apos;s verified property platform
           </p>
@@ -89,7 +86,7 @@ export default function HomePage() {
             Find. Verify. Own.
           </SplitHeading>
           <p
-            className="mx-auto mt-5 max-w-md text-[1.05rem] leading-relaxed text-white/60"
+            className="mx-auto mt-5 max-w-md text-[1.05rem] leading-relaxed text-white/80"
             data-animate="fade"
           >
             Trusted agents, confirmed listings, clear titles — now live across
@@ -108,7 +105,7 @@ export default function HomePage() {
             </Magnetic>
           </div>
           <p
-            className="mt-10 text-[0.7rem] tracking-[0.2em] text-white/30 uppercase"
+            className="mt-10 text-[0.7rem] tracking-[0.2em] text-white/60 uppercase"
             data-animate="fade"
           >
             Kenya now — Uganda, Tanzania &amp; Rwanda coming soon

@@ -118,7 +118,7 @@ export default function DiasporaPage() {
             {[
               { icon: <Globe className="h-6 w-6 text-accent" />, title: "USD & GBP pricing", body: "All listings show USD and GBP equivalents alongside local currency — no guesswork." },
               { icon: <CheckShield className="h-6 w-6 text-accent" />, title: "Remote verification", body: "Full Title verification confirms ownership without you needing to be in the country." },
-              { icon: <Phone className="h-6 w-6 text-accent" />, title: "Video tours", body: "Spotlight listings include drone footage and walkthrough video tours, bookable on request." },
+              { icon: <Phone className="h-6 w-6 text-accent" />, title: "Remote-friendly enquiries", body: "Enquire, ask questions and arrange viewings through a local representative — all without being in the country." },
             ].map((s) => (
               <div key={s.title} className="rounded-2xl border border-white/10 bg-white/5 p-6">
                 <div className="grid h-10 w-10 place-items-center rounded-full bg-accent-soft/10">{s.icon}</div>

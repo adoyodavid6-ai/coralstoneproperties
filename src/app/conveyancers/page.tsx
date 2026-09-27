@@ -9,6 +9,8 @@ export const metadata: Metadata = {
   description: "Find verified, licensed conveyancers and property lawyers in Kenya — more East African markets coming soon.",
 };
 
+// Country-by-country legal guidance. We list the official regulator (where a
+// buyer can independently confirm any advocate's licence) — not named firms.
 const CONVEYANCERS = [
   {
     country: "Kenya",
@@ -17,11 +19,6 @@ const CONVEYANCERS = [
     regulatorUrl: "https://www.lsk.or.ke",
     fee: "1–1.5% of property value (government-regulated scale)",
     timeline: "4–8 weeks for a residential transfer",
-    providers: [
-      { name: "Mboya Wangong'u & Waiyaki Advocates", city: "Nairobi", spec: "Residential & commercial" },
-      { name: "Hamilton Harrison & Mathews", city: "Nairobi", spec: "High-value & off-plan" },
-      { name: "Mombasa Conveyancing Partners", city: "Mombasa", spec: "Coastal land & title" },
-    ],
   },
   {
     country: "Uganda",
@@ -30,11 +27,6 @@ const CONVEYANCERS = [
     regulatorUrl: "https://www.uls.or.ug",
     fee: "1–2% of property value",
     timeline: "6–12 weeks (land title transfers via Lands Registry)",
-    providers: [
-      { name: "MMAKS Advocates", city: "Kampala", spec: "Commercial & residential" },
-      { name: "AF Mpanga & Co Advocates", city: "Kampala", spec: "Land & title disputes" },
-      { name: "Kampala Associated Advocates", city: "Kampala", spec: "Off-plan & developer projects" },
-    ],
   },
   {
     country: "Tanzania",
@@ -43,24 +35,14 @@ const CONVEYANCERS = [
     regulatorUrl: "https://www.tls.or.tz",
     fee: "1–2% of property value (no fixed scale)",
     timeline: "8–14 weeks (Right of Occupancy transfers)",
-    providers: [
-      { name: "Clyde & Co Tanzania", city: "Dar es Salaam", spec: "Commercial & foreign investment" },
-      { name: "Felix Mrema & Co Advocates", city: "Dar es Salaam", spec: "Residential & land" },
-      { name: "Zanzibar Property Legal Group", city: "Zanzibar", spec: "Zanzibar-specific land law" },
-    ],
   },
   {
     country: "Rwanda",
     flag: "🇷🇼",
     regulator: "Rwanda Bar Association (RBA)",
     regulatorUrl: "https://www.rba.gov.rw",
-    fee: "Flat fee or hourly (no fixed scale); typically RWF 500,000–2,000,000",
+    fee: "Flat fee or hourly (no fixed scale)",
     timeline: "3–6 weeks (Rwanda Land Use and Management Information System)",
-    providers: [
-      { name: "Trust Law Associates", city: "Kigali", spec: "Residential & commercial" },
-      { name: "Immobilier Legal Rwanda", city: "Kigali", spec: "Off-plan & developer" },
-      { name: "East Africa Property Law", city: "Kigali", spec: "Cross-border transactions" },
-    ],
   },
 ];
 
@@ -73,8 +55,9 @@ export default function ConveyancersPage() {
           Verified conveyancers
         </h1>
         <p className="mx-auto mt-4 max-w-xl text-base text-white/65">
-          Never buy property without independent legal advice. Our verified conveyancer network
-          covers every market we operate in — vetted for licence, experience and reputation.
+          Never buy property without independent legal advice. Here is what a
+          conveyancer does, what it typically costs, and how to confirm any
+          advocate&apos;s licence with the official regulator.
         </p>
       </section>
 
@@ -112,8 +95,8 @@ export default function ConveyancersPage() {
 
       {/* By country */}
       <section className="container-page py-14 sm:py-18">
-        <p className="eyebrow">Our network</p>
-        <h2 className="mt-3 font-serif text-3xl font-semibold text-primary">Verified practices by country</h2>
+        <p className="eyebrow">Country guide</p>
+        <h2 className="mt-3 font-serif text-3xl font-semibold text-primary">The legal process by country</h2>
         <p className="mt-2 text-sm text-ink-soft">Kenya is live now — Uganda, Tanzania and Rwanda are coming soon.</p>
 
         <div className="mt-10 space-y-10">
@@ -143,18 +126,11 @@ export default function ConveyancersPage() {
                 </div>
               </div>
 
-              <div className="mt-5 space-y-3">
-                <p className="text-xs font-semibold uppercase tracking-wider text-ink-soft">Featured verified practices</p>
-                {c.providers.map((p) => (
-                  <div key={p.name} className="flex items-start justify-between gap-4 rounded-lg border border-line px-4 py-3">
-                    <div>
-                      <p className="text-sm font-semibold text-primary">{p.name}</p>
-                      <p className="text-xs text-ink-soft">{p.city} · {p.spec}</p>
-                    </div>
-                    <CheckShield className="h-5 w-5 shrink-0 text-accent" />
-                  </div>
-                ))}
-              </div>
+              <p className="mt-5 flex items-start gap-2.5 rounded-lg border border-line bg-surface px-4 py-3 text-sm text-ink-soft">
+                <CheckShield className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+                Verify any advocate&apos;s licence directly with the regulator above, or ask us
+                for an introduction to a vetted practice in your area.
+              </p>
             </div>
           ))}
         </div>

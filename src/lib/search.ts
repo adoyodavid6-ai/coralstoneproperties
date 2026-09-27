@@ -148,9 +148,9 @@ export interface CountryOption {
 }
 
 /** Country → city → area cascade for the location filter, across East African markets. */
-export function locationOptions(): CountryOption[] {
+export function locationOptions(source: Property[] = getAllProperties()): CountryOption[] {
   const map = new Map<string, Map<string, Set<string>>>();
-  for (const p of getAllProperties()) {
+  for (const p of source) {
     if (!map.has(p.country)) map.set(p.country, new Map());
     const cities = map.get(p.country)!;
     if (!cities.has(p.county)) cities.set(p.county, new Set());

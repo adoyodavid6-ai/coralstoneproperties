@@ -1,13 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { CheckShield, Phone, Globe, Pin } from "@/components/ui/icons";
+import Link from "next/link";
+import { CheckShield } from "@/components/ui/icons";
 import { ButtonLink } from "@/components/ui/Button";
 import { sendContactLead } from "@/lib/leads/actions";
-
-const OFFICES = [
-  { flag: "🇰🇪", city: "Nairobi", country: "Kenya", address: "Upper Hill, Nairobi", phone: "+254 700 000 000", email: "kenya@coralstone.co" },
-];
 
 const inputCls = "w-full rounded-lg border border-line bg-surface-raised px-3.5 py-2.5 text-sm text-primary placeholder:text-ink-soft/60 focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20 transition-colors";
 
@@ -38,7 +35,7 @@ export default function ContactPage() {
         <h1 className="mt-3 font-serif text-4xl font-semibold text-white sm:text-5xl">Contact us</h1>
         <p className="mx-auto mt-4 max-w-md text-base text-white/65">
           Whether you have a question about a listing, need help with verification, or want
-          to list a property — our team across East Africa is ready.
+          to list a property — send us a message and we&apos;ll get back to you.
         </p>
       </section>
 
@@ -121,63 +118,29 @@ export default function ContactPage() {
             )}
           </div>
 
-          {/* Side info */}
+          {/* Side info — real channels only (the forms deliver directly to our team) */}
           <div className="space-y-6">
             <div className="rounded-2xl border border-line bg-surface-raised p-6">
-              <h3 className="font-semibold text-primary">WhatsApp support</h3>
-              <p className="mt-1 text-sm text-ink-soft">For urgent listing queries, message us directly.</p>
-              <a
-                href="https://wa.me/254700000000"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-4 inline-flex items-center gap-2 rounded-full bg-[#25D366] px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
-              >
-                <Phone className="h-4 w-4" />
-                Open WhatsApp
-              </a>
-            </div>
-
-            <div className="rounded-2xl border border-line bg-surface-raised p-6">
-              <h3 className="font-semibold text-primary">General enquiries</h3>
-              <p className="mt-2 text-sm text-ink-soft">
-                <span className="text-primary font-medium">Email:</span>{" "}
-                <a href="mailto:hello@coralstone.co" className="text-accent hover:brightness-90">hello@coralstone.co</a>
-              </p>
-              <p className="mt-1.5 text-sm text-ink-soft">
-                <span className="text-primary font-medium">Support hours:</span> Mon–Fri 08:00–18:00 EAT
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-line bg-surface-raised p-6">
-              <h3 className="font-semibold text-primary">Fraud reports</h3>
+              <h3 className="font-semibold text-primary">Report a listing</h3>
               <p className="mt-1 text-sm text-ink-soft">
-                To report a fraudulent listing urgently, use our dedicated fraud line.
+                Suspect fraud or a problem with a listing? Use the dedicated
+                report form — it reaches our team immediately.
               </p>
-              <a href="mailto:fraud@coralstone.co" className="mt-3 inline-block text-sm font-semibold text-accent hover:brightness-90">
-                fraud@coralstone.co →
-              </a>
+              <Link href="/report" className="mt-3 inline-block text-sm font-semibold text-accent hover:brightness-90">
+                Report a listing →
+              </Link>
             </div>
-          </div>
-        </div>
 
-        {/* Office locations */}
-        <div className="mt-16">
-          <h2 className="font-serif text-2xl font-semibold text-primary">Our offices</h2>
-          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {OFFICES.map((o) => (
-              <div key={o.city} className="rounded-2xl border border-line bg-surface-raised p-5">
-                <span className="text-2xl">{o.flag}</span>
-                <h3 className="mt-2 font-semibold text-primary">{o.city}</h3>
-                <p className="text-xs text-ink-soft">{o.country}</p>
-                <div className="mt-3 space-y-1 text-sm text-ink-soft">
-                  <p className="flex items-start gap-1.5"><Pin className="mt-0.5 h-3.5 w-3.5 shrink-0" />{o.address}</p>
-                  <p className="flex items-center gap-1.5"><Phone className="h-3.5 w-3.5 shrink-0" />{o.phone}</p>
-                  <p className="flex items-center gap-1.5"><Globe className="h-3.5 w-3.5 shrink-0" />
-                    <a href={`mailto:${o.email}`} className="text-accent hover:brightness-90">{o.email}</a>
-                  </p>
-                </div>
-              </div>
-            ))}
+            <div className="rounded-2xl border border-line bg-surface-raised p-6">
+              <h3 className="font-semibold text-primary">List a property</h3>
+              <p className="mt-1 text-sm text-ink-soft">
+                Selling or letting? Submit your property for verification and
+                our team will review it within one business day.
+              </p>
+              <Link href="/list" className="mt-3 inline-block text-sm font-semibold text-accent hover:brightness-90">
+                Start a listing →
+              </Link>
+            </div>
           </div>
         </div>
       </section>

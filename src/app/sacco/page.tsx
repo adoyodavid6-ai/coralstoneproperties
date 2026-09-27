@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 const HOW_IT_WORKS = [
   { n: "01", title: "Form or join a group", detail: "A SACCO, chama or informal cooperative of 5–50+ members agrees on a target property type and budget. Groups can be colleagues, church members, family, alumni — any trusted network." },
   { n: "02", title: "Pool deposits on CoralStone", detail: "Members contribute monthly to a group account. CoralStone tracks group targets and notifies the group when a matching off-plan or plot becomes available." },
-  { n: "03", title: "CoralStone negotiates block rates", detail: "Developers offer significant discounts (10–25%) for block purchases of 5+ units. Our commercial team negotiates on behalf of your group before the deal is presented." },
+  { n: "03", title: "CoralStone negotiates block rates", detail: "Developers often offer meaningful discounts for block purchases of 5+ units. Our commercial team negotiates on behalf of your group before the deal is presented." },
   { n: "04", title: "Legal setup", detail: "A registered legal entity (company or cooperative society) is formed to hold the property. Our verified conveyancers handle the structure at preferential rates for CoralStone groups." },
   { n: "05", title: "Title per member", detail: "On completion, each member receives their individual title deed. The group entity is dissolved and each person owns their unit outright." },
 ];
@@ -51,12 +51,10 @@ export default function SaccoPage() {
             <div className="mt-5 space-y-3 text-sm leading-relaxed text-ink-soft">
               <p>
                 A SACCO (Savings and Credit Co-operative) is a member-owned financial cooperative where
-                members save regularly and can borrow at low interest rates — often 12% per annum compared
-                to bank mortgage rates of 18–25%.
+                members save regularly and can borrow at rates typically well below bank mortgage rates.
               </p>
               <p>
-                Kenya alone has over 14,000 registered SACCOs with combined assets exceeding KSh 1.1 trillion.
-                It is the deepest cooperative savings culture in the region — a natural
+                Kenya has the deepest cooperative savings culture in the region — a natural
                 engine for the group property ownership CoralStone is built to serve.
               </p>
               <p>
@@ -104,8 +102,8 @@ export default function SaccoPage() {
       {/* Developer discount example */}
       <section className="container-page py-14 sm:py-18">
         <div className="mx-auto max-w-2xl">
-          <p className="eyebrow">Real numbers</p>
-          <h2 className="mt-3 font-serif text-2xl font-semibold text-primary">What a group discount looks like</h2>
+          <p className="eyebrow">Illustrative example</p>
+          <h2 className="mt-3 font-serif text-2xl font-semibold text-primary">What a group discount could look like</h2>
           <div className="mt-6 overflow-x-auto">
             <table className="w-full text-sm">
               <thead>

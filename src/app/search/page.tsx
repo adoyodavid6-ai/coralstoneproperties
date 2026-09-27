@@ -10,7 +10,7 @@ import { SaveSearch } from "@/components/search/SaveSearch";
 import { Pagination } from "@/components/search/Pagination";
 import { SearchViewToggle } from "@/components/search/SearchViewToggle";
 import { parseFilters, searchProperties, locationOptions } from "@/lib/search";
-import { getAllProperties } from "@/lib/data/properties";
+import { getActiveListings } from "@/lib/data/listings";
 import { ButtonLink } from "@/components/ui/Button";
 import type { ListingIntent } from "@/lib/types";
 import { Search as SearchIcon, CheckShield } from "@/components/ui/icons";
@@ -36,8 +36,9 @@ export default async function SearchPage({
 }) {
   const sp = await searchParams;
   const filters = parseFilters(sp);
-  const results = searchProperties(filters);
-  const locations = locationOptions();
+  const all = await getActiveListings();
+  const results = searchProperties(filters, all);
+  const locations = locationOptions(all);
   const q = typeof sp.q === "string" ? sp.q : "";
   const intent = (typeof sp.intent === "string" ? sp.intent : "sale") as
     | ListingIntent
@@ -152,7 +153,7 @@ export default async function SearchPage({
           </div>
 
           {results.length === 0 ? (
-            getAllProperties().length === 0 ? (
+            all.length === 0 ? (
               /* Launch state — there is no inventory yet at all */
               <div className="rounded-2xl border border-dashed border-line-strong bg-surface-raised p-14 text-center">
                 <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-accent-soft text-accent">

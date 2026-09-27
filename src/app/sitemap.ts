@@ -1,6 +1,9 @@
 import type { MetadataRoute } from "next";
-import { PROPERTIES } from "@/lib/data/properties";
+import { getActiveListings } from "@/lib/data/listings";
 import { SITE_URL } from "@/lib/site";
+
+// Reflect current live inventory rather than a build-time snapshot.
+export const dynamic = "force-dynamic";
 
 // Public marketing / info pages, in rough priority order. Admin, saved,
 // bookings and compare are intentionally excluded — they are utility routes
@@ -24,7 +27,7 @@ const STATIC_PATHS: { path: string; priority: number }[] = [
   { path: "/data-protection", priority: 0.3 },
 ];
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
 
   const home: MetadataRoute.Sitemap = [
@@ -38,7 +41,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority,
   }));
 
-  const listings: MetadataRoute.Sitemap = PROPERTIES.map((p) => ({
+  const listings: MetadataRoute.Sitemap = (await getActiveListings()).map((p) => ({
     url: `${SITE_URL}/property/${p.slug}`,
     lastModified: new Date(p.listedOn),
     changeFrequency: "weekly",

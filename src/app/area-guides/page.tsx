@@ -14,37 +14,37 @@ const AREAS = [
     country: "Kenya 🇰🇪",
     slug: "kenya",
     areas: [
-      { name: "Westlands, Nairobi", vibe: "Business & nightlife hub", types: "Apartments, offices, serviced suites", priceRange: "KSh 5M – 35M to buy · KSh 60K – 200K/mo to rent", highlights: "Walking distance to Sarit Centre & Westgate. Dense commercial zone. Strong short-let demand from expats.", intent: "sale" },
-      { name: "Karen, Nairobi", vibe: "Leafy suburban retreat", types: "Villas, townhouses, land", priceRange: "KSh 20M – 150M to buy", highlights: "Large plots, mature gardens, good international schools. Popular with diplomats and senior executives.", intent: "sale" },
-      { name: "Kilimani, Nairobi", vibe: "Young professionals & families", types: "Apartments, off-plan", priceRange: "KSh 8M – 40M to buy · KSh 50K – 150K/mo to rent", highlights: "High apartment density. Strong rental yields 6–8%. Close to CBD without the chaos.", intent: "rent" },
-      { name: "Mombasa Island", vibe: "Coastal heritage & trade", types: "Houses, commercial, land", priceRange: "KSh 5M – 60M to buy", highlights: "Historic Old Town. Ferry access to Likoni. Slower pace. Growing port-city commercial demand.", intent: "sale" },
+      { name: "Westlands, Nairobi", vibe: "Business & nightlife hub", types: "Apartments, offices, serviced suites", highlights: "Walking distance to Sarit Centre & Westgate. Dense commercial zone. Strong short-let demand from expats.", intent: "sale" },
+      { name: "Karen, Nairobi", vibe: "Leafy suburban retreat", types: "Villas, townhouses, land", highlights: "Large plots, mature gardens, good international schools. Popular with diplomats and senior executives.", intent: "sale" },
+      { name: "Kilimani, Nairobi", vibe: "Young professionals & families", types: "Apartments, off-plan", highlights: "High apartment density. Close to CBD without the chaos.", intent: "rent" },
+      { name: "Mombasa Island", vibe: "Coastal heritage & trade", types: "Houses, commercial, land", highlights: "Historic Old Town. Ferry access to Likoni. Slower pace. Growing port-city commercial demand.", intent: "sale" },
     ],
   },
   {
     country: "Uganda 🇺🇬",
     slug: "uganda",
     areas: [
-      { name: "Kololo, Kampala", vibe: "Prestige hilltop", types: "Villas, embassies, high-end rentals", priceRange: "UGX 800M – 4B to buy · UGX 3M – 15M/mo to rent", highlights: "The address for diplomats and top executives. Limited supply keeps values strong.", intent: "rent" },
-      { name: "Nakasero, Kampala", vibe: "CBD-adjacent business core", types: "Commercial, apartments, hotels", priceRange: "UGX 600M – 3B to buy", highlights: "Central location. Walking distance to government offices. High commercial demand.", intent: "sale" },
-      { name: "Entebbe Road Corridor", vibe: "Suburban expansion", types: "Off-plan, gated communities, land", priceRange: "UGX 200M – 800M to buy", highlights: "Fast-growing corridor between Kampala and the airport. New estates, good infrastructure.", intent: "sale" },
+      { name: "Kololo, Kampala", vibe: "Prestige hilltop", types: "Villas, embassies, high-end rentals", highlights: "The address for diplomats and top executives. Limited supply keeps values strong.", intent: "rent" },
+      { name: "Nakasero, Kampala", vibe: "CBD-adjacent business core", types: "Commercial, apartments, hotels", highlights: "Central location. Walking distance to government offices. High commercial demand.", intent: "sale" },
+      { name: "Entebbe Road Corridor", vibe: "Suburban expansion", types: "Off-plan, gated communities, land", highlights: "Fast-growing corridor between Kampala and the airport. New estates, good infrastructure.", intent: "sale" },
     ],
   },
   {
     country: "Tanzania 🇹🇿",
     slug: "tanzania",
     areas: [
-      { name: "Masaki, Dar es Salaam", vibe: "Upmarket peninsular enclave", types: "Villas, serviced apartments", priceRange: "USD 300K – 1.5M to buy · USD 2K – 8K/mo to rent", highlights: "Home to most expats and NGOs. Ocean views. Walking distance to Coco Beach.", intent: "rent" },
-      { name: "Zanzibar Stone Town", vibe: "UNESCO heritage & tourism", types: "Boutique hotels, riads, land", priceRange: "USD 150K – 1M+", highlights: "Legal framework for foreign ownership via Right of Occupancy. Strong short-let and tourism returns.", intent: "short_let" },
-      { name: "Arusha City", vibe: "Safari gateway & business hub", types: "Houses, land, commercial", priceRange: "TZS 100M – 800M to buy", highlights: "Gateway to Serengeti and Kilimanjaro. Growing conference tourism. Strong local demand.", intent: "sale" },
+      { name: "Masaki, Dar es Salaam", vibe: "Upmarket peninsular enclave", types: "Villas, serviced apartments", highlights: "Home to most expats and NGOs. Ocean views. Walking distance to Coco Beach.", intent: "rent" },
+      { name: "Zanzibar Stone Town", vibe: "UNESCO heritage & tourism", types: "Boutique hotels, riads, land", highlights: "Legal framework for foreign ownership via Right of Occupancy. Strong short-let and tourism returns.", intent: "short_let" },
+      { name: "Arusha City", vibe: "Safari gateway & business hub", types: "Houses, land, commercial", highlights: "Gateway to Serengeti and Kilimanjaro. Growing conference tourism. Strong local demand.", intent: "sale" },
     ],
   },
   {
     country: "Rwanda 🇷🇼",
     slug: "rwanda",
     areas: [
-      { name: "Kiyovu, Kigali", vibe: "Government & diplomatic quarter", types: "Villas, embassies, apartments", priceRange: "USD 200K – 1.5M to buy · USD 1.5K – 6K/mo to rent", highlights: "Most prestigious address in Kigali. Quiet, well-maintained, close to ministries.", intent: "rent" },
-      { name: "Nyarutarama, Kigali", vibe: "Upmarket family suburb", types: "Villas, gated communities", priceRange: "USD 150K – 600K to buy", highlights: "Green, hillside suburbs. Good international schools nearby. Favoured by expats.", intent: "sale" },
-      { name: "Kacyiru, Kigali", vibe: "Government & growing commercial", types: "Apartments, offices, off-plan", priceRange: "USD 80K – 300K to buy", highlights: "High off-plan activity. Newer buildings, better infrastructure. Strong yield potential.", intent: "sale" },
+      { name: "Kiyovu, Kigali", vibe: "Government & diplomatic quarter", types: "Villas, embassies, apartments", highlights: "Most prestigious address in Kigali. Quiet, well-maintained, close to ministries.", intent: "rent" },
+      { name: "Nyarutarama, Kigali", vibe: "Upmarket family suburb", types: "Villas, gated communities", highlights: "Green, hillside suburbs. Good international schools nearby. Favoured by expats.", intent: "sale" },
+      { name: "Kacyiru, Kigali", vibe: "Government & growing commercial", types: "Apartments, offices, off-plan", highlights: "High off-plan activity. Newer buildings, better infrastructure. Strong yield potential.", intent: "sale" },
     ],
   },
 ];
@@ -57,7 +57,7 @@ export default function AreaGuidesPage() {
         <h1 className="mt-3 font-serif text-4xl font-semibold text-white sm:text-5xl">Area guides</h1>
         <p className="mx-auto mt-4 max-w-xl text-base text-white/65">
           Neighbourhood breakdowns for East Africa&apos;s top property markets —
-          vibe, property types, price ranges and what makes each area tick.
+          vibe, property types and what makes each area tick.
         </p>
       </section>
 
@@ -81,10 +81,6 @@ export default function AreaGuidesPage() {
                       <div>
                         <dt className="text-xs font-semibold uppercase tracking-wider text-accent">Property types</dt>
                         <dd className="mt-0.5 text-sm text-ink-soft">{area.types}</dd>
-                      </div>
-                      <div>
-                        <dt className="text-xs font-semibold uppercase tracking-wider text-accent">Price range</dt>
-                        <dd className="mt-0.5 figure text-sm font-medium text-primary">{area.priceRange}</dd>
                       </div>
                       <div>
                         <dt className="text-xs font-semibold uppercase tracking-wider text-accent">Why buyers choose it</dt>

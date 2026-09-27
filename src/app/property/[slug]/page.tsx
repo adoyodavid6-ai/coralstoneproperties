@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getPropertyBySlug, getSimilar, PROPERTIES } from "@/lib/data/properties";
+import { getListingBySlug, getSimilar } from "@/lib/data/listings";
 import { INTENT_LABEL, TYPE_LABEL } from "@/lib/labels";
 import { daysOnMarket, formatNumber } from "@/lib/format";
 import { SITE_URL } from "@/lib/site";
@@ -30,9 +30,9 @@ import {
   Clock,
 } from "@/components/ui/icons";
 
-export function generateStaticParams() {
-  return PROPERTIES.map((p) => ({ slug: p.slug }));
-}
+// Listings live in the database and change without a redeploy, so render each
+// property page on demand rather than pre-building a fixed set of slugs.
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
@@ -40,7 +40,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const p = getPropertyBySlug(slug);
+  const p = await getListingBySlug(slug);
   if (!p) return { title: "Property not found" };
   return {
     title: p.title,
@@ -79,10 +79,10 @@ export default async function PropertyPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const property = getPropertyBySlug(slug);
+  const property = await getListingBySlug(slug);
   if (!property) notFound();
 
-  const similar = getSimilar(property, 3);
+  const similar = await getSimilar(property, 3);
   const dom = daysOnMarket(property.listedOn);
 
   // Structured data for search engines (schema.org). Price is the listing's native currency.
