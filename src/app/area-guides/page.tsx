@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { ButtonLink } from "@/components/ui/Button";
 import { Chevron, Pin } from "@/components/ui/icons";
@@ -14,10 +15,10 @@ const AREAS = [
     country: "Kenya 🇰🇪",
     slug: "kenya",
     areas: [
-      { name: "Westlands, Nairobi", vibe: "Business & nightlife hub", types: "Apartments, offices, serviced suites", highlights: "Walking distance to Sarit Centre & Westgate. Dense commercial zone. Strong short-let demand from expats.", intent: "sale" },
-      { name: "Karen, Nairobi", vibe: "Leafy suburban retreat", types: "Villas, townhouses, land", highlights: "Large plots, mature gardens, good international schools. Popular with diplomats and senior executives.", intent: "sale" },
-      { name: "Kilimani, Nairobi", vibe: "Young professionals & families", types: "Apartments, off-plan", highlights: "High apartment density. Close to CBD without the chaos.", intent: "rent" },
-      { name: "Mombasa Island", vibe: "Coastal heritage & trade", types: "Houses, commercial, land", highlights: "Historic Old Town. Ferry access to Likoni. Slower pace. Growing port-city commercial demand.", intent: "sale" },
+      { name: "Westlands, Nairobi", vibe: "Business & nightlife hub", types: "Apartments, offices, serviced suites", highlights: "Walking distance to Sarit Centre & Westgate. Dense commercial zone. Strong short-let demand from expats.", intent: "sale", image: "/images/areas/westlands.png" },
+      { name: "Karen, Nairobi", vibe: "Leafy suburban retreat", types: "Villas, townhouses, land", highlights: "Large plots, mature gardens, good international schools. Popular with diplomats and senior executives.", intent: "sale", image: "/images/areas/karen.png" },
+      { name: "Kilimani, Nairobi", vibe: "Young professionals & families", types: "Apartments, off-plan", highlights: "High apartment density. Close to CBD without the chaos.", intent: "rent", image: "/images/areas/kilimani.png" },
+      { name: "Mombasa Island", vibe: "Coastal heritage & trade", types: "Houses, commercial, land", highlights: "Historic Old Town. Ferry access to Likoni. Slower pace. Growing port-city commercial demand.", intent: "sale", image: "/images/areas/mombasa-island.png" },
     ],
   },
   {
@@ -68,34 +69,47 @@ export default function AreaGuidesPage() {
               <h2 className="font-serif text-2xl font-semibold text-primary">{country.country}</h2>
               <div className="mt-6 grid gap-5 sm:grid-cols-2">
                 {country.areas.map((area) => (
-                  <div key={area.name} className="flex flex-col rounded-2xl border border-line bg-surface-raised p-6 shadow-card">
-                    <div className="flex items-start gap-2">
-                      <Pin className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                      <div>
-                        <h3 className="font-semibold text-primary">{area.name}</h3>
-                        <p className="text-xs text-ink-soft">{area.vibe}</p>
+                  <div key={area.name} className="flex flex-col rounded-2xl border border-line bg-surface-raised shadow-card overflow-hidden">
+                    {"image" in area && area.image && (
+                      <div className="relative h-44 w-full shrink-0">
+                        <Image
+                          src={area.image}
+                          alt={area.name}
+                          fill
+                          className="object-cover"
+                          sizes="(min-width: 640px) 50vw, 100vw"
+                        />
                       </div>
-                    </div>
+                    )}
+                    <div className="flex flex-col flex-1 p-6">
+                      <div className="flex items-start gap-2">
+                        <Pin className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+                        <div>
+                          <h3 className="font-semibold text-primary">{area.name}</h3>
+                          <p className="text-xs text-ink-soft">{area.vibe}</p>
+                        </div>
+                      </div>
 
-                    <dl className="mt-4 space-y-2.5">
-                      <div>
-                        <dt className="text-xs font-semibold uppercase tracking-wider text-accent">Property types</dt>
-                        <dd className="mt-0.5 text-sm text-ink-soft">{area.types}</dd>
-                      </div>
-                      <div>
-                        <dt className="text-xs font-semibold uppercase tracking-wider text-accent">Why buyers choose it</dt>
-                        <dd className="mt-0.5 text-sm text-ink-soft">{area.highlights}</dd>
-                      </div>
-                    </dl>
+                      <dl className="mt-4 space-y-2.5">
+                        <div>
+                          <dt className="text-xs font-semibold uppercase tracking-wider text-accent">Property types</dt>
+                          <dd className="mt-0.5 text-sm text-ink-soft">{area.types}</dd>
+                        </div>
+                        <div>
+                          <dt className="text-xs font-semibold uppercase tracking-wider text-accent">Why buyers choose it</dt>
+                          <dd className="mt-0.5 text-sm text-ink-soft">{area.highlights}</dd>
+                        </div>
+                      </dl>
 
-                    <div className="mt-5 pt-4 border-t border-line">
-                      <Link
-                        href={`/search?intent=${area.intent}&country=${country.slug.charAt(0).toUpperCase() + country.slug.slice(1)}`}
-                        className="inline-flex items-center gap-1.5 text-sm font-semibold text-accent hover:brightness-90"
-                      >
-                        Browse listings here
-                        <Chevron className="h-4 w-4 -rotate-90" />
-                      </Link>
+                      <div className="mt-5 pt-4 border-t border-line">
+                        <Link
+                          href={`/search?intent=${area.intent}&country=${country.slug.charAt(0).toUpperCase() + country.slug.slice(1)}`}
+                          className="inline-flex items-center gap-1.5 text-sm font-semibold text-accent hover:brightness-90"
+                        >
+                          Browse listings here
+                          <Chevron className="h-4 w-4 -rotate-90" />
+                        </Link>
+                      </div>
                     </div>
                   </div>
                 ))}

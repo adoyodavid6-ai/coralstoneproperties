@@ -30,6 +30,19 @@ export default function DataProtectionPage() {
       <section className="container-page py-14">
         <div className="mx-auto max-w-2xl space-y-10">
 
+          <Section title="Geographic scope">
+            <p>
+              CoralStone is operated from Kenya and directed exclusively at users in Kenya and East Africa.
+              This platform is <strong className="text-primary">not directed at residents of the European Union or European Economic Area</strong>.
+              If you are located in the EU or EEA, please do not use this service.
+              The EU General Data Protection Regulation (GDPR) does not apply to our operations.
+            </p>
+            <p>
+              Our data practices are governed by the <strong className="text-primary">Kenya Data Protection Act 2019</strong> and
+              the regulatory oversight of the Office of the Data Protection Commissioner (Kenya).
+            </p>
+          </Section>
+
           <Section title="Who we are">
             <p>
               CoralStone Properties Listings Limited is the data controller for all personal data collected
@@ -106,7 +119,10 @@ export default function DataProtectionPage() {
               <a href="mailto:privacy@coralstone.co" className="text-accent hover:brightness-90">privacy@coralstone.co</a>
             </p>
             <p>
-              To complain about how we handle your data, you may contact the Office of the Data Protection Commissioner (Kenya) or the equivalent authority in your country.
+              To complain about how we handle your data, you may contact the{" "}
+              <a href="https://www.odpc.go.ke" className="text-accent hover:brightness-90" target="_blank" rel="noopener noreferrer">
+                Office of the Data Protection Commissioner (Kenya)
+              </a>.
             </p>
           </Section>
         </div>

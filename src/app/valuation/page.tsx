@@ -60,7 +60,7 @@ export default function ValuationPage() {
           What&apos;s my property worth?
         </h1>
         <p className="mx-auto mt-4 max-w-xl text-base text-white/65">
-          Get a free indicative valuation from our team of certified valuers — and understand
+          Get a free indicative valuation from our valuation team — and understand
           the key factors driving values in your area.
         </p>
       </section>
@@ -91,15 +91,15 @@ export default function ValuationPage() {
             {/* Market benchmarks */}
             <div className="mt-10">
               <p className="eyebrow">Market benchmarks</p>
-              <h3 className="mt-3 font-serif text-xl font-semibold text-primary">Current price ranges by area</h3>
+              <h3 className="mt-3 font-serif text-xl font-semibold text-primary">Indicative price ranges by area</h3>
               <div className="mt-5 overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-line text-left">
                       <th className="pb-3 font-semibold text-primary">Area</th>
                       <th className="pb-3 font-semibold text-primary">Type</th>
-                      <th className="pb-3 font-semibold text-primary">Price range</th>
-                      <th className="pb-3 font-semibold text-primary">Rental yield</th>
+                      <th className="pb-3 font-semibold text-primary">Indicative price range</th>
+                      <th className="pb-3 font-semibold text-primary">Indicative yield</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-line">
@@ -114,7 +114,9 @@ export default function ValuationPage() {
                   </tbody>
                 </table>
               </div>
-              <p className="mt-3 text-xs text-ink-soft">Prices as of Q1 2026. Contact us for a specific property assessment.</p>
+              <p className="mt-3 text-xs text-ink-soft">
+                Indicative ranges only, for general guidance. Actual values vary by unit condition, floor level, finish quality, and negotiation. Not a substitute for a formal valuation.
+              </p>
             </div>
           </div>
 

@@ -45,7 +45,7 @@ export default function ReportPage() {
         </span>
         <h1 className="mt-6 font-serif text-3xl font-semibold text-primary">Report received</h1>
         <p className="mt-3 max-w-sm text-ink-soft">
-          Our moderation team reviews all reports within 4 business hours. The listing will be
+          We review every report as quickly as we can. The listing will be
           flagged and suspended if evidence supports the claim.
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
@@ -63,7 +63,7 @@ export default function ReportPage() {
         <h1 className="mt-3 font-serif text-4xl font-semibold text-white">Report a listing</h1>
         <p className="mx-auto mt-4 max-w-md text-base text-white/65">
           If you encounter a suspicious listing, fake agent or fraudulent activity, report it here.
-          We investigate every report within 4 business hours.
+          We investigate every report as quickly as we can.
         </p>
       </section>
 
@@ -78,7 +78,7 @@ export default function ReportPage() {
             </p>
             <ul className="mt-2 space-y-1 text-xs text-ink-soft">
               <li>• The listing is flagged and placed under review immediately</li>
-              <li>• Our moderation team investigates within 4 business hours</li>
+              <li>• We investigate as quickly as we can</li>
               <li>• The listing is suspended if the report is substantiated</li>
               <li>• Repeat offenders are permanently banned from the platform</li>
               <li>• You may be contacted for additional evidence</li>

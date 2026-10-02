@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { AdminProvider } from "@/lib/admin/AdminStore";
-import { AdminGate } from "@/components/admin/AdminGate";
 import { AdminShell } from "@/components/admin/AdminShell";
 
 export const metadata: Metadata = {
@@ -8,12 +7,12 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
+// Access control lives in `src/proxy.ts` (HTTP Basic Auth on /admin), not in a
+// client component — so the console is never served to the public.
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
     <AdminProvider>
-      <AdminGate>
-        <AdminShell>{children}</AdminShell>
-      </AdminGate>
+      <AdminShell>{children}</AdminShell>
     </AdminProvider>
   );
 }

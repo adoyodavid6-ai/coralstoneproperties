@@ -40,7 +40,7 @@ export function PropertyCard({
   );
 
   return (
-    <article className="group card-underlay relative z-0 flex flex-col rounded-xl border border-line bg-surface-raised shadow-card transition-shadow hover:z-20 hover:shadow-float">
+    <article className="group card-underlay relative z-0 flex flex-col rounded-xl border border-line bg-surface-raised shadow-card transition-shadow hover:z-[30] hover:shadow-float">
       <Link
         href={`/property/${property.slug}`}
         className="relative block aspect-[4/3] overflow-hidden rounded-t-xl"

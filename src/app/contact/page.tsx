@@ -45,7 +45,7 @@ export default function ContactPage() {
           {/* Form */}
           <div>
             <h2 className="font-serif text-2xl font-semibold text-primary">Send us a message</h2>
-            <p className="mt-2 text-sm text-ink-soft">We respond within one business day.</p>
+            <p className="mt-2 text-sm text-ink-soft">We respond as soon as we can, usually within a business day or two.</p>
 
             {sent ? (
               <div className="mt-8 flex flex-col items-center rounded-2xl border border-line bg-surface-raised p-10 text-center">
@@ -53,7 +53,7 @@ export default function ContactPage() {
                   <CheckShield className="h-7 w-7 text-accent" />
                 </span>
                 <h3 className="mt-4 font-serif text-xl font-semibold text-primary">Message sent!</h3>
-                <p className="mt-2 text-sm text-ink-soft">We&apos;ll be in touch within one business day.</p>
+                <p className="mt-2 text-sm text-ink-soft">We&apos;ll be in touch as soon as we can.</p>
                 <ButtonLink href="/" variant="coral" className="mt-6">Back to home</ButtonLink>
               </div>
             ) : (
@@ -135,7 +135,7 @@ export default function ContactPage() {
               <h3 className="font-semibold text-primary">List a property</h3>
               <p className="mt-1 text-sm text-ink-soft">
                 Selling or letting? Submit your property for verification and
-                our team will review it within one business day.
+                our team will review it as soon as we can.
               </p>
               <Link href="/list" className="mt-3 inline-block text-sm font-semibold text-accent hover:brightness-90">
                 Start a listing →

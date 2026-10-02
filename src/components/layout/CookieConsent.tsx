@@ -10,7 +10,7 @@ import { CheckShield } from "@/components/ui/icons";
  *
  * Vercel Analytics is only mounted once the visitor explicitly accepts, so no
  * analytics cookie/beacon fires before consent — required under the Kenya Data
- * Protection Act 2019 and GDPR (for diaspora visitors). The choice is stored in
+ * Protection Act 2019. The choice is stored in
  * localStorage so the banner shows once per browser.
  */
 const STORAGE_KEY = "coralstone_cookie_consent";

@@ -198,7 +198,7 @@ export default function ListPropertyPage() {
           Listing submitted!
         </h1>
         <p className="mt-3 max-w-sm text-ink-soft">
-          Our team will review your listing within 24 hours. Once verified, it goes
+          Our team will review your listing as quickly as we can. Once verified, it goes
           live across the platform.
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
@@ -230,7 +230,7 @@ export default function ListPropertyPage() {
         <div className="container-page grid divide-y divide-line sm:grid-cols-3 sm:divide-x sm:divide-y-0">
           {[
             { icon: <CheckShield className="h-5 w-5 text-accent" />, label: "Verified badge", sub: "Builds buyer trust instantly" },
-            { icon: <Sparkle className="h-5 w-5 text-accent" />,     label: "Live in 24 hrs",  sub: "After our quick review" },
+            { icon: <Sparkle className="h-5 w-5 text-accent" />,     label: "Fast to go live",  sub: "After our review" },
             { icon: <Users className="h-5 w-5 text-accent" />,        label: "Direct enquiries", sub: "Buyers contact you directly" },
           ].map((t) => (
             <div key={t.label} className="flex items-center gap-3 px-6 py-5">
@@ -629,7 +629,7 @@ export default function ListPropertyPage() {
                 icon: <CheckShield className="h-6 w-6 text-accent" />,
                 step: "02",
                 title: "We verify",
-                body: "Our team checks photos, location, agent credentials and — for land — the title deed within 24 hours.",
+                body: "Our team checks photos, location, agent credentials and — for land — the title deed before your listing goes live.",
               },
               {
                 icon: <Phone className="h-6 w-6 text-accent" />,

@@ -32,7 +32,7 @@ export function VerifiedBadge({
       {/* Tooltip */}
       <span
         role="tooltip"
-        className="pointer-events-none absolute bottom-full left-1/2 z-30 mb-2 w-60 -translate-x-1/2 rounded-xl bg-surface-dark px-3 py-2.5 text-left text-xs leading-relaxed text-white opacity-0 shadow-float ring-1 ring-white/10 transition-opacity duration-150 group-hover:opacity-100 group-focus-within:opacity-100"
+        className="pointer-events-none absolute bottom-full left-1/2 z-[100] mb-2 w-60 -translate-x-1/2 rounded-xl bg-surface-dark px-3 py-2.5 text-left text-xs leading-relaxed text-white opacity-0 shadow-float ring-1 ring-white/10 transition-opacity duration-150 group-hover:opacity-100 group-focus-within:opacity-100"
       >
         <span className="mb-0.5 block font-semibold">{meta.label}</span>
         {meta.guarantee}

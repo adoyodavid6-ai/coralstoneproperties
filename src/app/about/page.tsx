@@ -66,9 +66,9 @@ export default function AboutPage() {
               on our platform.
             </p>
             <p>
-              We&apos;re live in Kenya — with verification officers, legal partners and licensed conveyancers
-              on the ground — and expanding across East Africa from there. Every listing on CoralStone
-              has been touched by a human reviewer — not just an algorithm.
+              We&apos;re starting in Kenya — working with legal partners and licensed conveyancers —
+              and plan to expand across East Africa from there. Listings are reviewed by a person,
+              not just an algorithm, before they go live.
             </p>
           </div>
         </div>
@@ -103,10 +103,10 @@ export default function AboutPage() {
           </h2>
           <div className="mt-8 space-y-5">
             {[
-              { n: "01", title: "Agent verification", body: "Every agent on the platform provides their licence number, ID and regulatory registration. We cross-check with the Estate Agents Registration Boards in each country." },
+              { n: "01", title: "Agent verification", body: "Agents provide their licence number, ID and regulatory registration, which we check against the Estate Agents Registration Board (EARB)." },
               { n: "02", title: "Agency verification", body: "The agency or brokerage must hold a valid registration certificate and have no outstanding fraud reports. New agencies are placed on probation for 90 days." },
-              { n: "03", title: "Listing verification", body: "Our field team confirm photos are real, the location is accurate and the property exists as described. We make at least one site visit for all Spotlight listings." },
-              { n: "04", title: "Title verification", body: "For land and high-value sales, we run a title deed search with the relevant Lands Registry. Any encumbrance, caveat or dispute is disclosed to the buyer upfront." },
+              { n: "03", title: "Listing verification", body: "We confirm photos are real, the location is accurate and the property exists as described. Spotlight listings include a site visit where needed." },
+              { n: "04", title: "Title verification", body: "For land and high-value sales, we help run a title deed search at the relevant Lands Registry, and disclose any encumbrance, caveat or dispute we find." },
             ].map((step) => (
               <div key={step.n} className="flex gap-5 rounded-xl border border-line bg-surface-raised px-6 py-5">
                 <span className="figure shrink-0 text-2xl font-semibold text-accent/40">{step.n}</span>

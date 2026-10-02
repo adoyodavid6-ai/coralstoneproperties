@@ -93,7 +93,7 @@ const NAV: NavItem[] = [
     href: "/search?intent=short_let",
     children: [
       { label: "Event Spaces",          href: "/search?intent=short_let&type=venue" },
-      { label: "Short-Stay Apartments", href: "/search?intent=short_let&type=apartment" },
+      { label: "Airbnb-Style Apartments", href: "/search?intent=short_let&type=apartment" },
       { label: "Weekend Villas",        href: "/search?intent=short_let&type=house" },
       { label: "Serviced Suites",       href: "/search?intent=short_let" },
       { label: "Beachfront Cottages",   href: "/search?intent=short_let" },

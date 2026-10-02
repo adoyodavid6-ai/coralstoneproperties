@@ -24,8 +24,15 @@
 .DS_Store
 *.pem
 
-# local reference/planning docs (not part of the codebase)
+# local reference/planning docs (not part of the codebase) — keep internal docs OUT of the public repo
 payment model real estate review.pdf
+*.pdf
+*.docx
+*.doc
+~$*
+
+# supabase local CLI temp
+supabase/.temp/
 
 # debug
 npm-debug.log*

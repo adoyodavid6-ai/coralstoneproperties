@@ -15,7 +15,7 @@ const STAGES = [
     timeline: "1–2 business days",
     items: [
       "Government-issued ID confirmed",
-      "Estate agent licence number cross-checked with the national registration board",
+      "Estate agent licence number checked against the national registration board (EARB)",
       "Previous fraud or disciplinary record search",
       "Active agency membership confirmed",
     ],
@@ -42,7 +42,7 @@ const STAGES = [
       "Location coordinates confirmed accurate",
       "Stated price benchmarked against comparable sales in the area",
       "Property description reviewed for accuracy and completeness",
-      "Site visit conducted for all Spotlight-tier listings",
+      "Site visit for Spotlight-tier listings where needed",
     ],
     badge: "Listing verified",
   },
@@ -116,7 +116,7 @@ export default function VerificationPage() {
                   <span className="rounded-full bg-accent-soft px-3 py-1 text-xs font-semibold text-accent">
                     {s.badge}
                   </span>
-                  <span className="text-xs text-ink-soft">{s.timeline}</span>
+                  <span className="text-xs text-ink-soft">Target: {s.timeline}</span>
                 </div>
               </div>
               <ul className="mt-5 grid gap-2 sm:grid-cols-2">

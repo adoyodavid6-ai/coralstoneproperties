@@ -49,10 +49,10 @@ export default function AntiFraudPage() {
         <h2 className="mt-3 font-serif text-3xl font-semibold text-primary">Our zero-tolerance approach</h2>
         <div className="mt-8 grid gap-5 sm:grid-cols-2">
           {[
-            { title: "No listing goes live unverified", body: "Every property on CoralStone is reviewed by a human verification officer before it is published. We do not auto-publish." },
-            { title: "Agent licence checks", body: "We cross-check every agent against the Estate Agents Registration Board of Kenya (EARB)." },
-            { title: "Title deed searches", body: "For land and high-value sales, we search the relevant Lands Registry and disclose all encumbrances before you proceed." },
-            { title: "Fraud reports actioned in 4 hours", body: "Every fraud report is reviewed by our moderation team. Verified fraudulent listings are removed and the agent banned." },
+            { title: "No listing goes live unverified", body: "Listings are reviewed by our team before they go live — we don't auto-publish." },
+            { title: "Agent licence checks", body: "We check agents against the Estate Agents Registration Board of Kenya (EARB) register." },
+            { title: "Title deed searches", body: "For land and high-value sales, we help you run a title search at the relevant Lands Registry and flag any encumbrances it reveals." },
+            { title: "Every fraud report reviewed", body: "We review every fraud report. Confirmed fraudulent listings are removed and the lister banned." },
             { title: "Payment protection guidance", body: "We advise all buyers to pay through formal bank channels only — never cash, never mobile money to personal numbers." },
             { title: "Permanent bans", body: "Any agent or lister found to be fraudulent is permanently banned and reported to the relevant authorities." },
           ].map((p) => (
@@ -109,7 +109,7 @@ export default function AntiFraudPage() {
           <ol className="mt-6 space-y-4">
             {[
               { n: "1", action: "Stop all payments", detail: "Do not send any money — including viewing fees, reservation deposits or registration fees — until the issue is resolved." },
-              { n: "2", action: "Report the listing", detail: "Use our Report a Listing tool. Our team will investigate within 4 business hours and suspend the listing if fraud is confirmed." },
+              { n: "2", action: "Report the listing", detail: "Use our Report a Listing tool. We'll investigate as quickly as we can and suspend the listing if fraud is confirmed." },
               { n: "3", action: "Contact us directly", detail: "Email fraud@coralstone.co with any evidence — screenshots, payment receipts, conversation records." },
               { n: "4", action: "Report to authorities", detail: "File a report with the Directorate of Criminal Investigations (DCI) in Kenya, and notify your bank immediately if any money changed hands." },
             ].map((step) => (
