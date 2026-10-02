@@ -12,7 +12,7 @@ import Lenis from "lenis";
 import { gsap, ScrollTrigger } from "./gsap";
 import { getMotionTier, type MotionTier } from "./tier";
 import { ScrollChoreographer } from "./ScrollChoreographer";
-import { Cursor } from "./Cursor";
+
 
 type MotionContextValue = {
   /** null until the tier has been detected on the client. */
@@ -78,7 +78,6 @@ export function MotionProvider({ children }: { children: React.ReactNode }) {
       <Suspense fallback={null}>
         <ScrollChoreographer tier={tier} />
       </Suspense>
-      <Cursor tier={tier} />
     </MotionContext.Provider>
   );
 }

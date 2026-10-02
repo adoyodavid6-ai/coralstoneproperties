@@ -45,7 +45,6 @@ export function PropertyCard({
         href={`/property/${property.slug}`}
         className="relative block aspect-[4/3] overflow-hidden rounded-t-xl"
         aria-label={property.title}
-        data-cursor="view"
       >
         <div className="h-full w-full transition-transform duration-500 group-hover:scale-[1.03]">
           <SmartImage
