@@ -13,7 +13,8 @@ import { CheckShield } from "@/components/ui/icons";
  * Protection Act 2019. The choice is stored in
  * localStorage so the banner shows once per browser.
  */
-const STORAGE_KEY = "coralstone_cookie_consent";
+/** Shared so the "change cookie preferences" control (data-protection page) can reset it. */
+export const COOKIE_CONSENT_KEY = "coralstone_cookie_consent";
 type Consent = "accepted" | "declined";
 
 export function CookieConsent() {
@@ -21,14 +22,14 @@ export function CookieConsent() {
   const [consent, setConsent] = useState<Consent | null | undefined>(undefined);
 
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
+    const stored = localStorage.getItem(COOKIE_CONSENT_KEY);
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setConsent(stored === "accepted" || stored === "declined" ? stored : null);
   }, []);
 
   const decide = (choice: Consent) => {
     try {
-      localStorage.setItem(STORAGE_KEY, choice);
+      localStorage.setItem(COOKIE_CONSENT_KEY, choice);
     } catch {
       /* ignore storage errors (e.g. private mode) */
     }
@@ -52,10 +53,12 @@ export function CookieConsent() {
                 <CheckShield className="h-4 w-4" />
               </span>
               <p className="text-sm leading-relaxed text-ink-soft">
-                We use essential cookies to run the site, plus optional analytics cookies to
-                understand how it&apos;s used. You can accept or decline analytics.{" "}
-                <Link href="/data-protection" className="font-semibold text-accent hover:brightness-90">
-                  Privacy policy
+                We use essential cookies to run the site, plus optional{" "}
+                <strong className="text-primary">Vercel Analytics</strong> cookies (retained up to
+                24 months) to understand how it&apos;s used. No analytics load until you accept, and
+                you can change your choice anytime.{" "}
+                <Link href="/data-protection#cookies" className="font-semibold text-accent hover:brightness-90">
+                  Cookie &amp; privacy policy
                 </Link>
               </p>
             </div>

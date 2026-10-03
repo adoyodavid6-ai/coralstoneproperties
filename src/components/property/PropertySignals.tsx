@@ -34,8 +34,8 @@ export function LocationIntelligence({ property }: { property: Property }) {
     <section className="rounded-2xl border border-line bg-surface-raised p-6 shadow-card">
       <h3 className="font-serif text-lg text-primary">Location intelligence</h3>
       <p className="mt-1 text-sm text-ink-soft">
-        Honest neighbourhood signals for {g.area}, {g.county} — cached and refreshed,
-        blended with verified-resident input.
+        Indicative neighbourhood signals for {g.area}, {g.county} — general estimates for
+        guidance only, not independently audited. Always do your own area research.
       </p>
 
       <div className="mt-5 grid gap-5 sm:grid-cols-2">

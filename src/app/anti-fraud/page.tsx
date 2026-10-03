@@ -49,7 +49,7 @@ export default function AntiFraudPage() {
         <h2 className="mt-3 font-serif text-3xl font-semibold text-primary">Our zero-tolerance approach</h2>
         <div className="mt-8 grid gap-5 sm:grid-cols-2">
           {[
-            { title: "No listing goes live unverified", body: "Listings are reviewed by our team before they go live — we don't auto-publish." },
+            { title: "Human review before publishing", body: "As a standard policy, listings are reviewed by our team before they go live — we don't auto-publish." },
             { title: "Agent licence checks", body: "We check agents against the Estate Agents Registration Board of Kenya (EARB) register." },
             { title: "Title deed searches", body: "For land and high-value sales, we help you run a title search at the relevant Lands Registry and flag any encumbrances it reveals." },
             { title: "Every fraud report reviewed", body: "We review every fraud report. Confirmed fraudulent listings are removed and the lister banned." },

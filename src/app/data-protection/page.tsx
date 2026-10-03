@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { CookieSettingsButton } from "@/components/layout/CookieSettings";
 
 export const metadata: Metadata = {
   title: "Data protection & privacy — CoralStones",
   description: "How CoralStones collects, stores and protects your personal data.",
 };
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({ title, id, children }: { title: string; id?: string; children: React.ReactNode }) {
   return (
-    <div className="border-b border-line pb-10 last:border-0">
+    <div id={id} className="scroll-mt-24 border-b border-line pb-10 last:border-0">
       <h2 className="font-serif text-xl font-semibold text-primary">{title}</h2>
       <div className="mt-4 space-y-3 text-sm leading-relaxed text-ink-soft">{children}</div>
     </div>
@@ -30,16 +31,26 @@ export default function DataProtectionPage() {
       <section className="container-page py-14">
         <div className="mx-auto max-w-2xl space-y-10">
 
-          <Section title="Geographic scope">
+          <Section title="Geographic scope &amp; GDPR">
             <p>
-              CoralStones is operated from Kenya and directed exclusively at users in Kenya and East Africa.
-              This platform is <strong className="text-primary">not directed at residents of the European Union or European Economic Area</strong>.
-              If you are located in the EU or EEA, please do not use this service.
-              The EU General Data Protection Regulation (GDPR) does not apply to our operations.
+              CoralStones is operated from Kenya and our services are <strong className="text-primary">primarily directed at
+              users in Kenya and East Africa</strong>. Our data practices are governed by the{" "}
+              <strong className="text-primary">Kenya Data Protection Act 2019</strong> and the oversight of the Office of the
+              Data Protection Commissioner (Kenya).
             </p>
             <p>
-              Our data practices are governed by the <strong className="text-primary">Kenya Data Protection Act 2019</strong> and
-              the regulatory oversight of the Office of the Data Protection Commissioner (Kenya).
+              We know many of our users are part of the East African diaspora. If you access the platform from the
+              European Union, the EEA or the UK, the EU/UK <strong className="text-primary">General Data Protection
+              Regulation (GDPR)</strong> may apply to the processing of your personal data. Where it does, we will:
+            </p>
+            <ul className="list-disc space-y-1.5 pl-4">
+              <li>process your data only on the legal bases set out below;</li>
+              <li>honour your GDPR rights (access, rectification, erasure, portability, objection, restriction) — the same rights we extend under the Kenya DPA;</li>
+              <li>act as the data controller, reachable through our Data Protection Officer (below).</li>
+            </ul>
+            <p>
+              We do not currently have an EU/UK-established entity or representative. If you would prefer we did not
+              process your data, please do not submit it, or contact our DPO to have it removed.
             </p>
           </Section>
 
@@ -100,13 +111,54 @@ export default function DataProtectionPage() {
             <p>To exercise any right, email <a href="mailto:privacy@coralstonesproperties.co.ke" className="text-accent hover:brightness-90">privacy@coralstonesproperties.co.ke</a>. We will respond within 30 days.</p>
           </Section>
 
-          <Section title="Cookies">
-            <p>We use strictly necessary cookies (session management, security) and analytics cookies (to understand how the platform is used). We do not use advertising cookies.</p>
-            <p>You can disable analytics cookies in your browser settings. Disabling strictly necessary cookies will affect platform functionality.</p>
+          <Section title="Cookies" id="cookies">
+            <p>We use strictly necessary cookies to run the site and optional analytics cookies to understand how the platform is used. Analytics only load after you accept them in the cookie banner. We do not use advertising cookies.</p>
+            <div className="overflow-x-auto">
+              <table className="mt-2 w-full border-collapse text-left text-sm">
+                <thead>
+                  <tr className="border-b border-line text-xs uppercase tracking-wider text-ink-soft">
+                    <th className="py-2 pr-4 font-semibold">Cookie / storage</th>
+                    <th className="py-2 pr-4 font-semibold">Purpose</th>
+                    <th className="py-2 pr-4 font-semibold">Retention</th>
+                    <th className="py-2 font-semibold">Provider</th>
+                  </tr>
+                </thead>
+                <tbody className="text-ink-soft">
+                  <tr className="border-b border-line/60">
+                    <td className="py-2 pr-4">Consent preference</td>
+                    <td className="py-2 pr-4">Remembers your cookie choice</td>
+                    <td className="py-2 pr-4">Until you clear it</td>
+                    <td className="py-2">CoralStones (essential)</td>
+                  </tr>
+                  <tr className="border-b border-line/60">
+                    <td className="py-2 pr-4">Saved / compared listings</td>
+                    <td className="py-2 pr-4">Keeps your saved and compared properties on this device</td>
+                    <td className="py-2 pr-4">Until you clear it</td>
+                    <td className="py-2">CoralStones (essential)</td>
+                  </tr>
+                  <tr>
+                    <td className="py-2 pr-4">Analytics</td>
+                    <td className="py-2 pr-4">Anonymous usage measurement (page views, performance)</td>
+                    <td className="py-2 pr-4">Up to 24 months</td>
+                    <td className="py-2">Vercel Analytics (optional)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p className="pt-2"><strong className="text-primary">Withdraw or change consent:</strong> use the button below to reopen the cookie banner and accept or decline analytics at any time. You can also clear cookies/site data in your browser. Disabling strictly necessary cookies will affect platform functionality.</p>
+            <div className="pt-1">
+              <CookieSettingsButton />
+            </div>
           </Section>
 
           <Section title="Third-party services">
-            <p>We use a limited number of trusted third-party services including our cloud hosting provider, payment processor and email delivery service. Each is contractually required to protect your data and may not use it for their own purposes.</p>
+            <p>We use a limited number of trusted third-party processors, each contractually required to protect your data and not use it for their own purposes:</p>
+            <ul className="list-disc space-y-1.5 pl-4">
+              <li><strong className="text-primary">Vercel</strong> — hosting and anonymous analytics</li>
+              <li><strong className="text-primary">Supabase</strong> — database and storage</li>
+              <li><strong className="text-primary">Resend</strong> — transactional and subscriber email delivery</li>
+              <li><strong className="text-primary">Flutterwave</strong> — payment processing (only when you make a payment)</li>
+            </ul>
           </Section>
 
           <Section title="Security">

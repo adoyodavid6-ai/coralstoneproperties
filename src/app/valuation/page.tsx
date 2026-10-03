@@ -129,13 +129,13 @@ export default function ValuationPage() {
                     <CheckShield className="h-7 w-7 text-accent" />
                   </span>
                   <h3 className="mt-4 font-serif text-lg font-semibold text-primary">Request received</h3>
-                  <p className="mt-2 text-sm text-ink-soft">Our valuer will be in touch within 2 business days with an indicative range.</p>
+                  <p className="mt-2 text-sm text-ink-soft">Our valuer will be in touch — typically within 2 business days — with an indicative range.</p>
                   <ButtonLink href="/search" variant="coral" className="mt-6">Browse listings</ButtonLink>
                 </div>
               ) : (
                 <>
                   <h2 className="font-serif text-lg font-semibold text-primary">Request a free valuation</h2>
-                  <p className="mt-1 text-sm text-ink-soft">Free indicative valuation — our team responds within 2 business days.</p>
+                  <p className="mt-1 text-sm text-ink-soft">Free indicative valuation — our team typically responds within 2 business days.</p>
                   <div className="mt-5 space-y-4">
                     <div>
                       <label className="mb-1.5 block text-sm font-semibold text-primary">Country</label>
