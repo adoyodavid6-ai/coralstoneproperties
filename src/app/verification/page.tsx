@@ -4,8 +4,8 @@ import { ButtonLink } from "@/components/ui/Button";
 import { CheckShield, Check } from "@/components/ui/icons";
 
 export const metadata: Metadata = {
-  title: "How verification works — CoralStone",
-  description: "Every listing on CoralStone is human-verified before it goes live. Here is exactly how we do it.",
+  title: "How verification works — CoralStones",
+  description: "Every listing on CoralStones is human-verified before it goes live. Here is exactly how we do it.",
 };
 
 const STAGES = [
@@ -76,7 +76,7 @@ export default function VerificationPage() {
           How verification works
         </h1>
         <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-white/65">
-          Every listing on CoralStone passes through up to four human-reviewed verification
+          Every listing on CoralStones passes through up to four human-reviewed verification
           stages before a buyer ever sees it. Here is exactly what we check and why.
         </p>
       </section>

@@ -38,7 +38,7 @@ export default function BrandPage() {
     <div className="container-page py-12">
       <header className="max-w-2xl">
         <p className="text-sm font-semibold uppercase tracking-[0.14em] text-accent">Brand sign-off</p>
-        <h1 className="mt-2 font-serif text-4xl font-semibold text-primary">CoralStone Properties Listings — logo &amp; colour</h1>
+        <h1 className="mt-2 font-serif text-4xl font-semibold text-primary">CoralStones Properties Listings — logo &amp; colour</h1>
         <p className="mt-3 text-ink-soft">
           Navy-teal <span className="figure">#16425B</span> for structure, sage-grey{" "}
           <span className="figure">#D9DCD6</span> for blend sections, coral{" "}

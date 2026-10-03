@@ -4,15 +4,15 @@ import { ButtonLink } from "@/components/ui/Button";
 import { Users, Check, Trend, CheckShield } from "@/components/ui/icons";
 
 export const metadata: Metadata = {
-  title: "SACCO & group-buying — CoralStone",
-  description: "How SACCOs and cooperative group-buying unlock property ownership in East Africa — and how CoralStone facilitates it.",
+  title: "SACCO & group-buying — CoralStones",
+  description: "How SACCOs and cooperative group-buying unlock property ownership in East Africa — and how CoralStones facilitates it.",
 };
 
 const HOW_IT_WORKS = [
   { n: "01", title: "Form or join a group", detail: "A SACCO, chama or informal cooperative of 5–50+ members agrees on a target property type and budget. Groups can be colleagues, church members, family, alumni — any trusted network." },
-  { n: "02", title: "Pool deposits on CoralStone", detail: "Members contribute monthly to a group account. CoralStone tracks group targets and notifies the group when a matching off-plan or plot becomes available." },
-  { n: "03", title: "CoralStone negotiates block rates", detail: "Developers often offer meaningful discounts for block purchases of 5+ units. Our commercial team negotiates on behalf of your group before the deal is presented." },
-  { n: "04", title: "Legal setup", detail: "A registered legal entity (company or cooperative society) is formed to hold the property. Our verified conveyancers handle the structure at preferential rates for CoralStone groups." },
+  { n: "02", title: "Pool deposits on CoralStones", detail: "Members contribute monthly to a group account. CoralStones tracks group targets and notifies the group when a matching off-plan or plot becomes available." },
+  { n: "03", title: "CoralStones negotiates block rates", detail: "Developers often offer meaningful discounts for block purchases of 5+ units. Our commercial team negotiates on behalf of your group before the deal is presented." },
+  { n: "04", title: "Legal setup", detail: "A registered legal entity (company or cooperative society) is formed to hold the property. Our verified conveyancers handle the structure at preferential rates for CoralStones groups." },
   { n: "05", title: "Title per member", detail: "On completion, each member receives their individual title deed. The group entity is dissolved and each person owns their unit outright." },
 ];
 
@@ -35,7 +35,7 @@ export default function SaccoPage() {
         </h1>
         <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-white/65">
           Property ownership does not have to be a solo journey. SACCOs and chamas have been
-          financing homes across East Africa for decades. CoralStone connects groups to verified
+          financing homes across East Africa for decades. CoralStones connects groups to verified
           developers and helps them get the deal done safely.
         </p>
       </section>
@@ -55,7 +55,7 @@ export default function SaccoPage() {
               </p>
               <p>
                 Kenya has the deepest cooperative savings culture in the region — a natural
-                engine for the group property ownership CoralStone is built to serve.
+                engine for the group property ownership CoralStones is built to serve.
               </p>
               <p>
                 For property, SACCOs offer two key advantages: low-interest loans for deposits, and collective
@@ -83,7 +83,7 @@ export default function SaccoPage() {
       {/* How it works */}
       <section className="bg-surface-muted py-14">
         <div className="container-page">
-          <p className="eyebrow">The CoralStone group-buying process</p>
+          <p className="eyebrow">The CoralStones group-buying process</p>
           <h2 className="mt-3 font-serif text-2xl font-semibold text-primary">From savings pool to title deed</h2>
           <div className="mt-8 space-y-5">
             {HOW_IT_WORKS.map((s) => (
@@ -138,15 +138,15 @@ export default function SaccoPage() {
       <section className="bg-surface-muted py-14">
         <div className="container-page max-w-2xl mx-auto">
           <p className="eyebrow">Eligibility</p>
-          <h2 className="mt-3 font-serif text-2xl font-semibold text-primary">Requirements for group buying via CoralStone</h2>
+          <h2 className="mt-3 font-serif text-2xl font-semibold text-primary">Requirements for group buying via CoralStones</h2>
           <div className="mt-6 space-y-3 text-sm text-ink-soft">
             {[
               "Minimum 5 members per group (maximum no limit)",
-              "Each member must be verified on CoralStone (name, ID, contact)",
+              "Each member must be verified on CoralStones (name, ID, contact)",
               "Group must form a legal entity (limited company or cooperative society) before title transfer",
               "At least 30% combined deposit available at signing",
               "All members must agree to the purchase terms in writing",
-              "CoralStone recommends (but does not require) a group agreement covering exit rights, default rules and voting",
+              "CoralStones recommends (but does not require) a group agreement covering exit rights, default rules and voting",
             ].map((r) => (
               <div key={r} className="flex items-start gap-2.5 bg-surface-raised rounded-lg border border-line px-4 py-3">
                 <CheckShield className="mt-0.5 h-4 w-4 shrink-0 text-accent" />

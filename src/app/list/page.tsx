@@ -213,7 +213,7 @@ export default function ListPropertyPage() {
     <>
       {/* ── Hero ──────────────────────────────────────────────────────────── */}
       <section className="bg-surface-dark px-6 py-14 text-center">
-        <p className="eyebrow text-white/60">CoralStone Properties Listings</p>
+        <p className="eyebrow text-white/60">CoralStones Properties Listings</p>
         <h1 className="mt-3 font-serif text-4xl font-semibold text-white sm:text-5xl">
           List on East Africa&apos;s<br />
           <span className="text-rose">verified</span> platform

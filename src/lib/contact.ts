@@ -1,5 +1,5 @@
 /**
- * Public contact accounts for CoralStone Properties.
+ * Public contact accounts for CoralStones Properties.
  *
  * One source of truth for the email addresses shown across the site
  * (Contact page, Footer, policy pages). All three live on the verified
@@ -21,5 +21,10 @@ export const CONTACT_EMAILS = [
     address: "report@coralstonesproperties.co.ke",
     label: "Report a listing",
     description: "Suspected fraud or a problem with a listing.",
+  },
+  {
+    address: "privacy@coralstonesproperties.co.ke",
+    label: "Data protection",
+    description: "Privacy questions and data requests — our Data Protection Officer.",
   },
 ] as const;

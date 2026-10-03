@@ -107,10 +107,10 @@ export async function subscribe(input: SubscribeInput): Promise<SubscribeResult>
   const confirmUrl = `${SITE_URL}/subscribe/confirm?token=${encodeURIComponent(token)}`;
   await sendEmail({
     to: email,
-    subject: "Confirm your CoralStone subscription",
+    subject: "Confirm your CoralStones subscription",
     html: renderEmail({
       heading: "One quick step",
-      bodyHtml: `<p>Thanks for signing up for CoralStone property updates. Please confirm your email address to start receiving new verified listings and market insight.</p>`,
+      bodyHtml: `<p>Thanks for signing up for CoralStones property updates. Please confirm your email address to start receiving new verified listings and market insight.</p>`,
       cta: { label: "Confirm my subscription", href: confirmUrl },
       footerHtml: `If you didn't request this, you can safely ignore this email — no messages will be sent until you confirm.`,
     }),
@@ -174,7 +174,7 @@ export async function sendCampaign(input: SendCampaignInput): Promise<SendCampai
       html: renderEmail({
         heading: subject,
         bodyHtml,
-        footerHtml: `You're receiving this because you subscribed to CoralStone updates. <a href="${esc(unsubUrl)}" style="color:#5c7f96">Unsubscribe</a>.`,
+        footerHtml: `You're receiving this because you subscribed to CoralStones updates. <a href="${esc(unsubUrl)}" style="color:#5c7f96">Unsubscribe</a>.`,
       }),
       headers: { "List-Unsubscribe": `<${unsubUrl}>` },
     };
@@ -186,7 +186,7 @@ export async function sendCampaign(input: SendCampaignInput): Promise<SendCampai
   const archiveHtml = renderEmail({
     heading: subject,
     bodyHtml,
-    footerHtml: `You're receiving this because you subscribed to CoralStone updates.`,
+    footerHtml: `You're receiving this because you subscribed to CoralStones updates.`,
   });
   await sb.from("campaigns").insert({
     subject,

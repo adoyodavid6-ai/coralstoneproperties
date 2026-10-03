@@ -6,7 +6,7 @@ import { Chevron, Pin } from "@/components/ui/icons";
 import { LIVE_COUNTRIES } from "@/lib/countries";
 
 export const metadata: Metadata = {
-  title: "Area guides — CoralStone",
+  title: "Area guides — CoralStones",
   description: "Neighbourhood guides for Kenya's top property markets — Nairobi, Mombasa, Kisumu and more.",
 };
 

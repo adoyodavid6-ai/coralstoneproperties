@@ -1,4 +1,4 @@
-# CoralStone Properties Listings
+# CoralStones Properties Listings
 
 > Kenya's **trust-first** property portal. Verification is the name and the moat —
 > every agent, agency, listing and (for land) title is checked before it reaches a buyer.

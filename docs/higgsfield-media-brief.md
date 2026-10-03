@@ -1,4 +1,4 @@
-# CoralStone × Higgsfield — Marketing Media Production Brief
+# CoralStones × Higgsfield — Marketing Media Production Brief
 
 Everything you need to generate the site's marketing images + video in Higgsfield,
 with exact sizes, filenames, and copy-paste prompts. Generate → hand the files back →
@@ -143,7 +143,7 @@ not specific listed homes.
 > residential blocks with balconies, jacaranda and palm trees, bright airy daytime light,
 > young-professional urban vibe. [STYLE BLOCK]
 
-**Mombasa Island** (coastal heritage — nice tie-in to the *CoralStone* name):
+**Mombasa Island** (coastal heritage — nice tie-in to the *CoralStones* name):
 > Coastal heritage of Mombasa Old Town — Swahili architecture with carved wooden balconies
 > and warm coral-stone walls, a narrow historic street opening to a view of the Indian Ocean
 > and a dhow, warm tropical golden-hour light. [STYLE BLOCK]
@@ -179,7 +179,7 @@ Overlay copy is added in the editor; prompts describe the visuals only.
    > Slow push toward a modern Kenyan home at dusk, warm interior glow, landscaped garden,
    > teal twilight sky. [STYLE BLOCK]
 4. **Handover silhouette** — anonymous figures, keys passed, warm backlight. *Overlay:*
-   "Find. Verify. Own." + **CoralStone end-card** (navy `#16425b`, coral logo mark).
+   "Find. Verify. Own." + **CoralStones end-card** (navy `#16425b`, coral logo mark).
    *Camera:* slow crane up.
 
 ### Concept B — "How it works" (~15s, 3 beats)

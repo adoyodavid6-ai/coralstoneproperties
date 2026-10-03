@@ -4,7 +4,7 @@ import { cn } from "@/lib/cn";
 export type LogoVariant = "full-light" | "full-dark" | "stacked" | "emblem" | "mono";
 
 /**
- * CoralStone emblem — a cut coral gemstone in a rounded-square badge.
+ * CoralStones emblem — a cut coral gemstone in a rounded-square badge.
  * The facets read as a precious cut "stone"; premium, warm, and ownable.
  * Colours are passed in (tokens only) so one mark serves every variant.
  */

@@ -4,8 +4,8 @@ import { ButtonLink } from "@/components/ui/Button";
 import { CheckShield, Users, Globe, Trend, Sparkle } from "@/components/ui/icons";
 
 export const metadata: Metadata = {
-  title: "About CoralStone Properties Listings",
-  description: "We built CoralStone to end ghost listings and property fraud in East Africa — one verified listing at a time.",
+  title: "About CoralStones Properties Listings",
+  description: "We built CoralStones to end ghost listings and property fraud in East Africa — one verified listing at a time.",
 };
 
 const VALUES = [
@@ -41,7 +41,7 @@ export default function AboutPage() {
           Trust-first property,<br />built for East Africa
         </h1>
         <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-white/65">
-          We built CoralStone after watching buyers lose savings to ghost listings, fake agents
+          We built CoralStones after watching buyers lose savings to ghost listings, fake agents
           and forged title deeds. Our answer: verify everything before a single buyer sees it.
         </p>
       </section>
@@ -60,7 +60,7 @@ export default function AboutPage() {
               deposits and disappear. Forged title deeds transfer land that was never for sale.
             </p>
             <p>
-              CoralStone Properties Listings was created with one goal: make verified, trustworthy
+              CoralStones Properties Listings was created with one goal: make verified, trustworthy
               property listings the norm — not the exception. We do this by checking the agent,
               the agency, the listing, and for land, the title deed, before any property goes live
               on our platform.
@@ -97,7 +97,7 @@ export default function AboutPage() {
       {/* How we verify */}
       <section className="container-page py-16 sm:py-20">
         <div className="mx-auto max-w-3xl">
-          <p className="eyebrow">The CoralStone guarantee</p>
+          <p className="eyebrow">The CoralStones guarantee</p>
           <h2 className="mt-3 font-serif text-3xl font-semibold text-primary">
             Four layers. One promise.
           </h2>

@@ -28,7 +28,7 @@ function mapAgent(a: Record<string, unknown> | null | undefined): Agent {
   const row = a ?? {};
   return {
     id: (row.id as string) ?? "ag_unknown",
-    name: (row.name as string) ?? "CoralStone agent",
+    name: (row.name as string) ?? "CoralStones agent",
     agency: (row.agency as string) ?? "",
     avatarUrl: (row.avatar_url as string) ?? "",
     verified: arr(row.verified),

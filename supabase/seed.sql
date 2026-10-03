@@ -1,4 +1,4 @@
--- CoralStone Properties — demo seed
+-- CoralStones Properties — demo seed
 -- Safe to re-run: agents upsert, properties skip on conflict.
 -- Run AFTER schema.sql.
 

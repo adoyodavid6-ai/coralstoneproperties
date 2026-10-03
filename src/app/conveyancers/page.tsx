@@ -5,7 +5,7 @@ import { CheckShield, Check, Phone, Globe } from "@/components/ui/icons";
 import { LIVE_COUNTRIES } from "@/lib/countries";
 
 export const metadata: Metadata = {
-  title: "Verified conveyancers — CoralStone",
+  title: "Verified conveyancers — CoralStones",
   description: "Find verified, licensed conveyancers and property lawyers in Kenya — more East African markets coming soon.",
 };
 

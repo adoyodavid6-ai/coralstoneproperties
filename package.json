@@ -2,7 +2,7 @@
   "name": "verified-property-listings",
   "version": "0.1.0",
   "private": true,
-  "description": "CoralStone Properties Listings — a trust-first property portal for Kenya (V1 frontend slice)",
+  "description": "CoralStones Properties Listings — a trust-first property portal for Kenya (V1 frontend slice)",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

@@ -4,8 +4,8 @@ import { ButtonLink } from "@/components/ui/Button";
 import { CheckShield, Flag, Check } from "@/components/ui/icons";
 
 export const metadata: Metadata = {
-  title: "Anti-fraud policy — CoralStone",
-  description: "How CoralStone prevents property fraud and what to do if you encounter suspicious activity.",
+  title: "Anti-fraud policy — CoralStones",
+  description: "How CoralStones prevents property fraud and what to do if you encounter suspicious activity.",
 };
 
 const SCAMS = [
@@ -43,9 +43,9 @@ export default function AntiFraudPage() {
         </p>
       </section>
 
-      {/* CoralStone's protections */}
+      {/* CoralStones' protections */}
       <section className="container-page py-14 sm:py-18">
-        <p className="eyebrow">How CoralStone protects you</p>
+        <p className="eyebrow">How CoralStones protects you</p>
         <h2 className="mt-3 font-serif text-3xl font-semibold text-primary">Our zero-tolerance approach</h2>
         <div className="mt-8 grid gap-5 sm:grid-cols-2">
           {[

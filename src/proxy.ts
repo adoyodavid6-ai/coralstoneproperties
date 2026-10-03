@@ -20,7 +20,7 @@ import type { NextRequest } from "next/server";
  * NOTE: this version of Next renames `middleware` → `proxy`
  * (node_modules/next/dist/docs/.../proxy.md). Proxy runs on the Node.js runtime.
  */
-const REALM = 'Basic realm="CoralStone admin", charset="UTF-8"';
+const REALM = 'Basic realm="CoralStones admin", charset="UTF-8"';
 
 export function proxy(request: NextRequest) {
   const expectedPass = process.env.ADMIN_PASSWORD;

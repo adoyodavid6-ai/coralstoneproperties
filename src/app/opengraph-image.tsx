@@ -1,9 +1,9 @@
 import { ImageResponse } from "next/og";
 
-// Branded social-share card shown when a CoralStone link is posted to
+// Branded social-share card shown when a CoralStones link is posted to
 // WhatsApp, X, Facebook, Slack, etc. Generated at build time.
 export const alt =
-  "CoralStone Properties Listings — East Africa's trust-first property portal";
+  "CoralStones Properties Listings — East Africa's trust-first property portal";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -40,7 +40,7 @@ export default function OpengraphImage() {
             }}
           />
           <div style={{ color: LIGHT, fontSize: 34, fontWeight: 700 }}>
-            CoralStone
+            CoralStones
           </div>
         </div>
 

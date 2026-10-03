@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Data protection & privacy — CoralStone",
-  description: "How CoralStone collects, stores and protects your personal data.",
+  title: "Data protection & privacy — CoralStones",
+  description: "How CoralStones collects, stores and protects your personal data.",
 };
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
@@ -32,7 +32,7 @@ export default function DataProtectionPage() {
 
           <Section title="Geographic scope">
             <p>
-              CoralStone is operated from Kenya and directed exclusively at users in Kenya and East Africa.
+              CoralStones is operated from Kenya and directed exclusively at users in Kenya and East Africa.
               This platform is <strong className="text-primary">not directed at residents of the European Union or European Economic Area</strong>.
               If you are located in the EU or EEA, please do not use this service.
               The EU General Data Protection Regulation (GDPR) does not apply to our operations.
@@ -45,9 +45,9 @@ export default function DataProtectionPage() {
 
           <Section title="Who we are">
             <p>
-              CoralStone Properties Listings Limited is the data controller for all personal data collected
+              CoralStones Properties Listings Limited is the data controller for all personal data collected
               through this platform. We are registered in Kenya. Our Data Protection Officer can be reached at{" "}
-              <a href="mailto:privacy@coralstone.co" className="text-accent hover:brightness-90">privacy@coralstone.co</a>.
+              <a href="mailto:privacy@coralstonesproperties.co.ke" className="text-accent hover:brightness-90">privacy@coralstonesproperties.co.ke</a>.
             </p>
           </Section>
 
@@ -97,7 +97,7 @@ export default function DataProtectionPage() {
               <li><strong className="text-primary">Objection</strong> — object to processing based on legitimate interests</li>
               <li><strong className="text-primary">Restriction</strong> — limit how we use your data while a dispute is resolved</li>
             </ul>
-            <p>To exercise any right, email <a href="mailto:privacy@coralstone.co" className="text-accent hover:brightness-90">privacy@coralstone.co</a>. We will respond within 30 days.</p>
+            <p>To exercise any right, email <a href="mailto:privacy@coralstonesproperties.co.ke" className="text-accent hover:brightness-90">privacy@coralstonesproperties.co.ke</a>. We will respond within 30 days.</p>
           </Section>
 
           <Section title="Cookies">
@@ -116,7 +116,7 @@ export default function DataProtectionPage() {
           <Section title="Contact">
             <p>
               For privacy questions or to exercise your rights:{" "}
-              <a href="mailto:privacy@coralstone.co" className="text-accent hover:brightness-90">privacy@coralstone.co</a>
+              <a href="mailto:privacy@coralstonesproperties.co.ke" className="text-accent hover:brightness-90">privacy@coralstonesproperties.co.ke</a>
             </p>
             <p>
               To complain about how we handle your data, you may contact the{" "}

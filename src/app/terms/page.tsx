@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Terms of service & privacy — CoralStone",
-  description: "CoralStone's terms of service, privacy policy and acceptable use rules.",
+  title: "Terms of service & privacy — CoralStones",
+  description: "CoralStones' terms of service, privacy policy and acceptable use rules.",
 };
 
 function Section({ id, title, children }: { id?: string; title: string; children: React.ReactNode }) {
@@ -22,7 +22,7 @@ export default function TermsPage() {
         <p className="eyebrow text-white/60">Legal</p>
         <h1 className="mt-3 font-serif text-4xl font-semibold text-white">Terms &amp; privacy</h1>
         <p className="mx-auto mt-4 max-w-md text-white/65">
-          By using CoralStone Properties Listings, you agree to these terms.
+          By using CoralStones Properties Listings, you agree to these terms.
           They are written in plain language — not legalese.
         </p>
         <p className="mt-4 text-xs text-white/40">Effective date: 1 January 2026</p>
@@ -48,29 +48,29 @@ export default function TermsPage() {
         <div className="mx-auto max-w-2xl space-y-10">
 
           <Section id="using" title="1. Using the platform">
-            <p>CoralStone Properties Listings (&quot;CoralStone&quot;, &quot;we&quot;, &quot;us&quot;) is a property marketplace operating in Kenya. We connect buyers, tenants and investors with verified agents and property owners.</p>
+            <p>CoralStones Properties Listings (&quot;CoralStones&quot;, &quot;we&quot;, &quot;us&quot;) is a property marketplace operating in Kenya. We connect buyers, tenants and investors with verified agents and property owners.</p>
             <p>You must be at least 18 years old to use the platform. By registering or making an enquiry, you confirm you are acting in your own right or with proper authority on behalf of another person.</p>
             <p>You agree not to use the platform to post fraudulent listings, impersonate agents, scrape data, or engage in any activity that harms other users or the integrity of the platform.</p>
           </Section>
 
           <Section id="listings" title="2. Listings and agents">
-            <p>All listings on CoralStone are provided by licensed agents or property owners. We verify listings before publication, but we do not guarantee the accuracy of every detail — especially for information that can change (price, availability).</p>
-            <p>CoralStone is not a party to any property transaction. We facilitate the connection between buyer and agent; the contract is between those two parties.</p>
+            <p>All listings on CoralStones are provided by licensed agents or property owners. We verify listings before publication, but we do not guarantee the accuracy of every detail — especially for information that can change (price, availability).</p>
+            <p>CoralStones is not a party to any property transaction. We facilitate the connection between buyer and agent; the contract is between those two parties.</p>
             <p>Agents are responsible for ensuring their listings are accurate and that they have proper authority to list the property. Misrepresentation is grounds for immediate removal and permanent ban.</p>
-            <p>Buyers should conduct their own due diligence, including a title search, before proceeding to any transaction. CoralStone&apos;s verification reduces — but does not eliminate — risk.</p>
+            <p>Buyers should conduct their own due diligence, including a title search, before proceeding to any transaction. CoralStones&apos; verification reduces — but does not eliminate — risk.</p>
           </Section>
 
           <Section id="payments" title="3. Payments and fees">
-            <p>Listing on CoralStone is free. Agents may pay for Featured or Spotlight promotion, verification services and subscription plans. These fees are non-refundable once the service has been activated.</p>
-            <p>CoralStone earns a platform fee on transactions completed through the platform. This fee is disclosed at the time of reservation and is paid by the agent or seller, not the buyer.</p>
-            <p>CoralStone does not hold buyer funds. Any deposit or purchase payment is made directly to the agent or seller and is governed by the sale or tenancy agreement between the parties.</p>
-            <p>Never pay a deposit in cash or to a personal mobile money number. CoralStone will never ask you to pay us directly for a property you are buying or renting.</p>
+            <p>Listing on CoralStones is free. Agents may pay for Featured or Spotlight promotion, verification services and subscription plans. These fees are non-refundable once the service has been activated.</p>
+            <p>CoralStones earns a platform fee on transactions completed through the platform. This fee is disclosed at the time of reservation and is paid by the agent or seller, not the buyer.</p>
+            <p>CoralStones does not hold buyer funds. Any deposit or purchase payment is made directly to the agent or seller and is governed by the sale or tenancy agreement between the parties.</p>
+            <p>Never pay a deposit in cash or to a personal mobile money number. CoralStones will never ask you to pay us directly for a property you are buying or renting.</p>
           </Section>
 
           <Section id="liability" title="4. Liability">
-            <p>CoralStone provides the platform &quot;as is&quot;. To the fullest extent permitted by law, we are not liable for losses arising from property transactions, agent conduct, inaccurate listings or fraud by third parties.</p>
+            <p>CoralStones provides the platform &quot;as is&quot;. To the fullest extent permitted by law, we are not liable for losses arising from property transactions, agent conduct, inaccurate listings or fraud by third parties.</p>
             <p>Our verification services reduce risk but are not a guarantee of title or property condition. Buyers should obtain independent legal advice before completing any property transaction.</p>
-            <p>In any event, our liability is limited to the fees you have paid to CoralStone in the 12 months preceding the event giving rise to the claim.</p>
+            <p>In any event, our liability is limited to the fees you have paid to CoralStones in the 12 months preceding the event giving rise to the claim.</p>
           </Section>
 
           <Section id="privacy" title="5. Privacy summary">

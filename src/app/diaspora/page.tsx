@@ -4,17 +4,17 @@ import { ButtonLink } from "@/components/ui/Button";
 import { CheckShield, Check, Globe, Phone } from "@/components/ui/icons";
 
 export const metadata: Metadata = {
-  title: "Diaspora hub — CoralStone",
+  title: "Diaspora hub — CoralStones",
   description: "Buying property in East Africa from abroad. Your complete guide to remote purchasing, currency, legal process and power of attorney.",
 };
 
 const STEPS = [
-  { n: "01", title: "Identify the property", detail: "Browse verified listings on CoralStone. All listings show USD and GBP equivalents in addition to local currency." },
+  { n: "01", title: "Identify the property", detail: "Browse verified listings on CoralStones. All listings show USD and GBP equivalents in addition to local currency." },
   { n: "02", title: "Appoint a local representative", detail: "Grant Power of Attorney (POA) to a trusted person or your conveyancer in-country. They can attend viewings, sign documents and lodge title transfers on your behalf. Your conveyancer can prepare the POA for you to sign abroad." },
-  { n: "03", title: "Conduct due diligence", detail: "Your appointed conveyancer will search the title, confirm ownership and check for encumbrances. CoralStone's Full Title verification adds a second layer of independent confirmation." },
+  { n: "03", title: "Conduct due diligence", detail: "Your appointed conveyancer will search the title, confirm ownership and check for encumbrances. CoralStones' Full Title verification adds a second layer of independent confirmation." },
   { n: "04", title: "Transfer funds through official channels", detail: "Use your bank's international wire transfer or a regulated FX provider (not informal channels). Retain proof of transfer — it is required for future title resales and to prove legitimate acquisition." },
   { n: "05", title: "Complete the transaction", detail: "Your POA holder signs the sale agreement and lodge the transfer with the Lands Registry. Allow 4–12 weeks depending on the country. Your name appears on the new title deed." },
-  { n: "06", title: "Manage your property remotely", detail: "CoralStone can connect you with verified property managers and letting agents in each country for ongoing management, rental income collection and maintenance." },
+  { n: "06", title: "Manage your property remotely", detail: "CoralStones can connect you with verified property managers and letting agents in each country for ongoing management, rental income collection and maintenance." },
 ];
 
 const CURRENCIES = [
@@ -110,7 +110,7 @@ export default function DiasporaPage() {
         </div>
       </section>
 
-      {/* CoralStone diaspora services */}
+      {/* CoralStones diaspora services */}
       <section className="bg-surface-dark py-14">
         <div className="container-page">
           <p className="eyebrow text-white/60 text-center">How we help diaspora buyers</p>

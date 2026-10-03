@@ -41,7 +41,7 @@ export async function initPayment(params: FlwPaymentParams): Promise<string> {
         name: params.customerName,
       },
       customizations: {
-        title: "CoralStone Properties",
+        title: "CoralStones Properties",
         description: params.description,
       },
       meta: params.meta,

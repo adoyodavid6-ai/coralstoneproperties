@@ -52,7 +52,7 @@ export function ConversionRail({ property }: { property: Property }) {
   const agent = property.agent;
 
   const waText = encodeURIComponent(
-    `Hi ${agent.name}, I'm interested in "${property.title}" on CoralStone Properties Listings.`,
+    `Hi ${agent.name}, I'm interested in "${property.title}" on CoralStones Properties Listings.`,
   );
 
   const open = (a: Action) => {

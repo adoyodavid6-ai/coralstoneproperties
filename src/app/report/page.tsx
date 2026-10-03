@@ -90,7 +90,7 @@ export default function ReportPage() {
               <label className="mb-1.5 block text-sm font-semibold text-primary">
                 Listing URL or reference <span className="text-xs font-normal text-ink-soft">(optional but helpful)</span>
               </label>
-              <input className={inputCls} placeholder="e.g. https://coralstone.co/property/xxx or listing ref" value={form.listingUrl} onChange={(e) => set("listingUrl", e.target.value)} />
+              <input className={inputCls} placeholder="e.g. https://coralstonesproperties.co.ke/property/xxx or listing ref" value={form.listingUrl} onChange={(e) => set("listingUrl", e.target.value)} />
             </div>
 
             <div>

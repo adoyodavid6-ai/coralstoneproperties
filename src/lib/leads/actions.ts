@@ -11,7 +11,7 @@
  *   LEADS_FROM       — optional; defaults to Resend's shared onboarding sender,
  *                      which can only deliver to your own verified address.
  *                      Once you verify a domain, set e.g.
- *                      "CoralStone <leads@yourdomain.com>".
+ *                      "CoralStones <leads@yourdomain.com>".
  *
  * If the keys are absent (e.g. before setup) the lead is logged server-side
  * and the visitor still sees success — no lead is silently lost.
@@ -20,7 +20,7 @@
 import { getSupabaseAdmin } from "@/lib/supabase/server";
 
 const RESEND_ENDPOINT = "https://api.resend.com/emails";
-const DEFAULT_FROM = "CoralStone Leads <onboarding@resend.dev>";
+const DEFAULT_FROM = "CoralStones Leads <onboarding@resend.dev>";
 /** Where leads land when LEADS_EMAIL isn't set. Requires a Resend-verified domain to deliver. */
 const DEFAULT_LEADS_EMAIL = "info@coralstonesproperties.co.ke";
 
@@ -59,7 +59,7 @@ function row(label: string, value: string): string {
 function wrap(heading: string, rowsHtml: string): string {
   return `<div style="font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;max-width:560px;margin:0 auto">
     <div style="background:#16425b;color:#fff;padding:20px 24px;border-radius:12px 12px 0 0">
-      <div style="font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#ff8559">CoralStone Properties</div>
+      <div style="font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#ff8559">CoralStones Properties</div>
       <div style="font-size:18px;font-weight:700;margin-top:4px">${esc(heading)}</div>
     </div>
     <div style="border:1px solid #d9dcd6;border-top:0;border-radius:0 0 12px 12px;padding:20px 24px">

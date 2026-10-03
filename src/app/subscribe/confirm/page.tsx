@@ -24,7 +24,7 @@ export default async function ConfirmSubscriptionPage({
             <p className="mt-3 text-sm leading-relaxed text-ink-soft">
               {result.email ? <span className="font-medium text-primary">{result.email}</span> : "Your email"}{" "}
               is confirmed. You&apos;ll now receive new verified listings and East African market insight from
-              CoralStone.
+              CoralStones.
             </p>
           </>
         ) : (
@@ -40,7 +40,7 @@ export default async function ConfirmSubscriptionPage({
           href="/"
           className="mt-6 inline-flex rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-ink-black transition-colors hover:brightness-95"
         >
-          Back to CoralStone
+          Back to CoralStones
         </Link>
       </div>
     </main>

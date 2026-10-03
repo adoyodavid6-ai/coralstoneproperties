@@ -46,7 +46,7 @@ export default async function AdminSubscribers() {
       <div>
         <h1 className="font-serif text-2xl font-semibold text-primary">Subscribers</h1>
         <p className="mt-1 text-sm text-ink-soft">
-          Everyone who signed up for CoralStone updates. Only <span className="font-medium">confirmed</span>{" "}
+          Everyone who signed up for CoralStones updates. Only <span className="font-medium">confirmed</span>{" "}
           subscribers receive broadcasts. This is live data from Supabase.
         </p>
       </div>

@@ -1,4 +1,4 @@
--- CoralStone Properties — database schema
+-- CoralStones Properties — database schema
 -- ---------------------------------------------------------------------------
 -- HOW TO RUN: open your Supabase project → SQL Editor → New query →
 -- paste this whole file → Run. Safe to re-run (uses IF NOT EXISTS).

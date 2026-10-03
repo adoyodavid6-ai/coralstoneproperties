@@ -179,7 +179,7 @@ export default async function HomePage() {
               Verified listings are arriving soon
             </SplitHeading>
             <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-ink-soft">
-              Every property on CoralStone is checked — the agent, the listing
+              Every property on CoralStones is checked — the agent, the listing
               and the title — before it goes live. Selling or letting? Be among
               the first on the platform.
             </p>

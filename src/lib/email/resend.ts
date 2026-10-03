@@ -11,12 +11,12 @@
  *   LEADS_FROM       optional sender; defaults to Resend's shared onboarding
  *                    address, which can only deliver to your own verified
  *                    inbox. Once you verify a domain, set e.g.
- *                    "CoralStone <hello@yourdomain.com>".
+ *                    "CoralStones <hello@yourdomain.com>".
  */
 
 const RESEND_ENDPOINT = "https://api.resend.com/emails";
 const RESEND_BATCH_ENDPOINT = "https://api.resend.com/emails/batch";
-const DEFAULT_FROM = "CoralStone <onboarding@resend.dev>";
+const DEFAULT_FROM = "CoralStones <onboarding@resend.dev>";
 
 /** Resend caps a single batch send at 100 messages. */
 export const BATCH_LIMIT = 100;
@@ -38,7 +38,7 @@ export function esc(value: string): string {
 }
 
 /**
- * Wrap body HTML in the CoralStone email shell (matches the lead-notification
+ * Wrap body HTML in the CoralStones email shell (matches the lead-notification
  * styling). `cta` renders a button; `footerHtml` holds raw, pre-escaped markup
  * such as the unsubscribe line.
  */
@@ -60,7 +60,7 @@ export function renderEmail(opts: {
 
   return `<div style="font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;max-width:560px;margin:0 auto">
     <div style="background:#16425b;color:#fff;padding:20px 24px;border-radius:12px 12px 0 0">
-      <div style="font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#ff8559">CoralStone Properties</div>
+      <div style="font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#ff8559">CoralStones Properties</div>
       <div style="font-size:18px;font-weight:700;margin-top:4px">${esc(opts.heading)}</div>
     </div>
     <div style="border:1px solid #d9dcd6;border-top:0;border-radius:0 0 12px 12px;padding:20px 24px;color:#16425b;font-size:14px;line-height:1.7">

@@ -19,11 +19,11 @@ const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], weight: ["400", "500"
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "CoralStone Properties Listings — East Africa's trust-first property portal",
-    template: "%s · CoralStone Properties Listings",
+    default: "CoralStones Properties Listings — East Africa's trust-first property portal",
+    template: "%s · CoralStones Properties Listings",
   },
   description:
-    "Buy, rent, and invest with confidence across East Africa. Every agent, agency, listing and title on CoralStone Properties Listings is checked — so you never chase a ghost listing again.",
+    "Buy, rent, and invest with confidence across East Africa. Every agent, agency, listing and title on CoralStones Properties Listings is checked — so you never chase a ghost listing again.",
   keywords: [
     "East Africa property",
     "verified listings",
@@ -34,16 +34,16 @@ export const metadata: Metadata = {
     "off-plan East Africa",
   ],
   openGraph: {
-    title: "CoralStone Properties Listings",
+    title: "CoralStones Properties Listings",
     description:
       "East Africa's trust-first property portal. Verified agents, listings and titles — launching in Kenya.",
     type: "website",
-    siteName: "CoralStone Properties Listings",
+    siteName: "CoralStones Properties Listings",
     locale: "en_KE",
   },
   twitter: {
     card: "summary_large_image",
-    title: "CoralStone Properties Listings",
+    title: "CoralStones Properties Listings",
     description:
       "East Africa's trust-first property portal. Verified agents, listings and titles — launching in Kenya.",
   },

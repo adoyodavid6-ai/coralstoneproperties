@@ -7,7 +7,7 @@ import { cn } from "@/lib/cn";
 import type { VerificationKind } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Pricing — CoralStone Properties",
+  title: "Pricing — CoralStones Properties",
   description:
     "Transparent pricing for agents, developers and buyers. Free listing, paid promotion, subscriptions, verification and transaction fees — all designed for the East African market.",
 };
