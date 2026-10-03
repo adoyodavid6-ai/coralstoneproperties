@@ -54,10 +54,6 @@ const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
   },
 ];
 
-// Footer nav renders as two columns; each stacks two sections.
-// Left: Explore + Intelligence. Right: Trust + Company.
-const COLUMN_GROUPS = [COLUMNS.slice(0, 2), COLUMNS.slice(2, 4)];
-
 export function Footer() {
   const { t } = useLocale();
   const pathname = usePathname();
@@ -69,7 +65,7 @@ export function Footer() {
     <footer className="relative mt-20 overflow-hidden bg-surface-dark text-white/80">
       <div className="hairline-gradient" aria-hidden />
 
-      <div className="container-page relative grid gap-10 py-14 md:grid-cols-[1.6fr_repeat(2,1fr)]">
+      <div className="container-page relative grid gap-10 py-14 md:grid-cols-[1.4fr_4fr]">
         <div>
           <Logo variant="full-dark" />
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/70">
@@ -101,24 +97,24 @@ export function Footer() {
           </div>
         </div>
 
-        {COLUMN_GROUPS.map((group) => (
-          <div key={group[0].title} className="space-y-8">
-            {group.map((col) => (
-              <nav key={col.title} aria-label={col.title}>
-                <h4 className="font-sans text-sm font-semibold text-white">{col.title}</h4>
-                <ul className="mt-3 space-y-2.5 text-sm">
-                  {col.links.map((l) => (
-                    <li key={l.label}>
-                      <Link href={l.href} className="text-white/70 transition-colors hover:text-white">
-                        {l.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </nav>
-            ))}
-          </div>
-        ))}
+        {/* Phones: two columns, filled top-to-bottom per column — Explore+Intelligence
+            on the left, Trust+Company on the right. Desktop (md+): the original four columns. */}
+        <div className="grid grid-flow-col grid-cols-2 grid-rows-2 gap-x-6 gap-y-10 md:grid-flow-row md:grid-cols-4 md:grid-rows-1 md:gap-y-0">
+          {COLUMNS.map((col) => (
+            <nav key={col.title} aria-label={col.title}>
+              <h4 className="font-sans text-sm font-semibold text-white">{col.title}</h4>
+              <ul className="mt-3 space-y-2.5 text-sm">
+                {col.links.map((l) => (
+                  <li key={l.label}>
+                    <Link href={l.href} className="text-white/70 transition-colors hover:text-white">
+                      {l.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ))}
+        </div>
       </div>
 
       {/* Oversized display watermark — clipped at the footer's bottom edge */}
