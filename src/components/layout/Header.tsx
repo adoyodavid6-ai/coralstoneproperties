@@ -223,8 +223,8 @@ export function Header() {
 
         {/* Utility — right */}
         <div className="ml-auto flex items-center gap-4 lg:ml-0">
-          {/* Currency */}
-          <div className="hidden items-center sm:flex">
+          {/* Currency — desktop only; on mobile it lives in the menu */}
+          <div className="hidden items-center lg:flex">
             {CURRENCIES.map((c, i) => (
               <span key={c.value} className="flex items-center">
                 {i > 0 && (
@@ -250,7 +250,7 @@ export function Header() {
           <button
             onClick={() => setLocale(locale === "en" ? "sw" : "en")}
             aria-label="Switch language"
-            className="hidden items-center gap-1 text-xs font-semibold text-white/40 transition-colors hover:text-white/80 sm:inline-flex"
+            className="hidden items-center gap-1 text-xs font-semibold text-white/40 transition-colors hover:text-white/80 lg:inline-flex"
           >
             <Globe className="h-3.5 w-3.5" />
             {LOCALES.find((l) => l.code === locale)?.short}
@@ -263,14 +263,13 @@ export function Header() {
             Pricing
           </Link>
 
-          <ButtonLink
-            href="/list"
-            variant="coral"
-            size="sm"
-            className="hidden md:inline-flex"
-          >
-            {t("nav.list")}
-          </ButtonLink>
+          {/* List CTA — desktop only (mobile users get it in the menu).
+              Wrapped because ButtonLink's base `inline-flex` overrides `hidden`. */}
+          <span className="hidden lg:inline-flex">
+            <ButtonLink href="/list" variant="coral" size="sm">
+              {t("nav.list")}
+            </ButtonLink>
+          </span>
 
           {/* Hamburger */}
           <button

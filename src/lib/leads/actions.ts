@@ -21,6 +21,8 @@ import { getSupabaseAdmin } from "@/lib/supabase/server";
 
 const RESEND_ENDPOINT = "https://api.resend.com/emails";
 const DEFAULT_FROM = "CoralStone Leads <onboarding@resend.dev>";
+/** Where leads land when LEADS_EMAIL isn't set. Requires a Resend-verified domain to deliver. */
+const DEFAULT_LEADS_EMAIL = "info@coralstonesproperties.co.ke";
 
 export type LeadResult = { ok: boolean; error?: string };
 
@@ -112,7 +114,7 @@ async function emailLead(opts: {
   replyTo?: string;
 }): Promise<boolean | null> {
   const apiKey = process.env.RESEND_API_KEY;
-  const to = process.env.LEADS_EMAIL;
+  const to = process.env.LEADS_EMAIL || DEFAULT_LEADS_EMAIL;
   const from = process.env.LEADS_FROM || DEFAULT_FROM;
   if (!apiKey || !to) return null;
 

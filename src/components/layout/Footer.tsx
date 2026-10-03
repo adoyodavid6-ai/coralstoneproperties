@@ -4,6 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 import { Logo } from "@/components/ui/Logo";
+import { SubscribeForm } from "./SubscribeForm";
+import { CONTACT_EMAILS } from "@/lib/contact";
 
 const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
   {
@@ -77,6 +79,22 @@ export function Footer() {
             <span className="rounded-full bg-white/10 px-3 py-1.5">Airtel Money</span>
             <span className="rounded-full bg-white/10 px-3 py-1.5">EN · SW</span>
             <span className="rounded-full bg-white/10 px-3 py-1.5">USSD ready</span>
+          </div>
+
+          <div className="mt-6 flex flex-col gap-1.5 text-sm">
+            {CONTACT_EMAILS.map((c) => (
+              <a
+                key={c.address}
+                href={`mailto:${c.address}`}
+                className="text-white/70 transition-colors hover:text-white"
+              >
+                {c.address}
+              </a>
+            ))}
+          </div>
+
+          <div className="mt-8 border-t border-white/10 pt-6">
+            <SubscribeForm />
           </div>
         </div>
 

@@ -13,6 +13,8 @@ import {
   Sliders,
   Calendar,
   Chevron,
+  Users,
+  Mail,
 } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
 
@@ -23,6 +25,8 @@ const NAV = [
   { href: "/admin/pricing", label: "Pricing", icon: Trend },
   { href: "/admin/bookings", label: "Bookings", icon: Calendar },
   { href: "/admin/agents", label: "Agents", icon: CheckShield },
+  { href: "/admin/subscribers", label: "Subscribers", icon: Users },
+  { href: "/admin/email", label: "Email", icon: Mail },
   { href: "/admin/settings", label: "Settings", icon: Sliders },
 ] as const;
 

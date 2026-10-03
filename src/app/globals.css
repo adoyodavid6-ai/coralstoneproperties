@@ -111,12 +111,19 @@
       0 0 40px -12px rgb(30 90 126 / 0.28);
   }
 
+  html {
+    /* Guard against any element wider than the viewport causing sideways
+       scroll on mobile. `clip` (not `hidden`) doesn't break position: sticky. */
+    overflow-x: clip;
+  }
+
   body {
     background-color: var(--color-surface);
     color: var(--color-ink); /* small/long-form text is always navy on the light surface */
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    overflow-x: clip;
   }
 
   h1,

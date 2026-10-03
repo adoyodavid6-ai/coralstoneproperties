@@ -110,7 +110,7 @@ export default function AntiFraudPage() {
             {[
               { n: "1", action: "Stop all payments", detail: "Do not send any money — including viewing fees, reservation deposits or registration fees — until the issue is resolved." },
               { n: "2", action: "Report the listing", detail: "Use our Report a Listing tool. We'll investigate as quickly as we can and suspend the listing if fraud is confirmed." },
-              { n: "3", action: "Contact us directly", detail: "Email fraud@coralstone.co with any evidence — screenshots, payment receipts, conversation records." },
+              { n: "3", action: "Contact us directly", detail: "Email report@coralstonesproperties.co.ke with any evidence — screenshots, payment receipts, conversation records." },
               { n: "4", action: "Report to authorities", detail: "File a report with the Directorate of Criminal Investigations (DCI) in Kenya, and notify your bank immediately if any money changed hands." },
             ].map((step) => (
               <li key={step.n} className="flex gap-4">

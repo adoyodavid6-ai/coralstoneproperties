@@ -286,3 +286,51 @@ drop policy if exists "bookings manage own" on public.bookings;
 create policy "bookings manage own" on public.bookings
   for all using (auth.uid() = user_id or public.is_admin())
   with check (auth.uid() = user_id or public.is_admin());
+
+
+-- ===========================================================================
+-- SUBSCRIBERS  (newsletter / marketing funnel — double opt-in)
+-- ===========================================================================
+create table if not exists public.subscribers (
+  id               uuid primary key default gen_random_uuid(),
+  created_at       timestamptz not null default now(),
+  updated_at       timestamptz not null default now(),
+  email            text not null unique,
+  name             text,
+  status           text not null default 'pending' check (status in ('pending','confirmed','unsubscribed')),
+  source           text default 'footer',
+  -- Opaque token used for BOTH the confirm link and the unsubscribe link.
+  token            text not null default gen_random_uuid()::text,
+  confirmed_at     timestamptz,
+  unsubscribed_at  timestamptz
+);
+
+create index if not exists subscribers_status_idx on public.subscribers (status);
+create index if not exists subscribers_token_idx  on public.subscribers (token);
+
+drop trigger if exists subscribers_set_updated_at on public.subscribers;
+create trigger subscribers_set_updated_at before update on public.subscribers
+  for each row execute function public.set_updated_at();
+
+-- Fully locked down: the anon key gets NO access. Every read/write goes through
+-- the service role (public subscribe action, confirm/unsubscribe links, admin).
+alter table public.subscribers enable row level security;
+
+
+-- ===========================================================================
+-- CAMPAIGNS  (broadcast email history — "view emails" in the admin console)
+-- ===========================================================================
+create table if not exists public.campaigns (
+  id               uuid primary key default gen_random_uuid(),
+  created_at       timestamptz not null default now(),
+  subject          text not null,
+  body_html        text not null,
+  status           text not null default 'sent' check (status in ('draft','sending','sent','failed')),
+  sent_at          timestamptz,
+  recipient_count  integer not null default 0
+);
+
+create index if not exists campaigns_created_at_idx on public.campaigns (created_at desc);
+
+-- Service role only (admin console). No anon access.
+alter table public.campaigns enable row level security;

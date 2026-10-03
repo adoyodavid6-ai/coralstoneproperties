@@ -1,0 +1,52 @@
+{
+  "_readme": "Edit this file (or pass your own path to `npm run db:import -- path/to/file.json`). Field names mirror the camelCase `Property`/`Agent` types in src/lib/types.ts; the import script maps them to the snake_case DB columns. Import agents implicitly via each property's `agentId` — agents listed here are upserted first. Keep status 'draft' or 'pending_review' until a listing is cleared to go live; ONLY status 'active' is shown publicly (RLS). Listings render even with an empty `images` array (branded placeholders) — flip SHOW_REAL_MEDIA in src/lib/media.ts to true only once real photo URLs are in place.",
+
+  "agents": [
+    {
+      "id": "ag_example_partner",
+      "name": "Jane Wanjiru",
+      "agency": "CoralStone Verified Partner",
+      "avatarUrl": "",
+      "verified": ["agent"],
+      "responseMins": 20,
+      "completedDeals": 0,
+      "phone": "+254700000000",
+      "whatsapp": "+254700000000"
+    }
+  ],
+
+  "properties": [
+    {
+      "slug": "4-bed-townhouse-lavington-nairobi",
+      "title": "4-Bed Townhouse in Lavington",
+      "type": "townhouse",
+      "intent": "sale",
+      "status": "draft",
+
+      "price": 45000000,
+      "currency": "KES",
+      "pricePeriod": "total",
+
+      "beds": 4,
+      "baths": 4,
+      "size": 320,
+      "sizeUnit": "sqm",
+      "titleType": "freehold",
+
+      "country": "Kenya",
+      "county": "Nairobi",
+      "area": "Lavington",
+      "lat": -1.2793,
+      "lng": 36.7662,
+
+      "amenities": ["Borehole", "Solar backup", "DSQ", "Gated community"],
+      "lifestyle": [],
+      "images": [],
+      "verified": [],
+
+      "description": "Replace with the real listing description.",
+      "agentId": "ag_example_partner",
+      "listedOn": "2026-10-03"
+    }
+  ]
+}

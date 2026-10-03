@@ -8,7 +8,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "vitest run"
+    "test": "vitest run",
+    "db:import": "node scripts/import-listings.mjs",
+    "db:export": "node scripts/export-listings.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

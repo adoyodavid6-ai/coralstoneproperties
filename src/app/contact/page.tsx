@@ -5,6 +5,7 @@ import Link from "next/link";
 import { CheckShield } from "@/components/ui/icons";
 import { ButtonLink } from "@/components/ui/Button";
 import { sendContactLead } from "@/lib/leads/actions";
+import { CONTACT_EMAILS } from "@/lib/contact";
 
 const inputCls = "w-full rounded-lg border border-line bg-surface-raised px-3.5 py-2.5 text-sm text-primary placeholder:text-ink-soft/60 focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20 transition-colors";
 
@@ -120,6 +121,26 @@ export default function ContactPage() {
 
           {/* Side info — real channels only (the forms deliver directly to our team) */}
           <div className="space-y-6">
+            <div className="rounded-2xl border border-line bg-surface-raised p-6">
+              <h3 className="font-semibold text-primary">Email us directly</h3>
+              <p className="mt-1 text-sm text-ink-soft">
+                Prefer email? Reach the right team straight away.
+              </p>
+              <ul className="mt-4 space-y-3">
+                {CONTACT_EMAILS.map((c) => (
+                  <li key={c.address}>
+                    <a
+                      href={`mailto:${c.address}`}
+                      className="text-sm font-semibold text-accent hover:brightness-90"
+                    >
+                      {c.address}
+                    </a>
+                    <p className="text-xs text-ink-soft">{c.description}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
             <div className="rounded-2xl border border-line bg-surface-raised p-6">
               <h3 className="font-semibold text-primary">Report a listing</h3>
               <p className="mt-1 text-sm text-ink-soft">

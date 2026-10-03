@@ -136,3 +136,12 @@ export const Users = ({ className }: P) => (
     <path d="M16 5.2a3.2 3.2 0 0 1 0 5.9M17.5 14.6A5.5 5.5 0 0 1 20.5 20" />
   </S>
 );
+export const Mail = ({ className }: P) => (
+  <S className={className}>
+    <rect x="3" y="5" width="18" height="14" rx="2" />
+    <path d="m3.5 7 8.5 6 8.5-6" />
+  </S>
+);
+export const Send = ({ className }: P) => (
+  <S className={className}><path d="M21 3 10.5 13.5M21 3l-6.5 18-4-8-8-4L21 3Z" /></S>
+);

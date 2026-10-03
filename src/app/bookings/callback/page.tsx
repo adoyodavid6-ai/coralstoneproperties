@@ -31,8 +31,8 @@ export default async function BookingCallbackPage({
         <p className="mt-2 text-sm text-ink-soft">{result.error}</p>
         <p className="mt-1 text-xs text-ink-soft">
           No charge was made. If you believe this is an error, contact{" "}
-          <a href="mailto:support@coralstone.co" className="text-accent underline">
-            support@coralstone.co
+          <a href="mailto:support@coralstonesproperties.co.ke" className="text-accent underline">
+            support@coralstonesproperties.co.ke
           </a>{" "}
           with reference: <span className="figure">{tx_ref ?? "—"}</span>
         </p>
