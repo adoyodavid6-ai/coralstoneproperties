@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 import { Logo } from "@/components/ui/Logo";
 import { SubscribeForm } from "./SubscribeForm";
-import { CONTACT_EMAILS } from "@/lib/contact";
 
 const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
   {
@@ -48,7 +47,7 @@ const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
       { label: "Pricing", href: "/pricing" },
       { label: "For agents & agencies", href: "/pricing#plans" },
       { label: "Developer packages", href: "/pricing#developer" },
-      { label: "Contact", href: "/contact" },
+      { label: "Contact us", href: "/contact" },
       { label: "Terms & privacy", href: "/terms" },
     ],
   },
@@ -93,18 +92,6 @@ export function Footer() {
             <span className="rounded-full bg-white/10 px-3 py-1.5">Airtel Money</span>
             <span className="rounded-full bg-white/10 px-3 py-1.5">EN · SW</span>
             <span className="rounded-full bg-white/10 px-3 py-1.5">USSD ready</span>
-          </div>
-
-          <div className="mt-6 flex min-w-0 flex-col gap-1.5 text-sm">
-            {CONTACT_EMAILS.map((c) => (
-              <a
-                key={c.address}
-                href={`mailto:${c.address}`}
-                className="break-words text-white/70 transition-colors hover:text-white"
-              >
-                {c.address}
-              </a>
-            ))}
           </div>
         </div>
 
