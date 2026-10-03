@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import type { Property } from "@/lib/types";
 import { formatMoney } from "@/lib/format";
 import { useBookings } from "@/lib/booking/BookingProvider";
@@ -9,6 +9,7 @@ import { calcBooking, nightsBetween } from "@/lib/booking/calc";
 import { VerifiedStrip } from "@/components/ui/VerifiedBadge";
 import { CheckShield, Star, Calendar, Users } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
+import { startBookingPayment } from "@/lib/payment/actions";
 
 const inputCls =
   "w-full rounded-lg border border-line-strong bg-surface px-3 py-2 text-sm text-primary outline-none focus:border-accent focus:ring-2 focus:ring-accent/20";
@@ -16,6 +17,10 @@ const inputCls =
 /** Do two [in, out) date ranges overlap? */
 function overlaps(aIn: string, aOut: string, bIn: string, bOut: string) {
   return aIn < bOut && bIn < aOut;
+}
+
+function isEmail(v: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 }
 
 /**
@@ -26,7 +31,6 @@ function overlaps(aIn: string, aOut: string, bIn: string, bOut: string) {
 export function BookingWidget({ property }: { property: Property }) {
   const { fees, createBooking, bookingsFor } = useBookings();
 
-  // Venues are hired by the day and sized by guest capacity; short-lets by night.
   const perDay = property.pricePeriod === "day" || property.type === "venue";
   const unit = perDay ? "day" : "night";
   const capacity = property.capacity;
@@ -37,7 +41,10 @@ export function BookingWidget({ property }: { property: Property }) {
   const [checkOut, setCheckOut] = useState("");
   const [guests, setGuests] = useState(perDay ? Math.min(100, capacity ?? 100) : 2);
   const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [payError, setPayError] = useState("");
   const [confirmed, setConfirmed] = useState<{ id: string; nights: number } | null>(null);
+  const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -56,25 +63,56 @@ export function BookingWidget({ property }: { property: Property }) {
     return bookingsFor(property.id).some((b) => overlaps(checkIn, checkOut, b.checkIn, b.checkOut));
   }, [checkIn, checkOut, nights, bookingsFor, property.id]);
 
-  const canBook = nights >= 1 && !clash && name.trim().length > 1;
+  const emailValid = email === "" || isEmail(email);
+  const canBook = nights >= 1 && !clash && name.trim().length > 1 && isEmail(email);
   const money = (n: number) => formatMoney(n, property.currency);
 
   const reserve = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!canBook) return;
-    const booking = createBooking({
-      propertyId: property.id,
-      propertySlug: property.slug,
-      propertyTitle: property.title,
-      currency: property.currency,
-      unit,
-      nightlyRate: property.price,
-      checkIn,
-      checkOut,
-      guests,
-      guestName: name.trim(),
+    if (!canBook || isPending) return;
+    setPayError("");
+
+    startTransition(async () => {
+      const result = await startBookingPayment({
+        propertyId: property.id,
+        propertySlug: property.slug,
+        propertyTitle: property.title,
+        currency: property.currency,
+        unit,
+        checkIn,
+        checkOut,
+        guests,
+        guestName: name.trim(),
+        guestEmail: email.trim(),
+        breakdown,
+      });
+
+      if (!result.ok) {
+        setPayError(result.error);
+        return;
+      }
+
+      if ("paymentUrl" in result) {
+        // Real payment — redirect to Flutterwave hosted page
+        window.location.href = result.paymentUrl;
+        return;
+      }
+
+      // Demo fallback (Flutterwave not yet configured)
+      createBooking({
+        propertyId: property.id,
+        propertySlug: property.slug,
+        propertyTitle: property.title,
+        currency: property.currency,
+        unit,
+        nightlyRate: property.price,
+        checkIn,
+        checkOut,
+        guests,
+        guestName: name.trim(),
+      });
+      setConfirmed({ id: result.bookingId, nights });
     });
-    setConfirmed({ id: booking.id, nights });
   };
 
   if (confirmed) {
@@ -91,7 +129,7 @@ export function BookingWidget({ property }: { property: Property }) {
           Confirmation <span className="figure">{confirmed.id}</span>.
         </p>
         <p className="mt-2 text-xs text-ink-soft">
-          Demo reservation — the live product settles via M-Pesa / card and messages the host.
+          Demo reservation — payment gateway not yet active.
         </p>
         <Link
           href="/bookings"
@@ -196,7 +234,7 @@ export function BookingWidget({ property }: { property: Property }) {
         </dl>
       )}
 
-      {/* Guest name */}
+      {/* Guest details */}
       <label className="mt-4 block">
         <span className="block text-[11px] font-medium uppercase tracking-wide text-ink-soft">
           {perDay ? "Booking name" : "Your name"}
@@ -204,15 +242,41 @@ export function BookingWidget({ property }: { property: Property }) {
         <input className={cn(inputCls, "mt-1")} value={name} onChange={(e) => setName(e.target.value)} placeholder="Full name" />
       </label>
 
+      <label className="mt-3 block">
+        <span className="block text-[11px] font-medium uppercase tracking-wide text-ink-soft">Email</span>
+        <input
+          type="email"
+          className={cn(inputCls, "mt-1", !emailValid && "border-danger focus:border-danger focus:ring-danger/20")}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="you@example.com"
+        />
+        {!emailValid && <p className="mt-1 text-xs text-danger">Enter a valid email address.</p>}
+      </label>
+
+      {payError && (
+        <p className="mt-3 rounded-lg bg-danger-soft px-3 py-2 text-xs text-danger">{payError}</p>
+      )}
+
       <button
         type="submit"
-        disabled={!canBook}
+        disabled={!canBook || isPending}
         className="mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-rose text-sm font-semibold text-ink-black transition-[filter] hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-50"
       >
-        <Calendar className="h-4 w-4" />
-        {nights >= 1 ? `Reserve · ${money(breakdown.guestTotal)}` : "Reserve"}
+        {isPending ? (
+          <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+        ) : (
+          <Calendar className="h-4 w-4" />
+        )}
+        {isPending
+          ? "Redirecting to payment…"
+          : nights >= 1
+            ? `Pay ${money(breakdown.guestTotal)}`
+            : "Reserve"}
       </button>
-      <p className="mt-2 text-center text-xs text-ink-soft">You won&apos;t be charged yet — demo checkout.</p>
+      <p className="mt-2 text-center text-xs text-ink-soft">
+        Secure checkout via Flutterwave · M-Pesa, Visa, Mastercard
+      </p>
 
       {/* Host trust */}
       <div className="mt-5 border-t border-line pt-4">
