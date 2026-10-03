@@ -50,10 +50,13 @@ const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
       { label: "Developer packages", href: "/pricing#developer" },
       { label: "Contact", href: "/contact" },
       { label: "Terms & privacy", href: "/terms" },
-      { label: "Admin console", href: "/admin" },
     ],
   },
 ];
+
+// Footer nav renders as two columns; each stacks two sections.
+// Left: Explore + Intelligence. Right: Trust + Company.
+const COLUMN_GROUPS = [COLUMNS.slice(0, 2), COLUMNS.slice(2, 4)];
 
 export function Footer() {
   const { t } = useLocale();
@@ -66,7 +69,7 @@ export function Footer() {
     <footer className="relative mt-20 overflow-hidden bg-surface-dark text-white/80">
       <div className="hairline-gradient" aria-hidden />
 
-      <div className="container-page relative grid gap-10 py-14 md:grid-cols-[1.4fr_repeat(4,1fr)]">
+      <div className="container-page relative grid gap-10 py-14 md:grid-cols-[1.6fr_repeat(2,1fr)]">
         <div>
           <Logo variant="full-dark" />
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/70">
@@ -98,19 +101,23 @@ export function Footer() {
           </div>
         </div>
 
-        {COLUMNS.map((col) => (
-          <nav key={col.title} aria-label={col.title}>
-            <h4 className="font-sans text-sm font-semibold text-white">{col.title}</h4>
-            <ul className="mt-3 space-y-2.5 text-sm">
-              {col.links.map((l) => (
-                <li key={l.label}>
-                  <Link href={l.href} className="text-white/70 transition-colors hover:text-white">
-                    {l.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
+        {COLUMN_GROUPS.map((group) => (
+          <div key={group[0].title} className="space-y-8">
+            {group.map((col) => (
+              <nav key={col.title} aria-label={col.title}>
+                <h4 className="font-sans text-sm font-semibold text-white">{col.title}</h4>
+                <ul className="mt-3 space-y-2.5 text-sm">
+                  {col.links.map((l) => (
+                    <li key={l.label}>
+                      <Link href={l.href} className="text-white/70 transition-colors hover:text-white">
+                        {l.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            ))}
+          </div>
         ))}
       </div>
 
