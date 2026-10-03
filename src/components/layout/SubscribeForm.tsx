@@ -37,18 +37,13 @@ export function SubscribeForm() {
   }
 
   return (
-    <div>
-      <h4 className="font-sans text-sm font-semibold text-white">Stay in the loop</h4>
-      <p className="mt-3 max-w-xs text-sm leading-relaxed text-white/70">
-        New verified listings and East African market insight — straight to your inbox.
-      </p>
-
+    <div className="w-full">
       {status === "done" ? (
-        <p className="mt-4 rounded-xl bg-white/10 px-4 py-3 text-sm text-white" role="status">
+        <p className="rounded-xl bg-white/10 px-4 py-3 text-sm text-white" role="status">
           {message}
         </p>
       ) : (
-        <form onSubmit={onSubmit} className="mt-4" noValidate>
+        <form onSubmit={onSubmit} noValidate>
           <div className="flex gap-2">
             <label className="sr-only" htmlFor="footer-subscribe-email">
               Email address

@@ -65,6 +65,21 @@ export function Footer() {
     <footer className="relative mt-20 overflow-hidden bg-surface-dark text-white/80">
       <div className="hairline-gradient" aria-hidden />
 
+      {/* Newsletter band — full width so it isn't cramped in the brand column */}
+      <div className="relative border-b border-white/10">
+        <div className="container-page flex flex-col gap-5 py-9 sm:flex-row sm:items-center sm:justify-between">
+          <div className="max-w-md">
+            <h3 className="font-sans text-base font-semibold text-white">Stay in the loop</h3>
+            <p className="mt-1.5 text-sm leading-relaxed text-white/70">
+              New verified listings and East African market insight — straight to your inbox.
+            </p>
+          </div>
+          <div className="w-full sm:w-auto sm:min-w-[22rem]">
+            <SubscribeForm />
+          </div>
+        </div>
+      </div>
+
       <div className="container-page relative grid grid-cols-1 gap-10 py-14 md:grid-cols-[1.4fr_4fr]">
         <div>
           <Logo variant="full-dark" />
@@ -90,10 +105,6 @@ export function Footer() {
                 {c.address}
               </a>
             ))}
-          </div>
-
-          <div className="mt-8 border-t border-white/10 pt-6">
-            <SubscribeForm />
           </div>
         </div>
 
