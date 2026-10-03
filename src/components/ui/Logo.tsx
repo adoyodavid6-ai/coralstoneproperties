@@ -87,9 +87,7 @@ export function Logo({
           <span className={cn("block font-serif text-[19px] font-semibold tracking-tight", textCls)}>
             CoralStones
           </span>
-          <span className={cn("-mt-0.5 block text-[10px] font-medium uppercase tracking-[0.2em] opacity-70", textCls)}>
-            Properties
-          </span>
+          <SpreadWord word="Properties" className={cn("-mt-0.5 text-[10px] font-medium uppercase", textCls)} />
         </span>
       </Link>
     );
@@ -128,11 +126,24 @@ export function Logo({
           <span className={coralText}>Coral</span>
           <span className={cn("font-medium", stoneText)}>Stones</span>
         </span>
-        <span className={cn("-mt-0.5 block text-[10px] font-medium uppercase tracking-[0.2em]", subText)}>
-          Properties
-        </span>
+        <SpreadWord word="Properties" className={cn("-mt-0.5 text-[10px] font-medium uppercase", subText)} />
       </span>
     </Link>
+  );
+}
+
+/**
+ * Render a single word stretched edge-to-edge across its container's full
+ * width — here, to match the "CoralStones" wordmark above it. Distributes the
+ * letters with flexbox so the font/size is untouched; only the gaps grow.
+ */
+function SpreadWord({ word, className }: { word: string; className?: string }) {
+  return (
+    <span className={cn("flex w-full justify-between", className)}>
+      {word.split("").map((ch, i) => (
+        <span key={`${ch}-${i}`}>{ch}</span>
+      ))}
+    </span>
   );
 }
 
