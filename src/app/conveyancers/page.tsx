@@ -5,8 +5,8 @@ import { CheckShield, Check, Phone, Globe } from "@/components/ui/icons";
 import { LIVE_COUNTRIES } from "@/lib/countries";
 
 export const metadata: Metadata = {
-  title: "Verified conveyancers — CoralStones",
-  description: "Find verified, licensed conveyancers and property lawyers in Kenya — more East African markets coming soon.",
+  title: "Find a licensed conveyancer — CoralStones",
+  description: "How to find and vet a licensed conveyancer or property lawyer in Kenya — with official regulators to confirm any advocate's licence. More East African markets coming soon.",
 };
 
 // Country-by-country legal guidance. We list the official regulator (where a
@@ -52,7 +52,7 @@ export default function ConveyancersPage() {
       <section className="bg-surface-dark px-6 py-16 text-center">
         <p className="eyebrow text-white/60">Legal protection</p>
         <h1 className="mt-3 font-serif text-4xl font-semibold text-white sm:text-5xl">
-          Verified conveyancers
+          Find a licensed conveyancer
         </h1>
         <p className="mx-auto mt-4 max-w-xl text-base text-white/65">
           Never buy property without independent legal advice. Here is what a
@@ -128,8 +128,8 @@ export default function ConveyancersPage() {
 
               <p className="mt-5 flex items-start gap-2.5 rounded-lg border border-line bg-surface px-4 py-3 text-sm text-ink-soft">
                 <CheckShield className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                Verify any advocate&apos;s licence directly with the regulator above, or ask us
-                for an introduction to a vetted practice in your area.
+                Always confirm an advocate&apos;s licence directly with the regulator above before
+                engaging them. We&apos;re happy to help you find a licensed advocate in your area.
               </p>
             </div>
           ))}
@@ -138,9 +138,10 @@ export default function ConveyancersPage() {
 
       {/* CTA */}
       <section className="bg-surface-dark py-12 text-center">
-        <p className="font-semibold text-white">Need a conveyancer introduction?</p>
+        <p className="font-semibold text-white">Need help finding a conveyancer?</p>
         <p className="mt-1 text-sm text-white/55">
-          Our team can connect you with a verified practice in your area.
+          Our team can point you to a licensed advocate in your area — always verify their
+          licence with the regulator before engaging.
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-3">
           <ButtonLink href="/contact" variant="coral">Request an introduction</ButtonLink>

@@ -38,7 +38,7 @@ const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
       { label: "Report a listing", href: "/report" },
       { label: "Anti-fraud policy", href: "/anti-fraud" },
       { label: "Data protection", href: "/data-protection" },
-      { label: "Verified conveyancers", href: "/conveyancers" },
+      { label: "Find a conveyancer", href: "/conveyancers" },
     ],
   },
   {

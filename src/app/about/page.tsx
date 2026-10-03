@@ -97,9 +97,9 @@ export default function AboutPage() {
       {/* How we verify */}
       <section className="container-page py-16 sm:py-20">
         <div className="mx-auto max-w-3xl">
-          <p className="eyebrow">The CoralStones guarantee</p>
+          <p className="eyebrow">How we verify</p>
           <h2 className="mt-3 font-serif text-3xl font-semibold text-primary">
-            Four layers. One promise.
+            Four layers of checks.
           </h2>
           <div className="mt-8 space-y-5">
             {[

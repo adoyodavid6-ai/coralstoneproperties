@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { Property } from "@/lib/types";
+import { sendPropertyEnquiry } from "@/lib/leads/actions";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 import { convertBetween, formatMoney, resolveCurrency } from "@/lib/format";
 import { Price } from "@/components/ui/Price";
@@ -17,7 +18,6 @@ import {
   Close,
   Star,
 } from "@/components/ui/icons";
-import { cn } from "@/lib/cn";
 
 type Action = "enquire" | "book" | "reserve" | "offer";
 
@@ -34,8 +34,8 @@ const ACTION_COPY: Record<Action, { title: string; cta: string; note: string }> 
   },
   reserve: {
     title: "Reserve this property",
-    cta: "Pay reservation deposit",
-    note: "A refundable deposit via mobile money (M-Pesa, MTN MoMo, Airtel Money) or card holds the property. IPN-authoritative — no status is trusted until the provider confirms.",
+    cta: "Request to reserve",
+    note: "Tell the agent you'd like to reserve. They'll confirm the deposit amount and payment options — no payment is taken on this step.",
   },
   offer: {
     title: "Make an offer",
@@ -48,17 +48,13 @@ export function ConversionRail({ property }: { property: Property }) {
   const { t, currency } = useLocale();
   const target = resolveCurrency(currency, property.currency);
   const [action, setAction] = useState<Action | null>(null);
-  const [sent, setSent] = useState(false);
   const agent = property.agent;
 
   const waText = encodeURIComponent(
     `Hi ${agent.name}, I'm interested in "${property.title}" on CoralStones Properties Listings.`,
   );
 
-  const open = (a: Action) => {
-    setAction(a);
-    setSent(false);
-  };
+  const open = (a: Action) => setAction(a);
 
   return (
     <div className="rounded-2xl bg-surface-raised/80 p-5 shadow-card ring-1 ring-line backdrop-blur-xl">
@@ -127,7 +123,7 @@ export function ConversionRail({ property }: { property: Property }) {
 
       <p className="mt-3 flex items-center gap-1.5 text-xs text-ink-soft">
         <CheckShield className="h-3.5 w-3.5 text-verified" />
-        Masked calling keeps your number private and logs the lead.
+        Every enquiry is logged so your request is traceable and nothing slips through.
       </p>
 
       {/* Agent card */}
@@ -162,12 +158,7 @@ export function ConversionRail({ property }: { property: Property }) {
 
       {/* Modal */}
       {action && (
-        <ActionModal
-          action={action}
-          sent={sent}
-          onSend={() => setSent(true)}
-          onClose={() => setAction(null)}
-        />
+        <ActionModal action={action} property={property} onClose={() => setAction(null)} />
       )}
     </div>
   );
@@ -175,16 +166,49 @@ export function ConversionRail({ property }: { property: Property }) {
 
 function ActionModal({
   action,
-  sent,
-  onSend,
+  property,
   onClose,
 }: {
   action: Action;
-  sent: boolean;
-  onSend: () => void;
+  property: Property;
   onClose: () => void;
 }) {
   const copy = ACTION_COPY[action];
+  const [form, setForm] = useState({ name: "", phone: "", offer: "", message: "" });
+  const [company, setCompany] = useState(""); // honeypot
+  const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
+  const [error, setError] = useState("");
+
+  const set = (k: keyof typeof form, v: string) => setForm((f) => ({ ...f, [k]: v }));
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    if (status === "sending") return;
+    if (!form.name.trim() || !form.phone.trim()) {
+      setError("Please add your name and phone number.");
+      return;
+    }
+    setStatus("sending");
+    setError("");
+    const res = await sendPropertyEnquiry({
+      action,
+      propertyId: property.id,
+      propertyTitle: property.title,
+      propertyUrl: typeof window !== "undefined" ? window.location.href : undefined,
+      agentName: property.agent?.name,
+      name: form.name,
+      phone: form.phone,
+      offer: action === "offer" ? form.offer : undefined,
+      message: form.message,
+      company,
+    });
+    if (res.ok) setStatus("done");
+    else {
+      setStatus("error");
+      setError(res.error ?? "Something went wrong. Please try again.");
+    }
+  }
+
   return (
     <div
       className="fixed inset-0 z-50 grid place-items-center bg-primary/50 p-4 backdrop-blur-sm"
@@ -207,15 +231,15 @@ function ActionModal({
           </button>
         </div>
 
-        {sent ? (
+        {status === "done" ? (
           <div className="py-8 text-center">
             <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-verified-soft text-verified">
               <CheckShield className="h-8 w-8" />
             </span>
-            <p className="mt-4 font-serif text-lg text-primary">You're all set</p>
+            <p className="mt-4 font-serif text-lg text-primary">Request sent</p>
             <p className="mt-1 text-sm text-ink-soft">
-              This is a demo — in the live product your request would reach the verified
-              agent and appear in your dashboard.
+              Your request has reached the CoralStones team, who will pass it to the verified
+              agent for this listing. We&apos;ll be in touch shortly.
             </p>
             <button
               onClick={onClose}
@@ -225,22 +249,20 @@ function ActionModal({
             </button>
           </div>
         ) : (
-          <form
-            className="mt-4 space-y-3"
-            onSubmit={(e) => {
-              e.preventDefault();
-              onSend();
-            }}
-          >
+          <form className="mt-4 space-y-3" onSubmit={submit}>
             <input
               required
               placeholder="Your name"
+              value={form.name}
+              onChange={(e) => set("name", e.target.value)}
               className="w-full rounded-lg border border-line-strong bg-surface px-3.5 py-2.5 text-sm focus:border-accent focus:outline-none"
             />
             <input
               required
               type="tel"
               placeholder="Phone (with country code)"
+              value={form.phone}
+              onChange={(e) => set("phone", e.target.value)}
               className="figure w-full rounded-lg border border-line-strong bg-surface px-3.5 py-2.5 text-sm focus:border-accent focus:outline-none"
             />
             {action === "offer" && (
@@ -248,20 +270,40 @@ function ActionModal({
                 type="text"
                 inputMode="numeric"
                 placeholder="Your offer amount"
+                value={form.offer}
+                onChange={(e) => set("offer", e.target.value)}
                 className="figure w-full rounded-lg border border-line-strong bg-surface px-3.5 py-2.5 text-sm focus:border-accent focus:outline-none"
               />
             )}
             <textarea
               rows={3}
               placeholder="Message (optional)"
+              value={form.message}
+              onChange={(e) => set("message", e.target.value)}
               className="w-full rounded-lg border border-line-strong bg-surface px-3.5 py-2.5 text-sm focus:border-accent focus:outline-none"
             />
-            <p className={cn("text-xs text-ink-soft")}>{copy.note}</p>
+            {/* Honeypot — hidden from real users, catches bots */}
+            <input
+              type="text"
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+              value={company}
+              onChange={(e) => setCompany(e.target.value)}
+              className="hidden"
+            />
+            <p className="text-xs text-ink-soft">{copy.note}</p>
+            {error && (
+              <p className="rounded-lg border border-danger/30 bg-danger-soft px-3 py-2 text-xs text-danger" role="alert">
+                {error}
+              </p>
+            )}
             <button
               type="submit"
-              className="w-full rounded-full bg-ink-black py-3 text-sm font-medium text-white transition-colors hover:bg-primary-hover"
+              disabled={status === "sending"}
+              className="w-full rounded-full bg-ink-black py-3 text-sm font-medium text-white transition-colors hover:bg-primary-hover disabled:opacity-60"
             >
-              {copy.cta}
+              {status === "sending" ? "Sending…" : copy.cta}
             </button>
           </form>
         )}

@@ -86,8 +86,8 @@ export default function VerificationPage() {
         <div className="container-page py-10">
           <p className="mx-auto max-w-2xl text-center text-sm leading-relaxed text-ink-soft">
             Ghost listings, fake agents and forged titles are a real risk in East
-            African property. Our answer is simple: every listing is reviewed by
-            a human before it goes live — no exceptions.
+            African property. Our answer is simple: as a standard policy, every
+            listing is reviewed by a human before it goes live.
           </p>
         </div>
       </section>
@@ -98,6 +98,11 @@ export default function VerificationPage() {
         <h2 className="mt-3 font-serif text-3xl font-semibold text-primary sm:text-4xl">
           What we check at every step
         </h2>
+        <p className="mt-3 max-w-2xl text-sm text-ink-soft">
+          Timelines below are typical targets, not guarantees — they may take longer during
+          busy periods or when documents need clarification. We&apos;ll keep you updated if a
+          check runs long.
+        </p>
 
         <div className="mt-10 space-y-6">
           {STAGES.map((s) => (
@@ -116,7 +121,7 @@ export default function VerificationPage() {
                   <span className="rounded-full bg-accent-soft px-3 py-1 text-xs font-semibold text-accent">
                     {s.badge}
                   </span>
-                  <span className="text-xs text-ink-soft">Target: {s.timeline}</span>
+                  <span className="text-xs text-ink-soft">Typical: {s.timeline}</span>
                 </div>
               </div>
               <ul className="mt-5 grid gap-2 sm:grid-cols-2">

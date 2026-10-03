@@ -394,3 +394,85 @@ export async function sendValuationLead(input: ValuationLead): Promise<LeadResul
     { subject: `New valuation request — ${location}`, html, replyTo: email },
   );
 }
+
+// ── Property enquiry / viewing / reserve / offer (listing-page CTAs) ──────────────
+
+export type PropertyEnquiryAction = "enquire" | "book" | "reserve" | "offer";
+
+export type PropertyEnquiryLead = {
+  action: PropertyEnquiryAction;
+  propertyId: string;
+  propertyTitle: string;
+  propertyUrl?: string;
+  agentName?: string;
+  name: string;
+  phone: string;
+  /** Offer amount — only sent for action === "offer". */
+  offer?: string;
+  message?: string;
+  /** Optional — the modals collect phone, not email. */
+  email?: string;
+  /** Honeypot — real users never fill this; bots do. */
+  company?: string;
+};
+
+const ENQUIRY_LABEL: Record<PropertyEnquiryAction, string> = {
+  enquire: "Enquiry",
+  book: "Viewing request",
+  reserve: "Reservation request",
+  offer: "Offer",
+};
+
+/**
+ * Handle the Enquire / Book viewing / Reserve / Make offer actions on a listing
+ * page. Routes to the team inbox + database as a "contact" lead (the schema's
+ * kind set), with the action, property and offer captured in `details`.
+ */
+export async function sendPropertyEnquiry(input: PropertyEnquiryLead): Promise<LeadResult> {
+  if (clean(input.company, 100)) return { ok: true }; // silently drop bots
+
+  const action = input.action;
+  const label = ENQUIRY_LABEL[action] ?? "Enquiry";
+  const name = clean(input.name, 120);
+  const phone = clean(input.phone, 40);
+  const email = clean(input.email, 200);
+  const title = clean(input.propertyTitle, 200);
+  const offer = clean(input.offer, 40);
+  const message = clean(input.message, 5000);
+  const propertyId = clean(input.propertyId, 80);
+  const propertyUrl = clean(input.propertyUrl, 500);
+  const agentName = clean(input.agentName, 120);
+
+  if (!name || !phone) return { ok: false, error: "Please add your name and phone number." };
+  if (email && !isEmail(email)) return { ok: false, error: "Please enter a valid email address." };
+
+  const html = wrap(
+    `New ${label.toLowerCase()}`,
+    row("Property", title) +
+      row("Listing ID", propertyId) +
+      row("Agent", agentName) +
+      (action === "offer" ? row("Offer", offer) : "") +
+      row("From", name) +
+      row("Phone", phone) +
+      row("Email", email) +
+      row("Message", message) +
+      row("Listing URL", propertyUrl),
+  );
+
+  return dispatch(
+    {
+      kind: "contact",
+      name,
+      email,
+      phone,
+      subject: `${label}: ${title}`,
+      message,
+      details: { action, propertyId, propertyTitle: title, offer, agentName, propertyUrl },
+    },
+    {
+      subject: `${label}: ${title} — ${name}`,
+      html,
+      replyTo: email || undefined,
+    },
+  );
+}
