@@ -31,7 +31,7 @@ export function LogoMark({
       viewBox="0 0 48 48"
       fill="none"
       role="img"
-      aria-label="CoralStone Properties Listings"
+      aria-label="CoralStones Properties"
       className={className}
     >
       <rect
@@ -81,14 +81,14 @@ export function Logo({
     const c = monoTone === "paper" ? "var(--color-surface-raised)" : "var(--color-primary)";
     const textCls = monoTone === "paper" ? "text-white" : "text-primary";
     return (
-      <Link href={href} aria-label="CoralStone Properties Listings — home" className="inline-flex items-center gap-2.5">
+      <Link href={href} aria-label="CoralStones Properties — home" className="inline-flex items-center gap-2.5">
         <MonoMark size={size} colour={c} />
         <span className="leading-tight">
           <span className={cn("block font-serif text-[19px] font-semibold tracking-tight", textCls)}>
-            CoralStone
+            CoralStones
           </span>
           <span className={cn("-mt-0.5 block text-[10px] font-medium uppercase tracking-[0.2em] opacity-70", textCls)}>
-            Properties Listings
+            Properties
           </span>
         </span>
       </Link>
@@ -102,7 +102,7 @@ export function Logo({
 
   if (variant === "emblem") {
     return (
-      <Link href={href} aria-label="CoralStone Properties Listings — home" className="inline-flex">
+      <Link href={href} aria-label="CoralStones Properties — home" className="inline-flex">
         {mark}
       </Link>
     );
@@ -116,7 +116,7 @@ export function Logo({
   return (
     <Link
       href={href}
-      aria-label="CoralStone Properties Listings — home"
+      aria-label="CoralStones Properties — home"
       className={cn(
         "inline-flex items-center gap-2.5",
         variant === "stacked" && "flex-col gap-2 text-center",
@@ -126,10 +126,10 @@ export function Logo({
       <span className="leading-tight">
         <span className="block font-serif text-[19px] font-semibold tracking-tight">
           <span className={coralText}>Coral</span>
-          <span className={cn("font-medium", stoneText)}>Stone</span>
+          <span className={cn("font-medium", stoneText)}>Stones</span>
         </span>
         <span className={cn("-mt-0.5 block text-[10px] font-medium uppercase tracking-[0.2em]", subText)}>
-          Properties Listings
+          Properties
         </span>
       </span>
     </Link>
@@ -139,7 +139,7 @@ export function Logo({
 /** Single-colour outline emblem for the mono variant. */
 function MonoMark({ size, colour }: { size: number; colour: string }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" role="img" aria-label="CoralStone Properties Listings">
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" role="img" aria-label="CoralStones Properties">
       <rect x="2" y="2" width="44" height="44" rx="11" fill="none" stroke={colour} strokeWidth={2} />
       <g stroke={colour} strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" fill="none">
         <path d="M15.5 18.5 L32.5 18.5 L35.5 23.8 L24 35.8 L12.5 23.8 Z" />
