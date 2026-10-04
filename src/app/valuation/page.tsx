@@ -91,7 +91,11 @@ export default function ValuationPage() {
             {/* Market benchmarks */}
             <div className="mt-10">
               <p className="eyebrow">Market benchmarks</p>
-              <h3 className="mt-3 font-serif text-xl font-semibold text-primary">Indicative price ranges by area</h3>
+              <h3 className="mt-3 font-serif text-xl font-semibold text-primary">Rough price ranges by area</h3>
+              <p className="mt-2 text-sm text-ink-soft">
+                Ballpark figures to set expectations — not an official market index. For a number you
+                can act on, request a valuation below.
+              </p>
               <div className="mt-5 overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
@@ -115,7 +119,10 @@ export default function ValuationPage() {
                 </table>
               </div>
               <p className="mt-3 text-xs text-ink-soft">
-                Indicative ranges only, for general guidance. Actual values vary by unit condition, floor level, finish quality, and negotiation. Not a substitute for a formal valuation.
+                Rough estimates compiled by our team for general guidance — not sourced from a verified
+                market dataset or published index, and not independently audited. Yields are illustrative.
+                Actual values vary widely by unit condition, floor level, finish quality and negotiation,
+                and move over time. This is not a substitute for a formal valuation by a registered valuer.
               </p>
             </div>
           </div>
