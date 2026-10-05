@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { LEGAL, LEGAL_ADDRESS_ONELINE } from "@/lib/legal";
 
 export const metadata: Metadata = {
   title: "Terms of service & privacy — CoralStones",
@@ -38,6 +39,7 @@ export default function TermsPage() {
             ["#liability", "Liability"],
             ["#privacy", "Privacy summary"],
             ["#cookies", "Cookies"],
+            ["#legal", "Legal identity"],
           ].map(([href, label]) => (
             <a key={href} href={href} className="text-accent hover:brightness-90">{label}</a>
           ))}
@@ -92,6 +94,18 @@ export default function TermsPage() {
           <Section title="8. Changes to these terms">
             <p>We may update these terms. We will notify registered users by email at least 14 days before material changes take effect. Continued use of the platform after that date constitutes acceptance.</p>
             <p>Questions? <Link href="/contact" className="text-accent hover:brightness-90">Contact us</Link>.</p>
+          </Section>
+
+          <Section id="legal" title="9. Legal identity & contact">
+            <p>{LEGAL.entity} is the operator of CoralStones Properties Listings, registered in {LEGAL.address.country}.</p>
+            <ul className="list-disc space-y-1.5 pl-4">
+              <li><strong className="text-primary">Company registration no.:</strong> {LEGAL.registrationNumber}</li>
+              <li><strong className="text-primary">KRA PIN:</strong> {LEGAL.kraPin}</li>
+              <li><strong className="text-primary">Data controller (ODPC) registration no.:</strong> {LEGAL.odpcRegistrationNumber}</li>
+              <li><strong className="text-primary">Registered office:</strong> {LEGAL_ADDRESS_ONELINE}</li>
+              <li><strong className="text-primary">Phone:</strong> {LEGAL.phone}</li>
+              <li><strong className="text-primary">Email:</strong> <a href="mailto:info@coralstonesproperties.co.ke" className="text-accent hover:brightness-90">info@coralstonesproperties.co.ke</a></li>
+            </ul>
           </Section>
 
         </div>

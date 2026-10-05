@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CookieSettingsButton } from "@/components/layout/CookieSettings";
+import { LEGAL, LEGAL_ADDRESS_ONELINE } from "@/lib/legal";
 
 export const metadata: Metadata = {
   title: "Data protection & privacy — CoralStones",
@@ -56,8 +57,16 @@ export default function DataProtectionPage() {
 
           <Section title="Who we are">
             <p>
-              CoralStones Properties Listings Limited is the data controller for all personal data collected
-              through this platform. We are registered in Kenya. Our Data Protection Officer can be reached at{" "}
+              {LEGAL.entity} is the data controller for all personal data collected through this platform.
+              We are registered in {LEGAL.address.country}.
+            </p>
+            <ul className="list-disc space-y-1.5 pl-4">
+              <li><strong className="text-primary">Company registration no.:</strong> {LEGAL.registrationNumber}</li>
+              <li><strong className="text-primary">ODPC data-controller registration no.:</strong> {LEGAL.odpcRegistrationNumber}</li>
+              <li><strong className="text-primary">Registered office:</strong> {LEGAL_ADDRESS_ONELINE}</li>
+            </ul>
+            <p>
+              Our Data Protection Officer can be reached at{" "}
               <a href="mailto:privacy@coralstonesproperties.co.ke" className="text-accent hover:brightness-90">privacy@coralstonesproperties.co.ke</a>.
             </p>
           </Section>

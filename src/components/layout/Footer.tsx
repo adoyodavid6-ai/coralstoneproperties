@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 import { Logo } from "@/components/ui/Logo";
 import { SubscribeForm } from "./SubscribeForm";
+import { LEGAL, LEGAL_ADDRESS_ONELINE } from "@/lib/legal";
 
 const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
   {
@@ -125,9 +126,17 @@ export function Footer() {
       </div>
 
       <div className="relative border-t border-white/10">
-        <div className="container-page flex flex-col items-center justify-between gap-3 py-6 text-xs text-white/60 sm:flex-row">
-          <p>© {new Date().getFullYear()} CoralStones Properties. {t("footer.rights")}</p>
-          <p className="figure">Nairobi · Mombasa · Kisumu</p>
+        <div className="container-page space-y-3 py-6 text-xs text-white/50">
+          <p className="leading-relaxed">
+            {LEGAL.entity} · Reg. no. {LEGAL.registrationNumber} · KRA PIN {LEGAL.kraPin} ·
+            Data Protection (ODPC) reg. {LEGAL.odpcRegistrationNumber}
+            <br />
+            {LEGAL_ADDRESS_ONELINE}
+          </p>
+          <div className="flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-3 text-white/60 sm:flex-row">
+            <p>© {new Date().getFullYear()} CoralStones Properties. {t("footer.rights")}</p>
+            <p className="figure">Nairobi · Mombasa · Kisumu</p>
+          </div>
         </div>
       </div>
     </footer>
