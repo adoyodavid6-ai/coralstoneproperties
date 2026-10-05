@@ -6,6 +6,7 @@ import { ButtonLink } from "@/components/ui/Button";
 import { CheckShield, Check, Pin, Camera, Phone, Users, Sparkle, Chevron } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
 import { sendListingLead } from "@/lib/leads/actions";
+import { startVerificationPayment } from "@/lib/payment/actions";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 type Intent = "sale" | "rent" | "short_let";
@@ -71,10 +72,10 @@ const OWNER_TYPES: { value: OwnerType; label: string; sub: string }[] = [
   { value: "developer", label: "Developer",          sub: "New project / off-plan" },
 ];
 
-const VERIF_TIERS: { value: VerifTier; label: string; price: string; sub: string; highlight?: boolean }[] = [
-  { value: "basic",    label: "Basic",      price: "KSh 1,000", sub: "Listing photos, location and details confirmed." },
-  { value: "standard", label: "Standard",   price: "KSh 2,500", sub: "Basic + agent identity & licence checked.", highlight: true },
-  { value: "title",    label: "Full Title", price: "KSh 5,000", sub: "Title deed search + full ownership confirmation." },
+const VERIF_TIERS: { value: VerifTier; label: string; price: string; amount: number; sub: string; highlight?: boolean }[] = [
+  { value: "basic",    label: "Basic",      price: "KSh 1,000", amount: 1000, sub: "Listing photos, location and details confirmed." },
+  { value: "standard", label: "Standard",   price: "KSh 2,500", amount: 2500, sub: "Basic + agent identity & licence checked.", highlight: true },
+  { value: "title",    label: "Full Title", price: "KSh 5,000", amount: 5000, sub: "Title deed search + full ownership confirmation." },
 ];
 
 const CURRENCIES: Currency[] = ["KES", "USD", "GBP"];
@@ -168,10 +169,35 @@ export default function ListPropertyPage() {
     if (!canAdvance() || pending) return;
     setPending(true);
     setError("");
+
+    // 1) Capture the listing enquiry first — never lost even if payment is abandoned.
     const res = await sendListingLead({ ...data, company });
+    if (!res.ok) {
+      setPending(false);
+      setError(res.error ?? "Something went wrong. Please try again.");
+      return;
+    }
+
+    // 2) Collect the verification fee for the chosen tier (Flutterwave).
+    const tier = VERIF_TIERS.find((t) => t.value === data.verifTier);
+    const pay = await startVerificationPayment({
+      listingTitle: data.title,
+      tier: data.verifTier || "basic",
+      tierLabel: tier?.label ?? "Verification",
+      amount: tier?.amount ?? 0,
+      currency: "KES",
+      name: data.name,
+      email: data.email,
+    });
+
+    if (pay.ok && "paymentUrl" in pay) {
+      window.location.href = pay.paymentUrl; // → Flutterwave hosted checkout
+      return;
+    }
+
+    // Gateway not configured (demo) → show the normal success screen.
     setPending(false);
-    if (res.ok) setSubmit(true);
-    else setError(res.error ?? "Something went wrong. Please try again.");
+    setSubmit(true);
   }
 
   const showBedBath = data.propertyType !== "land" && data.propertyType !== "commercial";

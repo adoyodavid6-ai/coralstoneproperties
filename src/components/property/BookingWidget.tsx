@@ -9,7 +9,17 @@ import { calcBooking, nightsBetween } from "@/lib/booking/calc";
 import { VerifiedStrip } from "@/components/ui/VerifiedBadge";
 import { CheckShield, Star, Calendar, Users } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
-import { startBookingPayment } from "@/lib/payment/actions";
+import { startBookingPayment, startMpesaBooking, pollMpesaBooking } from "@/lib/payment/actions";
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+/** Normalise a Kenyan number to 2547…/2541… for the M-Pesa prompt; null if invalid. */
+function normalizePhone(v: string): string | null {
+  let d = v.replace(/\D/g, "");
+  if (d.startsWith("0")) d = "254" + d.slice(1);
+  else if (/^(7|1)\d{8}$/.test(d)) d = "254" + d;
+  return /^254(7|1)\d{8}$/.test(d) ? d : null;
+}
 
 const inputCls =
   "w-full rounded-lg border border-line-strong bg-surface px-3 py-2 text-sm text-primary outline-none focus:border-accent focus:ring-2 focus:ring-accent/20";
@@ -32,7 +42,7 @@ export function BookingWidget({ property }: { property: Property }) {
   const { fees, createBooking, bookingsFor } = useBookings();
 
   const perDay = property.pricePeriod === "day" || property.type === "venue";
-  const unit = perDay ? "day" : "night";
+  const unit: "night" | "day" = perDay ? "day" : "night";
   const capacity = property.capacity;
   const nUnit = (n: number) => `${n} ${unit}${n === 1 ? "" : "s"}`;
 
@@ -42,8 +52,15 @@ export function BookingWidget({ property }: { property: Property }) {
   const [guests, setGuests] = useState(perDay ? Math.min(100, capacity ?? 100) : 2);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  // M-Pesa only settles in KES; card/Flutterwave covers every currency.
+  const mpesaAvailable = property.currency === "KES";
+  const [method, setMethod] = useState<"card" | "mpesa">(mpesaAvailable ? "mpesa" : "card");
   const [payError, setPayError] = useState("");
-  const [confirmed, setConfirmed] = useState<{ id: string; nights: number } | null>(null);
+  const [waitMsg, setWaitMsg] = useState(""); // M-Pesa STK "check your phone" status
+  const [confirmed, setConfirmed] = useState<
+    { id: string; nights: number; demo: boolean; method: "card" | "mpesa" } | null
+  >(null);
   const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
@@ -64,54 +81,98 @@ export function BookingWidget({ property }: { property: Property }) {
   }, [checkIn, checkOut, nights, bookingsFor, property.id]);
 
   const emailValid = email === "" || isEmail(email);
-  const canBook = nights >= 1 && !clash && name.trim().length > 1 && isEmail(email);
+  const phoneValid = normalizePhone(phone) !== null;
   const money = (n: number) => formatMoney(n, property.currency);
+  const baseOk = nights >= 1 && !clash && name.trim().length > 1;
+  const canBook = method === "mpesa" ? baseOk && phoneValid : baseOk && isEmail(email);
+
+  const commonInput = () => ({
+    propertyId: property.id,
+    propertySlug: property.slug,
+    propertyTitle: property.title,
+    currency: property.currency,
+    unit,
+    checkIn,
+    checkOut,
+    guests,
+    guestName: name.trim(),
+    guestEmail: email.trim(),
+    breakdown,
+  });
+
+  // Mirror a confirmed booking into local "My trips" (the bookings page is
+  // device-local). The Flutterwave redirect path can't do this; M-Pesa & demo can.
+  const recordLocalBooking = () =>
+    createBooking({
+      propertyId: property.id,
+      propertySlug: property.slug,
+      propertyTitle: property.title,
+      currency: property.currency,
+      unit,
+      nightlyRate: property.price,
+      checkIn,
+      checkOut,
+      guests,
+      guestName: name.trim(),
+    });
 
   const reserve = (e: React.FormEvent) => {
     e.preventDefault();
     if (!canBook || isPending) return;
     setPayError("");
+    setWaitMsg("");
 
     startTransition(async () => {
-      const result = await startBookingPayment({
-        propertyId: property.id,
-        propertySlug: property.slug,
-        propertyTitle: property.title,
-        currency: property.currency,
-        unit,
-        checkIn,
-        checkOut,
-        guests,
-        guestName: name.trim(),
-        guestEmail: email.trim(),
-        breakdown,
-      });
-
-      if (!result.ok) {
-        setPayError(result.error);
+      if (method === "card") {
+        const result = await startBookingPayment(commonInput());
+        if (!result.ok) {
+          setPayError(result.error);
+          return;
+        }
+        if ("paymentUrl" in result) {
+          // Real payment — redirect to the Flutterwave hosted page.
+          window.location.href = result.paymentUrl;
+          return;
+        }
+        // Demo fallback (Flutterwave not configured).
+        recordLocalBooking();
+        setConfirmed({ id: result.bookingId, nights, demo: true, method: "card" });
         return;
       }
 
-      if ("paymentUrl" in result) {
-        // Real payment — redirect to Flutterwave hosted page
-        window.location.href = result.paymentUrl;
+      // M-Pesa: trigger the STK push, then poll until it settles.
+      const started = await startMpesaBooking({ ...commonInput(), phone: phone.trim() });
+      if (!started.ok) {
+        setPayError(started.error);
+        return;
+      }
+      if ("demo" in started) {
+        recordLocalBooking();
+        setConfirmed({ id: started.bookingId, nights, demo: true, method: "mpesa" });
         return;
       }
 
-      // Demo fallback (Flutterwave not yet configured)
-      createBooking({
-        propertyId: property.id,
-        propertySlug: property.slug,
-        propertyTitle: property.title,
-        currency: property.currency,
-        unit,
-        nightlyRate: property.price,
-        checkIn,
-        checkOut,
-        guests,
-        guestName: name.trim(),
-      });
-      setConfirmed({ id: result.bookingId, nights });
+      setWaitMsg(`Check your phone — enter your M-Pesa PIN to pay ${money(breakdown.guestTotal)}.`);
+      for (let i = 0; i < 30; i++) {
+        await sleep(4000);
+        const poll = await pollMpesaBooking(started.checkoutRequestId);
+        if (!poll.ok) continue; // transient — keep waiting
+        if (poll.status === "paid") {
+          recordLocalBooking();
+          setWaitMsg("");
+          setConfirmed({ id: poll.bookingId, nights, demo: false, method: "mpesa" });
+          return;
+        }
+        if (poll.status === "failed") {
+          setWaitMsg("");
+          setPayError(poll.error);
+          return;
+        }
+      }
+      setWaitMsg("");
+      setPayError(
+        "We didn't get confirmation in time. If you completed the payment it will reflect shortly — check My Trips or contact support.",
+      );
     });
   };
 
@@ -129,7 +190,11 @@ export function BookingWidget({ property }: { property: Property }) {
           Confirmation <span className="figure">{confirmed.id}</span>.
         </p>
         <p className="mt-2 text-xs text-ink-soft">
-          Demo reservation — payment gateway not yet active.
+          {confirmed.demo
+            ? "Demo reservation — payment gateway not yet active."
+            : confirmed.method === "mpesa"
+              ? "Paid via M-Pesa. Saved to your trips."
+              : "Payment received. Saved to your trips."}
         </p>
         <Link
           href="/bookings"
@@ -243,7 +308,9 @@ export function BookingWidget({ property }: { property: Property }) {
       </label>
 
       <label className="mt-3 block">
-        <span className="block text-[11px] font-medium uppercase tracking-wide text-ink-soft">Email</span>
+        <span className="block text-[11px] font-medium uppercase tracking-wide text-ink-soft">
+          {method === "mpesa" ? "Email (optional)" : "Email"}
+        </span>
         <input
           type="email"
           className={cn(inputCls, "mt-1", !emailValid && "border-danger focus:border-danger focus:ring-danger/20")}
@@ -253,6 +320,54 @@ export function BookingWidget({ property }: { property: Property }) {
         />
         {!emailValid && <p className="mt-1 text-xs text-danger">Enter a valid email address.</p>}
       </label>
+
+      {/* Payment method — M-Pesa STK push (KES listings) or card/other via Flutterwave. */}
+      {mpesaAvailable && (
+        <div className="mt-4">
+          <span className="block text-[11px] font-medium uppercase tracking-wide text-ink-soft">Pay with</span>
+          <div className="mt-1 grid grid-cols-2 gap-2">
+            {(["mpesa", "card"] as const).map((m) => (
+              <button
+                key={m}
+                type="button"
+                onClick={() => setMethod(m)}
+                className={cn(
+                  "rounded-lg border px-3 py-2 text-sm font-medium transition-colors",
+                  method === m
+                    ? "border-accent bg-accent-soft text-accent"
+                    : "border-line-strong text-primary hover:border-accent",
+                )}
+              >
+                {m === "mpesa" ? "M-Pesa" : "Card / other"}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {method === "mpesa" && (
+        <label className="mt-3 block">
+          <span className="block text-[11px] font-medium uppercase tracking-wide text-ink-soft">M-Pesa phone number</span>
+          <input
+            type="tel"
+            inputMode="numeric"
+            className={cn(inputCls, "figure mt-1", phone !== "" && !phoneValid && "border-danger focus:border-danger focus:ring-danger/20")}
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="07XX XXX XXX"
+          />
+          {phone !== "" && !phoneValid && (
+            <p className="mt-1 text-xs text-danger">Enter a valid Safaricom number.</p>
+          )}
+        </label>
+      )}
+
+      {waitMsg && (
+        <p className="mt-3 flex items-center gap-2 rounded-lg bg-accent-soft px-3 py-2 text-xs text-accent">
+          <span className="h-3.5 w-3.5 shrink-0 animate-spin rounded-full border-2 border-current border-t-transparent" />
+          {waitMsg}
+        </p>
+      )}
 
       {payError && (
         <p className="mt-3 rounded-lg bg-danger-soft px-3 py-2 text-xs text-danger">{payError}</p>
@@ -269,13 +384,17 @@ export function BookingWidget({ property }: { property: Property }) {
           <Calendar className="h-4 w-4" />
         )}
         {isPending
-          ? "Redirecting to payment…"
+          ? method === "mpesa"
+            ? "Waiting for M-Pesa…"
+            : "Redirecting to payment…"
           : nights >= 1
-            ? `Pay ${money(breakdown.guestTotal)}`
+            ? `Pay ${money(breakdown.guestTotal)}${method === "mpesa" ? " with M-Pesa" : ""}`
             : "Reserve"}
       </button>
       <p className="mt-2 text-center text-xs text-ink-soft">
-        Secure checkout via Flutterwave · M-Pesa, Visa, Mastercard
+        {method === "mpesa"
+          ? "Lipa na M-Pesa · a PIN prompt will pop up on your phone"
+          : "Secure checkout via Flutterwave · Visa, Mastercard, mobile money"}
       </p>
 
       {/* Host trust */}
