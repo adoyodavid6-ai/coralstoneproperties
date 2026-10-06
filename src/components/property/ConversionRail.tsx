@@ -1,8 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Property } from "@/lib/types";
 import { sendPropertyEnquiry } from "@/lib/leads/actions";
+import { startReservationDeposit } from "@/lib/payment/actions";
+import { normalizePhone } from "@/lib/payment/phone";
+import { pollMpesa } from "@/lib/payment/poll";
+import { RESERVATION_DEPOSIT_KES } from "@/lib/payment/reservation";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 import { convertBetween, formatMoney, resolveCurrency } from "@/lib/format";
 import { Price } from "@/components/ui/Price";
@@ -174,20 +178,88 @@ function ActionModal({
   onClose: () => void;
 }) {
   const copy = ACTION_COPY[action];
+  // A reservation deposit can be taken via M-Pesa on KES sale listings.
+  const depositEligible = action === "reserve" && property.currency === "KES";
+  const depositLabel = formatMoney(RESERVATION_DEPOSIT_KES, "KES");
+
+  const [mode, setMode] = useState<"deposit" | "enquiry">(depositEligible ? "deposit" : "enquiry");
   const [form, setForm] = useState({ name: "", phone: "", offer: "", message: "" });
   const [company, setCompany] = useState(""); // honeypot
-  const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "sending" | "waiting" | "done" | "error">("idle");
+  const [doneKind, setDoneKind] = useState<"enquiry" | "deposit" | "deposit_demo">("enquiry");
   const [error, setError] = useState("");
 
+  const depositMode = depositEligible && mode === "deposit";
+  const busy = status === "sending" || status === "waiting";
   const set = (k: keyof typeof form, v: string) => setForm((f) => ({ ...f, [k]: v }));
+
+  // The modal can unmount (user closes it) while an M-Pesa poll is still
+  // running — don't setState after that.
+  const alive = useRef(true);
+  useEffect(() => () => { alive.current = false; }, []);
+
+  const switchMode = (m: "deposit" | "enquiry") => {
+    setMode(m);
+    setError("");
+    setStatus("idle");
+  };
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (status === "sending") return;
+    if (busy) return;
     if (!form.name.trim() || !form.phone.trim()) {
       setError("Please add your name and phone number.");
       return;
     }
+
+    // Reserve + KES + deposit mode → take a refundable M-Pesa deposit.
+    if (depositMode) {
+      if (!normalizePhone(form.phone)) {
+        setError("Enter a valid Safaricom number, e.g. 07XX XXX XXX.");
+        return;
+      }
+      setStatus("sending");
+      setError("");
+      const started = await startReservationDeposit({
+        propertyId: property.id,
+        propertySlug: property.slug,
+        propertyTitle: property.title,
+        name: form.name,
+        phone: form.phone,
+        message: form.message || undefined,
+      });
+      if (!alive.current) return;
+      if (!started.ok) {
+        setStatus("error");
+        setError(started.error);
+        return;
+      }
+      if ("demo" in started) {
+        setDoneKind("deposit_demo");
+        setStatus("done");
+        return;
+      }
+      setStatus("waiting");
+      const final = await pollMpesa(started.checkoutRequestId);
+      if (!alive.current) return;
+      if (final.kind === "paid") {
+        setDoneKind("deposit");
+        setStatus("done");
+        return;
+      }
+      if (final.kind === "failed") {
+        setStatus("error");
+        setError(final.error);
+        return;
+      }
+      setStatus("error");
+      setError(
+        "Your reservation request has reached the agent. We're still waiting on M-Pesa confirmation — if you completed the payment it will reflect shortly. Contact support if it doesn't appear.",
+      );
+      return;
+    }
+
+    // Everything else → capture an enquiry lead.
     setStatus("sending");
     setError("");
     const res = await sendPropertyEnquiry({
@@ -202,12 +274,32 @@ function ActionModal({
       message: form.message,
       company,
     });
-    if (res.ok) setStatus("done");
-    else {
+    if (!alive.current) return;
+    if (res.ok) {
+      setDoneKind("enquiry");
+      setStatus("done");
+    } else {
       setStatus("error");
       setError(res.error ?? "Something went wrong. Please try again.");
     }
   }
+
+  const doneCopy =
+    doneKind === "deposit"
+      ? { title: "Deposit received", body: `${depositLabel} paid via M-Pesa. The verified agent will be in touch to take your reservation forward.` }
+      : doneKind === "deposit_demo"
+        ? { title: "Almost there", body: `Demo mode — in the live product a ${depositLabel} M-Pesa deposit would be taken now. Your enquiry has reached the team.` }
+        : { title: "Request sent", body: "Your request has reached the CoralStones team, who will pass it to the verified agent for this listing. We'll be in touch shortly." };
+
+  const buttonLabel = busy
+    ? status === "waiting"
+      ? "Waiting for M-Pesa…"
+      : depositMode
+        ? "Starting…"
+        : "Sending…"
+    : depositMode
+      ? `Pay ${depositLabel} deposit`
+      : copy.cta;
 
   return (
     <div
@@ -236,11 +328,8 @@ function ActionModal({
             <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-verified-soft text-verified">
               <CheckShield className="h-8 w-8" />
             </span>
-            <p className="mt-4 font-serif text-lg text-primary">Request sent</p>
-            <p className="mt-1 text-sm text-ink-soft">
-              Your request has reached the CoralStones team, who will pass it to the verified
-              agent for this listing. We&apos;ll be in touch shortly.
-            </p>
+            <p className="mt-4 font-serif text-lg text-primary">{doneCopy.title}</p>
+            <p className="mt-1 text-sm text-ink-soft">{doneCopy.body}</p>
             <button
               onClick={onClose}
               className="mt-5 rounded-full bg-ink-black px-6 py-2.5 text-sm font-medium text-white"
@@ -260,7 +349,8 @@ function ActionModal({
             <input
               required
               type="tel"
-              placeholder="Phone (with country code)"
+              inputMode={depositMode ? "numeric" : undefined}
+              placeholder={depositMode ? "M-Pesa number, e.g. 07XX XXX XXX" : "Phone (with country code)"}
               value={form.phone}
               onChange={(e) => set("phone", e.target.value)}
               className="figure w-full rounded-lg border border-line-strong bg-surface px-3.5 py-2.5 text-sm focus:border-accent focus:outline-none"
@@ -292,7 +382,17 @@ function ActionModal({
               onChange={(e) => setCompany(e.target.value)}
               className="hidden"
             />
-            <p className="text-xs text-ink-soft">{copy.note}</p>
+            <p className="text-xs text-ink-soft">
+              {depositMode
+                ? `A refundable ${depositLabel} deposit via M-Pesa registers your interest with the verified agent. It doesn't remove the listing or set a price — the agent takes it from there.`
+                : copy.note}
+            </p>
+            {status === "waiting" && (
+              <p className="flex items-center gap-2 rounded-lg bg-accent-soft px-3 py-2 text-xs text-accent">
+                <span className="h-3.5 w-3.5 shrink-0 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                Check your phone — enter your M-Pesa PIN to pay {depositLabel}.
+              </p>
+            )}
             {error && (
               <p className="rounded-lg border border-danger/30 bg-danger-soft px-3 py-2 text-xs text-danger" role="alert">
                 {error}
@@ -300,11 +400,22 @@ function ActionModal({
             )}
             <button
               type="submit"
-              disabled={status === "sending"}
+              disabled={busy}
               className="w-full rounded-full bg-ink-black py-3 text-sm font-medium text-white transition-colors hover:bg-primary-hover disabled:opacity-60"
             >
-              {status === "sending" ? "Sending…" : copy.cta}
+              {buttonLabel}
             </button>
+            {depositEligible && !busy && (
+              <button
+                type="button"
+                onClick={() => switchMode(depositMode ? "enquiry" : "deposit")}
+                className="w-full text-center text-xs font-medium text-accent hover:brightness-90"
+              >
+                {depositMode
+                  ? "Prefer not to pay now? Send an enquiry instead"
+                  : `Pay a refundable ${depositLabel} deposit instead`}
+              </button>
+            )}
           </form>
         )}
       </div>

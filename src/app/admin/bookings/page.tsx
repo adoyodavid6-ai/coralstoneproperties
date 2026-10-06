@@ -1,13 +1,19 @@
-"use client";
-
-import { useMemo } from "react";
-import { useBookings } from "@/lib/booking/BookingProvider";
+import { getBookings } from "@/lib/booking/adminService";
+import type { AdminBooking } from "@/lib/booking/adminService";
+import type { Currency } from "@/lib/types";
 import { formatMoney, convertBetween } from "@/lib/format";
-import { Panel, Field, inputClass } from "@/components/admin/ui";
+import { Panel } from "@/components/admin/ui";
+import { FeeModelPanel } from "@/components/admin/FeeModelPanel";
 import { cn } from "@/lib/cn";
 
+// Live data from Supabase — always render per request.
+export const dynamic = "force-dynamic";
+
 const fmtDate = (iso: string) =>
-  new Date(iso).toLocaleDateString(undefined, { day: "numeric", month: "short" });
+  new Date(iso).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
+
+// Mask the guest's M-Pesa number — PII, shown only partially in the console.
+const maskPhone = (p: string) => (p.length >= 8 ? `${p.slice(0, 6)}•••${p.slice(-2)}` : p);
 
 function StatCard({ label, value, sub }: { label: string; value: string; sub?: string }) {
   return (
@@ -19,135 +25,131 @@ function StatCard({ label, value, sub }: { label: string; value: string; sub?: s
   );
 }
 
-export default function AdminBookings() {
-  const { fees, bookings, setStatus, updateFees } = useBookings();
+const STATUS_TONE: Record<string, string> = {
+  paid: "bg-verified-soft text-verified ring-verified/20",
+  confirmed: "bg-verified-soft text-verified ring-verified/20",
+  pending: "bg-warning-soft text-warning ring-warning/20",
+  cancelled: "bg-surface-muted text-ink-soft ring-line",
+};
 
-  // Cross-currency totals are normalised to KES for a single headline figure.
-  const kes = (n: number, from: (typeof bookings)[number]["currency"]) =>
-    convertBetween(n, from, "KES");
+function StatusPill({ status }: { status: string }) {
+  return (
+    <span
+      className={cn(
+        "inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ring-1",
+        STATUS_TONE[status] ?? STATUS_TONE.cancelled,
+      )}
+    >
+      {status}
+    </span>
+  );
+}
 
-  const totals = useMemo(() => {
-    const active = bookings.filter((b) => b.status !== "cancelled");
-    let gross = 0, revenue = 0, payoutDue = 0, paidOut = 0;
-    for (const b of active) {
-      gross += kes(b.guestTotal, b.currency);
-      revenue += kes(b.platformRevenue, b.currency);
-      if (b.status === "paid_out") paidOut += kes(b.ownerPayout, b.currency);
-      else payoutDue += kes(b.ownerPayout, b.currency);
-    }
-    return { count: active.length, gross, revenue, payoutDue, paidOut };
-  }, [bookings]);
+function MethodPill({ method }: { method: AdminBooking["method"] }) {
+  const label = method === "mpesa" ? "M-Pesa" : method === "card" ? "Card" : "—";
+  return (
+    <span
+      className={cn(
+        "inline-flex rounded-full px-2 py-0.5 text-xs font-medium ring-1",
+        method === "mpesa"
+          ? "bg-verified-soft text-verified ring-verified/20"
+          : method === "card"
+            ? "bg-accent-soft text-accent ring-accent/20"
+            : "bg-surface-muted text-ink-soft ring-line",
+      )}
+    >
+      {label}
+    </span>
+  );
+}
 
-  const pctInput = (label: string, value: number, onPct: (frac: number) => void) => (
-    <Field label={label}>
-      <div className="flex items-center gap-1.5">
-        <input
-          className={cn(inputClass, "figure")}
-          inputMode="decimal"
-          value={Math.round(value * 1000) / 10}
-          onChange={(e) => onPct((Number(e.target.value) || 0) / 100)}
-        />
-        <span className="text-sm text-ink-soft">%</span>
-      </div>
-    </Field>
+export default async function AdminBookings() {
+  const bookings = await getBookings();
+
+  const paid = bookings.filter((b) => b.status === "paid");
+  const pending = bookings.filter((b) => b.status === "pending");
+  // Normalise paid amounts to KES for a single headline figure.
+  const grossPaidKes = paid.reduce(
+    (sum, b) => sum + convertBetween(b.amount, b.currency as Currency, "KES"),
+    0,
   );
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-serif text-2xl font-semibold text-primary">Short-let bookings &amp; billing</h1>
+        <h1 className="font-serif text-2xl font-semibold text-primary">Payments &amp; bookings</h1>
         <p className="mt-1 text-sm text-ink-soft">
-          The Airbnb-style model: guests are billed the stay plus a service fee; owners are paid out
-          minus the platform commission. Totals shown ≈ in KES across currencies.
+          Live from Supabase — short-let/venue bookings and sale reservation deposits, with the
+          payment method and M-Pesa receipt / Flutterwave reference. Totals ≈ in KES across currencies.
         </p>
       </div>
 
-      {/* Revenue summary */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <StatCard label="Bookings" value={String(totals.count)} sub="active reservations" />
-        <StatCard label="Gross booking value" value={`≈ ${formatMoney(totals.gross, "KES", { compact: true })}`} sub="guest payments" />
-        <StatCard label="Platform revenue" value={`≈ ${formatMoney(totals.revenue, "KES", { compact: true })}`} sub="service + commission" />
-        <StatCard label="Owner payouts due" value={`≈ ${formatMoney(totals.payoutDue, "KES", { compact: true })}`} sub={`${formatMoney(totals.paidOut, "KES", { compact: true })} paid`} />
+        <StatCard label="Total" value={String(bookings.length)} sub="all records" />
+        <StatCard label="Paid" value={String(paid.length)} sub="completed payments" />
+        <StatCard label="Pending" value={String(pending.length)} sub="awaiting payment" />
+        <StatCard
+          label="Gross paid"
+          value={`≈ ${formatMoney(grossPaidKes, "KES", { compact: true })}`}
+          sub="paid, normalised to KES"
+        />
       </div>
 
-      {/* Fee configuration */}
-      <Panel title="Fee model">
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-          {pctInput("Guest service fee", fees.guestServiceFeePct, (v) => updateFees({ guestServiceFeePct: v }))}
-          {pctInput("Host commission", fees.hostServiceFeePct, (v) => updateFees({ hostServiceFeePct: v }))}
-          {pctInput("Tourism levy", fees.taxPct, (v) => updateFees({ taxPct: v }))}
-          <Field label="Cleaning fee (× nightly)">
-            <input
-              className={cn(inputClass, "figure")}
-              inputMode="decimal"
-              value={fees.cleaningFeeRate}
-              onChange={(e) => updateFees({ cleaningFeeRate: Number(e.target.value) || 0 })}
-            />
-          </Field>
-        </div>
-        <p className="mt-3 text-xs text-ink-soft">
-          Guest pays: nights + cleaning + service fee (+ levy). Owner receives: nights + cleaning − commission.
-        </p>
-      </Panel>
-
-      {/* Ledger */}
-      <Panel title={`Bookings ledger (${bookings.length})`}>
+      <Panel title={`Payments ledger (${bookings.length})`}>
         {bookings.length === 0 ? (
           <p className="py-8 text-center text-sm text-ink-soft">
-            No bookings yet — reserve a short-let on the site to see it here.
+            No bookings or deposits yet. Once a payment is made on the site (or in demo mode with a
+            configured gateway), it appears here.
           </p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[820px] text-left text-sm">
+            <table className="w-full min-w-[860px] text-left text-sm">
               <thead className="border-b border-line text-xs uppercase tracking-wide text-ink-soft">
                 <tr>
                   <th className="px-3 py-3 font-medium">Property / guest</th>
-                  <th className="px-3 py-3 font-medium">Dates</th>
-                  <th className="px-3 py-3 text-right font-medium">Guest total</th>
-                  <th className="px-3 py-3 text-right font-medium">Platform</th>
-                  <th className="px-3 py-3 text-right font-medium">Owner payout</th>
+                  <th className="px-3 py-3 font-medium">Type</th>
+                  <th className="px-3 py-3 font-medium">Method</th>
+                  <th className="px-3 py-3 text-right font-medium">Amount</th>
                   <th className="px-3 py-3 font-medium">Status</th>
-                  <th className="px-3 py-3 text-right font-medium">Action</th>
+                  <th className="px-3 py-3 font-medium">Reference</th>
+                  <th className="px-3 py-3 font-medium">Date</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-line">
                 {bookings.map((b) => (
-                  <tr key={b.id} className={cn("hover:bg-surface-muted/50", b.status === "cancelled" && "opacity-50")}>
+                  <tr key={b.id} className={cn("hover:bg-surface-muted/50", b.status === "cancelled" && "opacity-60")}>
                     <td className="px-3 py-3">
                       <span className="block max-w-56 truncate font-medium text-primary">{b.propertyTitle}</span>
-                      <span className="text-xs text-ink-soft">{b.guestName} · {b.guests} guest{b.guests > 1 ? "s" : ""}</span>
-                    </td>
-                    <td className="figure px-3 py-3 text-ink-soft">
-                      {fmtDate(b.checkIn)}–{fmtDate(b.checkOut)}
-                      <span className="block text-xs">{b.nights} {b.unit}{b.nights > 1 ? "s" : ""}</span>
-                    </td>
-                    <td className="figure px-3 py-3 text-right text-primary">{formatMoney(b.guestTotal, b.currency, { compact: true })}</td>
-                    <td className="figure px-3 py-3 text-right text-accent">{formatMoney(b.platformRevenue, b.currency, { compact: true })}</td>
-                    <td className="figure px-3 py-3 text-right text-primary">{formatMoney(b.ownerPayout, b.currency, { compact: true })}</td>
-                    <td className="px-3 py-3">
-                      <span
-                        className={cn(
-                          "inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1",
-                          b.status === "cancelled"
-                            ? "bg-surface-muted text-ink-soft ring-line"
-                            : b.status === "paid_out"
-                              ? "bg-verified-soft text-verified ring-verified/20"
-                              : "bg-warning-soft text-warning ring-warning/20",
-                        )}
-                      >
-                        {b.status === "paid_out" ? "Paid out" : b.status === "cancelled" ? "Cancelled" : "Payout due"}
+                      <span className="text-xs text-ink-soft">
+                        {b.guestName || "—"}
+                        {b.phone ? ` · ${maskPhone(b.phone)}` : ""}
                       </span>
                     </td>
-                    <td className="px-3 py-3">
-                      <div className="flex items-center justify-end gap-1.5">
-                        {b.status === "confirmed" && (
-                          <>
-                            <button onClick={() => setStatus(b.id, "paid_out")} className="rounded-lg bg-verified px-2.5 py-1 text-xs font-semibold text-white hover:brightness-95">Mark paid</button>
-                            <button onClick={() => setStatus(b.id, "cancelled")} className="rounded-lg border border-line-strong px-2.5 py-1 text-xs font-medium text-ink-soft hover:text-danger">Cancel</button>
-                          </>
-                        )}
-                      </div>
+                    <td className="px-3 py-3 text-ink-soft">
+                      {b.kind === "reservation_deposit" ? (
+                        "Deposit"
+                      ) : (
+                        <>
+                          Stay
+                          {b.nights > 0 && (
+                            <span className="block text-xs">
+                              {b.nights} night{b.nights > 1 ? "s" : ""}
+                            </span>
+                          )}
+                        </>
+                      )}
                     </td>
+                    <td className="px-3 py-3">
+                      <MethodPill method={b.method} />
+                    </td>
+                    <td className="figure px-3 py-3 text-right text-primary">
+                      {formatMoney(b.amount, b.currency as Currency, { compact: true })}
+                    </td>
+                    <td className="px-3 py-3">
+                      <StatusPill status={b.status} />
+                    </td>
+                    <td className="figure px-3 py-3 text-xs text-ink-soft">{b.reference || "—"}</td>
+                    <td className="figure px-3 py-3 text-ink-soft">{fmtDate(b.createdAt)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -155,6 +157,8 @@ export default function AdminBookings() {
           </div>
         )}
       </Panel>
+
+      <FeeModelPanel />
     </div>
   );
 }

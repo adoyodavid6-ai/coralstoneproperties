@@ -4,6 +4,8 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { getSupabaseAdmin } from "@/lib/supabase/server";
 import { initPayment, verifyPayment, isFlutterwaveConfigured } from "./flutterwave";
 import { isMpesaConfigured, normalizeMsisdn, stkPush, stkQuery } from "./mpesa";
+import { RESERVATION_DEPOSIT_KES } from "./reservation";
+import { sendPropertyEnquiry } from "@/lib/leads/actions";
 import type { BookingBreakdown } from "@/lib/booking/types";
 
 const SITE_URL =
@@ -337,8 +339,9 @@ export async function startMpesaBooking(input: StartMpesaInput): Promise<StartMp
   });
 
   if (!push.ok || !push.checkoutRequestId) {
-    // Roll back so the slot isn't held by a push that never started.
-    await supabase.from("bookings").delete().eq("id", bookingId);
+    // Mark cancelled (not deleted) so the slot isn't held but the attempt is
+    // kept for audit/reconciliation.
+    await supabase.from("bookings").update({ status: "cancelled" }).eq("id", bookingId);
     return { ok: false, error: push.error ?? "Could not start the M-Pesa payment. Please try again." };
   }
 
@@ -379,7 +382,9 @@ export async function pollMpesaBooking(checkoutRequestId: string): Promise<Mpesa
     .eq("totals->>mpesa_checkout_request_id", checkoutRequestId)
     .maybeSingle();
 
-  if (!row) return { ok: false, error: "Booking not found." };
+  // Not found could be a brief read-replica lag just after insert — treat as
+  // pending so the client keeps polling rather than failing hard.
+  if (!row) return { ok: true, status: "pending" };
 
   if (row.status === "paid") {
     return { ok: true, status: "paid", ...toConfirmation(row as unknown as BookingRow) };
@@ -388,22 +393,36 @@ export async function pollMpesaBooking(checkoutRequestId: string): Promise<Mpesa
     return { ok: true, status: "failed", error: "Payment was cancelled or not completed." };
   }
 
+  const bookingCols = "id, currency, check_in, check_out, totals, properties(slug, title)";
+
   // Still pending in our DB — ask Daraja (authoritative).
   try {
     const q = await stkQuery(checkoutRequestId);
     if (q.settled) {
-      const totals = (row.totals ?? {}) as BookingBreakdown;
       if (q.success) {
+        // Re-read fresh totals before writing so we never clobber an
+        // mpesa_receipt the async callback may have already stored. The guarded
+        // update is a no-op if the callback got there first — then the fresh
+        // re-read below returns the already-settled (receipt-bearing) row.
+        const { data: fresh } = await supabase.from("bookings").select(bookingCols).eq("id", row.id).maybeSingle();
+        const freshTotals = (fresh?.totals ?? row.totals ?? {}) as BookingBreakdown;
         await supabase
           .from("bookings")
-          .update({ status: "paid", totals: { ...totals, mpesa_result_desc: q.resultDesc } })
+          .update({ status: "paid", totals: { ...freshTotals, mpesa_result_desc: q.resultDesc } })
           .eq("id", row.id)
           .eq("status", "pending");
-        return { ok: true, status: "paid", ...toConfirmation(row as unknown as BookingRow) };
+        const { data: settled } = await supabase.from("bookings").select(bookingCols).eq("id", row.id).maybeSingle();
+        return {
+          ok: true,
+          status: "paid",
+          ...toConfirmation((settled ?? fresh ?? row) as unknown as BookingRow),
+        };
       }
+      const { data: fresh } = await supabase.from("bookings").select("totals").eq("id", row.id).maybeSingle();
+      const freshTotals = (fresh?.totals ?? row.totals ?? {}) as BookingBreakdown;
       await supabase
         .from("bookings")
-        .update({ status: "cancelled", totals: { ...totals, mpesa_result_code: q.resultCode, mpesa_result_desc: q.resultDesc } })
+        .update({ status: "cancelled", totals: { ...freshTotals, mpesa_result_code: q.resultCode, mpesa_result_desc: q.resultDesc } })
         .eq("id", row.id)
         .eq("status", "pending");
       return { ok: true, status: "failed", error: q.resultDesc ?? "Payment was not completed." };
@@ -414,4 +433,115 @@ export async function pollMpesaBooking(checkoutRequestId: string): Promise<Mpesa
   }
 
   return { ok: true, status: "pending" };
+}
+
+// ── Reservation deposit (sale listings, M-Pesa) ──────────────────────────────────
+// A flat refundable deposit that registers interest with the verified agent. The
+// enquiry is also captured as a lead (so the agent is notified even if the push
+// is abandoned). Reuses the booking row + pollMpesaBooking/callback machinery.
+
+export type StartReservationInput = {
+  propertyId: string;
+  propertySlug: string;
+  propertyTitle: string;
+  name: string;
+  phone: string;
+  email?: string;
+  message?: string;
+};
+
+export type StartReservationResult =
+  | { ok: true; checkoutRequestId: string; bookingId: string; amount: number }
+  | { ok: true; demo: true; bookingId: string; amount: number }
+  | { ok: false; error: string };
+
+export async function startReservationDeposit(input: StartReservationInput): Promise<StartReservationResult> {
+  const name = (input.name ?? "").trim();
+  const phone = normalizeMsisdn(input.phone);
+  if (name.length < 2) return { ok: false, error: "Please add your name." };
+  if (!phone) return { ok: false, error: "Enter a valid Safaricom number, e.g. 07XX XXX XXX." };
+
+  const amount = RESERVATION_DEPOSIT_KES;
+
+  // Capture the enquiry regardless of whether the payment completes (best-effort).
+  void sendPropertyEnquiry({
+    action: "reserve",
+    propertyId: input.propertyId,
+    propertyTitle: input.propertyTitle,
+    name,
+    phone: input.phone,
+    email: input.email,
+    message: input.message
+      ? `${input.message}\n\n(Reservation deposit of KES ${amount} initiated via M-Pesa.)`
+      : `Reservation deposit of KES ${amount} initiated via M-Pesa.`,
+  }).catch((err) => {
+    console.error("[payment] Reservation enquiry capture failed:", err);
+  });
+
+  if (!isMpesaConfigured()) {
+    return { ok: true, demo: true, bookingId: `bk_demo_${Date.now().toString(36)}`, amount };
+  }
+
+  const supabase = getSupabaseAdmin();
+  if (!supabase) return { ok: false, error: "Database not configured." };
+
+  const today = new Date().toISOString().slice(0, 10);
+  const baseTotals = {
+    kind: "reservation_deposit",
+    guestTotal: amount,
+    nights: 0,
+    method: "mpesa",
+    mpesa_phone: phone,
+    propertyTitle: input.propertyTitle,
+  };
+
+  const { data, error } = await supabase
+    .from("bookings")
+    .insert({
+      property_id: input.propertyId,
+      guest_name: name,
+      guest_email: input.email?.trim() || null,
+      check_in: today,
+      check_out: today,
+      guests: 1,
+      unit: "day",
+      currency: "KES",
+      status: "pending",
+      totals: baseTotals,
+    })
+    .select("id")
+    .single();
+
+  if (error || !data) {
+    console.error("[payment] Reservation insert failed:", error?.message);
+    return { ok: false, error: "Could not start the reservation. Please try again." };
+  }
+  const bookingId = data.id as string;
+
+  const push = await stkPush({
+    amount,
+    phone,
+    accountRef: bookingId.replace(/-/g, "").slice(0, 12),
+    description: `Deposit ${input.propertyTitle}`,
+    callbackUrl: `${SITE_URL}/api/mpesa/callback`,
+  });
+
+  if (!push.ok || !push.checkoutRequestId) {
+    // Keep the row as a cancelled audit record rather than deleting it.
+    await supabase.from("bookings").update({ status: "cancelled" }).eq("id", bookingId);
+    return { ok: false, error: push.error ?? "Could not start the M-Pesa payment. Please try again." };
+  }
+
+  await supabase
+    .from("bookings")
+    .update({
+      totals: {
+        ...baseTotals,
+        mpesa_checkout_request_id: push.checkoutRequestId,
+        mpesa_merchant_request_id: push.merchantRequestId,
+      },
+    })
+    .eq("id", bookingId);
+
+  return { ok: true, checkoutRequestId: push.checkoutRequestId, bookingId, amount };
 }

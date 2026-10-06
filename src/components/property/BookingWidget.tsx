@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import type { Property } from "@/lib/types";
 import { formatMoney } from "@/lib/format";
 import { useBookings } from "@/lib/booking/BookingProvider";
@@ -9,17 +9,9 @@ import { calcBooking, nightsBetween } from "@/lib/booking/calc";
 import { VerifiedStrip } from "@/components/ui/VerifiedBadge";
 import { CheckShield, Star, Calendar, Users } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
-import { startBookingPayment, startMpesaBooking, pollMpesaBooking } from "@/lib/payment/actions";
-
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-
-/** Normalise a Kenyan number to 2547…/2541… for the M-Pesa prompt; null if invalid. */
-function normalizePhone(v: string): string | null {
-  let d = v.replace(/\D/g, "");
-  if (d.startsWith("0")) d = "254" + d.slice(1);
-  else if (/^(7|1)\d{8}$/.test(d)) d = "254" + d;
-  return /^254(7|1)\d{8}$/.test(d) ? d : null;
-}
+import { startBookingPayment, startMpesaBooking } from "@/lib/payment/actions";
+import { normalizePhone } from "@/lib/payment/phone";
+import { pollMpesa } from "@/lib/payment/poll";
 
 const inputCls =
   "w-full rounded-lg border border-line-strong bg-surface px-3 py-2 text-sm text-primary outline-none focus:border-accent focus:ring-2 focus:ring-accent/20";
@@ -62,6 +54,10 @@ export function BookingWidget({ property }: { property: Property }) {
     { id: string; nights: number; demo: boolean; method: "card" | "mpesa" } | null
   >(null);
   const [isPending, startTransition] = useTransition();
+
+  // Guard against setState after unmount (navigation during the ~2min M-Pesa poll).
+  const alive = useRef(true);
+  useEffect(() => () => { alive.current = false; }, []);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -125,13 +121,14 @@ export function BookingWidget({ property }: { property: Property }) {
     startTransition(async () => {
       if (method === "card") {
         const result = await startBookingPayment(commonInput());
-        if (!result.ok) {
-          setPayError(result.error);
+        if ("paymentUrl" in result) {
+          // Real payment — redirect to the Flutterwave hosted page (even if unmounting).
+          window.location.href = result.paymentUrl;
           return;
         }
-        if ("paymentUrl" in result) {
-          // Real payment — redirect to the Flutterwave hosted page.
-          window.location.href = result.paymentUrl;
+        if (!alive.current) return;
+        if (!result.ok) {
+          setPayError(result.error);
           return;
         }
         // Demo fallback (Flutterwave not configured).
@@ -142,6 +139,7 @@ export function BookingWidget({ property }: { property: Property }) {
 
       // M-Pesa: trigger the STK push, then poll until it settles.
       const started = await startMpesaBooking({ ...commonInput(), phone: phone.trim() });
+      if (!alive.current) return;
       if (!started.ok) {
         setPayError(started.error);
         return;
@@ -153,23 +151,18 @@ export function BookingWidget({ property }: { property: Property }) {
       }
 
       setWaitMsg(`Check your phone — enter your M-Pesa PIN to pay ${money(breakdown.guestTotal)}.`);
-      for (let i = 0; i < 30; i++) {
-        await sleep(4000);
-        const poll = await pollMpesaBooking(started.checkoutRequestId);
-        if (!poll.ok) continue; // transient — keep waiting
-        if (poll.status === "paid") {
-          recordLocalBooking();
-          setWaitMsg("");
-          setConfirmed({ id: poll.bookingId, nights, demo: false, method: "mpesa" });
-          return;
-        }
-        if (poll.status === "failed") {
-          setWaitMsg("");
-          setPayError(poll.error);
-          return;
-        }
-      }
+      const final = await pollMpesa(started.checkoutRequestId);
+      if (!alive.current) return;
       setWaitMsg("");
+      if (final.kind === "paid") {
+        recordLocalBooking();
+        setConfirmed({ id: final.bookingId, nights, demo: false, method: "mpesa" });
+        return;
+      }
+      if (final.kind === "failed") {
+        setPayError(final.error);
+        return;
+      }
       setPayError(
         "We didn't get confirmation in time. If you completed the payment it will reflect shortly — check My Trips or contact support.",
       );

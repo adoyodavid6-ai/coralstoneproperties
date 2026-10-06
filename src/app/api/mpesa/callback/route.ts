@@ -47,35 +47,46 @@ export async function POST(req: Request) {
       .eq("totals->>mpesa_checkout_request_id", checkoutId)
       .maybeSingle();
 
-    if (row && row.status === "pending") {
-      const totals = (row.totals ?? {}) as Record<string, unknown>;
+    // Enrich on success even if the authoritative poll already flipped it to
+    // "paid" (the poll can't learn the receipt — only this callback carries it).
+    // Never resurrect a cancelled row.
+    const totals = (row?.totals ?? {}) as Record<string, unknown>;
 
-      if (Number(resultCode) === 0) {
-        const items = cb?.CallbackMetadata?.Item ?? [];
-        const field = (name: string) => items.find((i) => i.Name === name)?.Value;
+    if (row && row.status !== "cancelled" && Number(resultCode) === 0) {
+      const items = cb?.CallbackMetadata?.Item ?? [];
+      const field = (name: string) => items.find((i) => i.Name === name)?.Value;
+      const paidAmount = Number(field("Amount") ?? NaN);
+      const expected = Number((totals as { guestTotal?: number }).guestTotal ?? NaN);
+
+      // Defence in depth: these callbacks are unauthenticated, so only honour a
+      // "paid" when the amount matches what we asked for. The authoritative STK
+      // query in the poll remains the real confirmation path.
+      if (Number.isFinite(paidAmount) && Number.isFinite(expected) && Math.round(paidAmount) !== Math.round(expected)) {
+        console.warn(`[mpesa] callback amount mismatch for ${row.id}: got ${paidAmount}, expected ${expected}`);
+      } else {
         await supabase
           .from("bookings")
           .update({
             status: "paid",
             totals: {
               ...totals,
-              mpesa_receipt: field("MpesaReceiptNumber") ?? null,
-              mpesa_amount: field("Amount") ?? null,
+              mpesa_receipt: field("MpesaReceiptNumber") ?? (totals as { mpesa_receipt?: unknown }).mpesa_receipt ?? null,
+              mpesa_amount: field("Amount") ?? (totals as { mpesa_amount?: unknown }).mpesa_amount ?? null,
               mpesa_result_desc: cb?.ResultDesc ?? null,
             },
           })
           .eq("id", row.id)
-          .eq("status", "pending");
-      } else {
-        await supabase
-          .from("bookings")
-          .update({
-            status: "cancelled",
-            totals: { ...totals, mpesa_result_code: String(resultCode), mpesa_result_desc: cb?.ResultDesc ?? null },
-          })
-          .eq("id", row.id)
-          .eq("status", "pending");
+          .neq("status", "cancelled");
       }
+    } else if (row && row.status === "pending") {
+      await supabase
+        .from("bookings")
+        .update({
+          status: "cancelled",
+          totals: { ...totals, mpesa_result_code: String(resultCode), mpesa_result_desc: cb?.ResultDesc ?? null },
+        })
+        .eq("id", row.id)
+        .eq("status", "pending");
     }
   }
 
