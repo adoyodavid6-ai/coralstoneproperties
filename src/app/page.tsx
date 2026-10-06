@@ -1,50 +1,60 @@
+import type { ComponentType } from "react";
 import Link from "next/link";
 import { PropertyCard } from "@/components/ui/PropertyCard";
 import { ButtonLink } from "@/components/ui/Button";
 import { SplitHeading } from "@/lib/motion/SplitHeading";
 import { Magnetic } from "@/lib/motion/Magnetic";
 import { getFeatured } from "@/lib/data/listings";
-import { Chevron } from "@/components/ui/icons";
+import { Chevron, Calendar, Users, Bed, Star, Area, Cube } from "@/components/ui/icons";
 import { HeroVideo } from "@/components/home/HeroVideo";
 
 // Featured picks come from live inventory — render per request so newly
 // published listings appear without a redeploy.
 export const dynamic = "force-dynamic";
 
-// Kenya is live; the rest are on the roadmap (see src/lib/countries.ts).
-const COUNTRIES: {
+// The most sought-after ways people search — each links straight into the
+// matching /search filter.
+const CATEGORIES: {
   name: string;
-  flag: string;
   tagline: string;
   href: string;
-  comingSoon?: boolean;
+  Icon: ComponentType<{ className?: string }>;
 }[] = [
   {
-    name: "Kenya",
-    flag: "🇰🇪",
-    tagline: "Nairobi, Mombasa, Kisumu",
-    href: "/search?intent=sale&country=Kenya",
+    name: "Short-let apartments",
+    tagline: "Airbnb-style stays, booked by the night",
+    href: "/search?intent=short_let",
+    Icon: Calendar,
   },
   {
-    name: "Uganda",
-    flag: "🇺🇬",
-    tagline: "Kampala, Entebbe, Jinja",
-    href: "/search?intent=sale&country=Uganda",
-    comingSoon: true,
+    name: "Event venues",
+    tagline: "Gardens, halls & rooftops for your day",
+    href: "/search?type=venue",
+    Icon: Users,
   },
   {
-    name: "Tanzania",
-    flag: "🇹🇿",
-    tagline: "Dar es Salaam, Zanzibar, Arusha",
-    href: "/search?intent=sale&country=Tanzania",
-    comingSoon: true,
+    name: "Apartments",
+    tagline: "City flats to buy or rent",
+    href: "/search?type=apartment",
+    Icon: Bed,
   },
   {
-    name: "Rwanda",
-    flag: "🇷🇼",
-    tagline: "Kigali, Musanze, Rubavu",
-    href: "/search?intent=sale&country=Rwanda",
-    comingSoon: true,
+    name: "Houses & villas",
+    tagline: "Family homes and gated estates",
+    href: "/search?type=house",
+    Icon: Star,
+  },
+  {
+    name: "Land & plots",
+    tagline: "Verified titles, ready to build",
+    href: "/search?type=land",
+    Icon: Area,
+  },
+  {
+    name: "Off-plan",
+    tagline: "New developments at launch prices",
+    href: "/search?type=off_plan",
+    Icon: Cube,
   },
 ];
 
@@ -113,57 +123,42 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Browse by country — compact link cards */}
+      {/* Most sought-after — category quick-links into the matching search filter */}
       <section className="border-b border-line bg-surface-raised py-10 sm:py-12">
         <div className="container-page">
-          <p className="eyebrow mb-5" data-animate="fade">
-            Buy by country
-          </p>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4" data-animate-group>
-            {COUNTRIES.map((c) =>
-              c.comingSoon ? (
-                <div
-                  key={c.name}
-                  aria-disabled
-                  title="Coming soon"
-                  className="flex items-center justify-between rounded-xl border border-dashed border-line bg-surface px-5 py-4 opacity-70"
-                >
-                  <span className="flex items-center gap-3">
-                    <span className="text-xl leading-none grayscale">{c.flag}</span>
-                    <span>
-                      <span className="block font-semibold text-ink-soft">
-                        {c.name}
-                      </span>
-                      <span className="mt-0.5 block text-xs text-ink-soft/70">
-                        {c.tagline}
-                      </span>
+          <div className="mb-5 flex items-end justify-between gap-4">
+            <p className="eyebrow" data-animate="fade">
+              Most sought-after
+            </p>
+            <Link
+              href="/search"
+              className="hidden items-center gap-1 whitespace-nowrap text-sm font-semibold text-accent hover:brightness-90 sm:inline-flex"
+            >
+              Browse all
+              <Chevron className="h-4 w-4 -rotate-90" />
+            </Link>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3" data-animate-group>
+            {CATEGORIES.map((c) => (
+              <Link
+                key={c.name}
+                href={c.href}
+                className="group flex items-center justify-between rounded-xl border border-line bg-surface px-5 py-4 transition-all hover:border-accent hover:shadow-card"
+              >
+                <span className="flex items-center gap-3">
+                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-accent-soft text-accent">
+                    <c.Icon className="h-5 w-5" />
+                  </span>
+                  <span>
+                    <span className="block font-semibold text-primary transition-colors group-hover:text-accent">
+                      {c.name}
                     </span>
+                    <span className="mt-0.5 block text-xs text-ink-soft">{c.tagline}</span>
                   </span>
-                  <span className="shrink-0 rounded-full bg-surface-muted px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-ink-soft">
-                    Coming soon
-                  </span>
-                </div>
-              ) : (
-                <Link
-                  key={c.name}
-                  href={c.href}
-                  className="group flex items-center justify-between rounded-xl border border-line bg-surface px-5 py-4 transition-all hover:border-accent hover:shadow-card"
-                >
-                  <span className="flex items-center gap-3">
-                    <span className="text-xl leading-none">{c.flag}</span>
-                    <span>
-                      <span className="block font-semibold text-primary transition-colors group-hover:text-accent">
-                        {c.name}
-                      </span>
-                      <span className="mt-0.5 block text-xs text-ink-soft">
-                        {c.tagline}
-                      </span>
-                    </span>
-                  </span>
-                  <Chevron className="h-4 w-4 -rotate-90 text-ink-soft transition-all group-hover:translate-x-0.5 group-hover:text-accent" />
-                </Link>
-              ),
-            )}
+                </span>
+                <Chevron className="h-4 w-4 -rotate-90 text-ink-soft transition-all group-hover:translate-x-0.5 group-hover:text-accent" />
+              </Link>
+            ))}
           </div>
         </div>
       </section>
