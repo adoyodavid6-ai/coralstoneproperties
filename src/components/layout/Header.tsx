@@ -133,7 +133,16 @@ export function Header() {
       />
 
       {/* Sub-header (top utility bar) — desktop only; mobile keeps these in the menu */}
-      <div className="hidden border-b border-white/10 lg:block">
+      <div className="relative hidden lg:block">
+        {/* White fading hairline between sub-header and main header */}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-px"
+          style={{
+            background:
+              "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.35) 25%, rgba(255,255,255,0.35) 75%, transparent 100%)",
+          }}
+        />
         <div className="container-page flex h-9 items-center justify-end gap-4">
           {/* Currency */}
           <div className="flex items-center">
@@ -169,13 +178,6 @@ export function Header() {
           </button>
 
           <span aria-hidden className="h-3.5 w-px bg-white/15" />
-
-          <Link
-            href="/pricing"
-            className="text-sm font-medium text-white/65 transition-colors hover:text-white"
-          >
-            Pricing
-          </Link>
 
           <Link
             href="/account"
@@ -278,6 +280,13 @@ export function Header() {
 
         {/* Utility — right */}
         <div className="ml-auto flex items-center gap-4 lg:ml-0">
+          <Link
+            href="/pricing"
+            className="hidden text-sm font-medium text-white/65 transition-colors hover:text-white lg:inline-flex"
+          >
+            Pricing
+          </Link>
+
           {/* List CTA — desktop only (mobile users get it in the menu).
               Wrapped because ButtonLink's base `inline-flex` overrides `hidden`. */}
           <span className="hidden lg:inline-flex">
