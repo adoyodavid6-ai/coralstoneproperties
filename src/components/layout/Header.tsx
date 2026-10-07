@@ -219,7 +219,7 @@ export function Header() {
 
           <Link
             href="/account"
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-white/65 transition-colors hover:text-white"
+            className="-ml-[0.2cm] inline-flex items-center gap-1.5 text-sm font-medium text-white/65 transition-colors hover:text-white"
           >
             <User className="h-4 w-4" />
             Account
