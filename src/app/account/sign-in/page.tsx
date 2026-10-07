@@ -14,10 +14,11 @@ function safeNext(v: string | string[] | undefined): string {
 export default async function SignInPage({
   searchParams,
 }: {
-  searchParams: Promise<{ next?: string | string[] }>;
+  searchParams: Promise<{ next?: string | string[]; error?: string | string[] }>;
 }) {
-  const { next } = await searchParams;
+  const { next, error } = await searchParams;
   const target = safeNext(next);
+  const confirmFailed = (Array.isArray(error) ? error[0] : error) === "confirm";
 
   const user = await getCurrentUser();
   if (user) redirect(target);
@@ -29,6 +30,12 @@ export default async function SignInPage({
         <p className="mt-1 mb-6 text-sm text-ink-soft">
           Sign in to upload and track your property purchase documents.
         </p>
+        {confirmFailed && (
+          <p className="mb-5 rounded-lg bg-warning-soft px-3 py-2 text-sm text-warning">
+            That confirmation link has expired or was already used. Please sign in — or create your
+            account again to get a fresh link.
+          </p>
+        )}
         <AuthForm mode="sign-in" next={target} />
       </div>
     </div>

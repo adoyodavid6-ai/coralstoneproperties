@@ -75,7 +75,9 @@ export async function signUpAction(
     password,
     options: {
       data: { full_name: name, phone },
-      emailRedirectTo: `${SITE_URL}/account`,
+      // Land on the callback route, which exchanges the code for a session and
+      // then forwards to the signed-in account page.
+      emailRedirectTo: `${SITE_URL}/account/callback?next=${encodeURIComponent(next)}`,
     },
   });
 
