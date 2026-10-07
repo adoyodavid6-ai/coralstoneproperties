@@ -4,7 +4,7 @@ import { PropertyCard } from "@/components/ui/PropertyCard";
 import { ButtonLink } from "@/components/ui/Button";
 import { SplitHeading } from "@/lib/motion/SplitHeading";
 import { Magnetic } from "@/lib/motion/Magnetic";
-import { getFeatured } from "@/lib/data/listings";
+import { getFeatured, getTrending } from "@/lib/data/listings";
 import { Chevron, Calendar, Users, Bed, Star, Area, Cube } from "@/components/ui/icons";
 import { HeroVideo } from "@/components/home/HeroVideo";
 
@@ -59,7 +59,14 @@ const CATEGORIES: {
 ];
 
 export default async function HomePage() {
-  const featured = await getFeatured(3);
+  // Fill a 4×4 showcase (16): boosted/featured listings first, then top up with
+  // other active verified listings so the block reads full.
+  const boosted = await getFeatured(16);
+  const topUp =
+    boosted.length < 16
+      ? await getTrending(16 - boosted.length, boosted.map((p) => p.id))
+      : [];
+  const featured = [...boosted, ...topUp].slice(0, 16);
 
   return (
     <>
@@ -207,9 +214,10 @@ export default async function HomePage() {
               </Link>
             </div>
 
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-animate-group>
+            {/* 4 columns on desktop → up to 4 rows of 4 (16 listings) */}
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4" data-animate-group>
               {featured.map((p, i) => (
-                <PropertyCard key={p.id} property={p} priority={i < 3} />
+                <PropertyCard key={p.id} property={p} priority={i < 4} />
               ))}
             </div>
 
