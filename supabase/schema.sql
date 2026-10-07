@@ -368,3 +368,77 @@ create index if not exists property_alerts_token_idx  on public.property_alerts 
 
 -- Service role only (public create action, unsubscribe link, cron dispatch). No anon access.
 alter table public.property_alerts enable row level security;
+
+
+-- ===========================================================================
+-- BUYER DOCUMENTS  (purchase paperwork a signed-in buyer uploads per property)
+-- ===========================================================================
+-- Files live in the PRIVATE `buyer-documents` storage bucket (created below);
+-- this table holds the metadata + review status. Writes go through server
+-- actions using the service role; RLS below also lets a buyer read/manage their
+-- own rows directly and admins see everything.
+create table if not exists public.buyer_documents (
+  id             uuid primary key default gen_random_uuid(),
+  created_at     timestamptz not null default now(),
+  user_id        uuid not null references auth.users (id) on delete cascade,
+  user_email     text,
+  -- property_id is NOT a FK: listings may come from the demo seed (not in the
+  -- properties table), so we snapshot the title/slug for display instead.
+  property_id    text not null,
+  property_slug  text,
+  property_title text,
+  doc_key        text not null,
+  doc_label      text,
+  file_name      text not null,
+  storage_path   text not null,
+  size_bytes     integer not null default 0,
+  mime           text,
+  status         text not null default 'submitted' check (status in ('submitted','approved','rejected')),
+  review_note    text,
+  reviewed_at    timestamptz
+);
+
+create index if not exists buyer_documents_user_idx     on public.buyer_documents (user_id);
+create index if not exists buyer_documents_property_idx on public.buyer_documents (property_id);
+create index if not exists buyer_documents_status_idx   on public.buyer_documents (status);
+
+alter table public.buyer_documents enable row level security;
+
+drop policy if exists "buyer_documents manage own" on public.buyer_documents;
+create policy "buyer_documents manage own" on public.buyer_documents
+  for all using (auth.uid() = user_id or public.is_admin())
+  with check (auth.uid() = user_id or public.is_admin());
+
+
+-- ===========================================================================
+-- STORAGE  — private bucket for buyer documents
+-- ===========================================================================
+-- Create the bucket (idempotent). The upload server action also creates it
+-- lazily, but declaring it here keeps a fresh project self-describing.
+insert into storage.buckets (id, name, public)
+  values ('buyer-documents', 'buyer-documents', false)
+  on conflict (id) do nothing;
+
+-- Object paths are `{user_id}/{property_id}/{doc_key}/{file}`. A buyer may only
+-- touch files under their own id prefix; admins see all. (Server actions use the
+-- service role and bypass these — they're defence-in-depth for the anon key.)
+drop policy if exists "buyer docs read own" on storage.objects;
+create policy "buyer docs read own" on storage.objects
+  for select using (
+    bucket_id = 'buyer-documents'
+    and ((storage.foldername(name))[1] = auth.uid()::text or public.is_admin())
+  );
+
+drop policy if exists "buyer docs write own" on storage.objects;
+create policy "buyer docs write own" on storage.objects
+  for insert with check (
+    bucket_id = 'buyer-documents'
+    and (storage.foldername(name))[1] = auth.uid()::text
+  );
+
+drop policy if exists "buyer docs delete own" on storage.objects;
+create policy "buyer docs delete own" on storage.objects
+  for delete using (
+    bucket_id = 'buyer-documents'
+    and ((storage.foldername(name))[1] = auth.uid()::text or public.is_admin())
+  );

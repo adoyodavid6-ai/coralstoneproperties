@@ -8,7 +8,7 @@ import { LOCALES } from "@/lib/i18n/dictionaries";
 import type { DisplayCurrency } from "@/lib/types";
 import { ButtonLink } from "@/components/ui/Button";
 import { Logo } from "@/components/ui/Logo";
-import { Globe, Close, Chevron } from "@/components/ui/icons";
+import { Globe, Close, Chevron, User } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
 
 const CURRENCIES: { value: DisplayCurrency; label: string }[] = [
@@ -263,6 +263,14 @@ export function Header() {
             Pricing
           </Link>
 
+          <Link
+            href="/account"
+            className="hidden items-center gap-1.5 text-sm font-medium text-white/65 transition-colors hover:text-white lg:inline-flex"
+          >
+            <User className="h-4 w-4" />
+            Account
+          </Link>
+
           {/* List CTA — desktop only (mobile users get it in the menu).
               Wrapped because ButtonLink's base `inline-flex` overrides `hidden`. */}
           <span className="hidden lg:inline-flex">
@@ -356,6 +364,14 @@ export function Header() {
               className="block rounded-xl px-4 py-3 text-sm font-medium text-white/70 transition-colors hover:bg-white/10 hover:text-white"
             >
               Pricing
+            </Link>
+            <Link
+              href="/account"
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-2 rounded-xl px-4 py-3 text-sm font-medium text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+            >
+              <User className="h-4 w-4" />
+              Account
             </Link>
           </nav>
 

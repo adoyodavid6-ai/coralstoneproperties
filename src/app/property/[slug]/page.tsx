@@ -12,6 +12,7 @@ import { ImmersiveGallery } from "@/components/showcase/ImmersiveGallery";
 import { PropertyShowcase } from "@/components/showcase/PropertyShowcase";
 import { ConversionRail } from "@/components/property/ConversionRail";
 import { CostIntelligence } from "@/components/property/CostIntelligence";
+import { Documentation } from "@/components/property/Documentation";
 import {
   LocationIntelligence,
   OffPlanProgress,
@@ -240,6 +241,8 @@ export default async function PropertyPage({
               </div>
             )}
           </section>
+
+          <Documentation property={property} />
 
           <OffPlanProgress property={property} />
           <LandToolkit property={property} />

@@ -54,6 +54,18 @@ export async function Documentation({ property }: { property: Property }) {
     (d) => !buyerDocs.some((b) => b.key === d.docKey),
   );
 
+  // Pre-resolve signed URLs so the JSX below stays synchronous (React can't
+  // render an array of promises from `.map(async …)`).
+  const buyerSlots = user
+    ? await Promise.all(
+        buyerDocs.map(async (doc) => ({
+          doc,
+          files: await toSlotFiles(byKey.get(doc.key) ?? []),
+        })),
+      )
+    : [];
+  const otherFiles = user ? await toSlotFiles(otherUploads) : [];
+
   const nextParam = `?next=${encodeURIComponent(`/property/${property.slug}`)}`;
 
   return (
@@ -123,31 +135,28 @@ export async function Documentation({ property }: { property: Property }) {
           </div>
         ) : (
           <div className="mt-4 space-y-5">
-            {buyerDocs.map(async (doc) => {
-              const files = await toSlotFiles(byKey.get(doc.key) ?? []);
-              return (
-                <div key={doc.key} className="rounded-xl border border-line bg-surface p-4">
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <p className="text-sm font-semibold text-primary">
-                      {doc.label}
-                      {doc.mandatory && <span className="ml-1 text-danger">*</span>}
-                    </p>
-                    <span className={cn("rounded-full px-2 py-0.5 text-[11px] font-medium", PROVIDER_TONE.buyer)}>
-                      {PROVIDER_LABEL.buyer}
-                    </span>
-                  </div>
-                  <p className="mt-1 mb-3 text-xs text-ink-soft">{doc.description}</p>
-                  <DocSlot
-                    propertyId={property.id}
-                    propertySlug={property.slug}
-                    propertyTitle={property.title}
-                    docKey={doc.key}
-                    docLabel={doc.label}
-                    files={files}
-                  />
+            {buyerSlots.map(({ doc, files }) => (
+              <div key={doc.key} className="rounded-xl border border-line bg-surface p-4">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <p className="text-sm font-semibold text-primary">
+                    {doc.label}
+                    {doc.mandatory && <span className="ml-1 text-danger">*</span>}
+                  </p>
+                  <span className={cn("rounded-full px-2 py-0.5 text-[11px] font-medium", PROVIDER_TONE.buyer)}>
+                    {PROVIDER_LABEL.buyer}
+                  </span>
                 </div>
-              );
-            })}
+                <p className="mt-1 mb-3 text-xs text-ink-soft">{doc.description}</p>
+                <DocSlot
+                  propertyId={property.id}
+                  propertySlug={property.slug}
+                  propertyTitle={property.title}
+                  docKey={doc.key}
+                  docLabel={doc.label}
+                  files={files}
+                />
+              </div>
+            ))}
 
             {/* Catch-all slot for anything else the advocate asks for */}
             <div className="rounded-xl border border-line bg-surface p-4">
@@ -161,7 +170,7 @@ export async function Documentation({ property }: { property: Property }) {
                 propertyTitle={property.title}
                 docKey="other"
                 docLabel="Other supporting documents"
-                files={await toSlotFiles(otherUploads)}
+                files={otherFiles}
               />
             </div>
 
