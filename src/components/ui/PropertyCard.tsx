@@ -5,7 +5,7 @@ import { relativeDays, daysOnMarket, formatNumber } from "@/lib/format";
 import { SmartImage } from "./SmartImage";
 import { SaveButton } from "./SaveButton";
 import { CompareButton } from "./CompareButton";
-import { VerifiedStrip } from "./VerifiedBadge";
+import { VerifiedBadge } from "./VerifiedBadge";
 import { Price } from "./Price";
 import { Bed, Bath, Area, Pin, Camera, Users } from "./icons";
 import { SHOW_REAL_MEDIA } from "@/lib/media";
@@ -35,8 +35,11 @@ export function PropertyCard({
 }) {
   const isNew = daysOnMarket(property.listedOn) <= 7;
   const reduced = Boolean(property.previousPrice);
-  const listingVerified = property.verified.filter(
-    (v) => v.kind === "listing" || v.kind === "title" || v.kind === "developer",
+  // Card shows only the two headline guarantees — Title on top, Listing below —
+  // each on its own line. Keeps the card scannable instead of a busy pill cluster;
+  // the full set of verifications lives on the property page.
+  const cardBadges = (["title", "listing"] as const).filter((k) =>
+    property.verified.some((v) => v.kind === k),
   );
 
   return (
@@ -142,14 +145,17 @@ export function PropertyCard({
           )}
         </div>
 
-        <div className={cn("mt-auto flex items-start justify-between gap-2 pt-1")}>
-          <VerifiedStrip
-            kinds={listingVerified.map((v) => v.kind)}
-            size="sm"
-            max={2}
-            vertical
-          />
-          <CompareButton id={property.id} />
+        <div className={cn("mt-auto flex flex-col gap-3 pt-2")}>
+          {cardBadges.length > 0 && (
+            <div className="flex flex-col items-start gap-2">
+              {cardBadges.map((k) => (
+                <VerifiedBadge key={k} kind={k} size="sm" />
+              ))}
+            </div>
+          )}
+          <div className="flex items-center justify-end">
+            <CompareButton id={property.id} />
+          </div>
         </div>
       </div>
     </article>
