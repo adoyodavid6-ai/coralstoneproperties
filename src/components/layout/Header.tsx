@@ -132,6 +132,61 @@ export function Header() {
         }}
       />
 
+      {/* Sub-header (top utility bar) — desktop only; mobile keeps these in the menu */}
+      <div className="hidden border-b border-white/10 lg:block">
+        <div className="container-page flex h-9 items-center justify-end gap-4">
+          {/* Currency */}
+          <div className="flex items-center">
+            {CURRENCIES.map((c, i) => (
+              <span key={c.value} className="flex items-center">
+                {i > 0 && (
+                  <span className="mx-1.5 select-none text-white/20">·</span>
+                )}
+                <button
+                  onClick={() => setCurrency(c.value)}
+                  aria-pressed={currency === c.value}
+                  className={cn(
+                    "figure text-xs font-semibold transition-colors",
+                    currency === c.value
+                      ? "text-rose"
+                      : "text-white/40 hover:text-white/75",
+                  )}
+                >
+                  {c.label}
+                </button>
+              </span>
+            ))}
+          </div>
+
+          {/* Language */}
+          <button
+            onClick={() => setLocale(locale === "en" ? "sw" : "en")}
+            aria-label="Switch language"
+            className="inline-flex items-center gap-1 text-xs font-semibold text-white/40 transition-colors hover:text-white/80"
+          >
+            <Globe className="h-3.5 w-3.5" />
+            {LOCALES.find((l) => l.code === locale)?.short}
+          </button>
+
+          <span aria-hidden className="h-3.5 w-px bg-white/15" />
+
+          <Link
+            href="/pricing"
+            className="text-sm font-medium text-white/65 transition-colors hover:text-white"
+          >
+            Pricing
+          </Link>
+
+          <Link
+            href="/account"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-white/65 transition-colors hover:text-white"
+          >
+            <User className="h-4 w-4" />
+            Account
+          </Link>
+        </div>
+      </div>
+
       <div className="container-page flex h-16 items-center gap-6">
         <Logo variant="full-dark" />
 
@@ -223,54 +278,6 @@ export function Header() {
 
         {/* Utility — right */}
         <div className="ml-auto flex items-center gap-4 lg:ml-0">
-          {/* Currency — desktop only; on mobile it lives in the menu */}
-          <div className="hidden items-center lg:flex">
-            {CURRENCIES.map((c, i) => (
-              <span key={c.value} className="flex items-center">
-                {i > 0 && (
-                  <span className="mx-1.5 select-none text-white/20">·</span>
-                )}
-                <button
-                  onClick={() => setCurrency(c.value)}
-                  aria-pressed={currency === c.value}
-                  className={cn(
-                    "figure text-xs font-semibold transition-colors",
-                    currency === c.value
-                      ? "text-rose"
-                      : "text-white/40 hover:text-white/75",
-                  )}
-                >
-                  {c.label}
-                </button>
-              </span>
-            ))}
-          </div>
-
-          {/* Language */}
-          <button
-            onClick={() => setLocale(locale === "en" ? "sw" : "en")}
-            aria-label="Switch language"
-            className="hidden items-center gap-1 text-xs font-semibold text-white/40 transition-colors hover:text-white/80 lg:inline-flex"
-          >
-            <Globe className="h-3.5 w-3.5" />
-            {LOCALES.find((l) => l.code === locale)?.short}
-          </button>
-
-          <Link
-            href="/pricing"
-            className="hidden text-sm font-medium text-white/65 transition-colors hover:text-white lg:inline-flex"
-          >
-            Pricing
-          </Link>
-
-          <Link
-            href="/account"
-            className="hidden items-center gap-1.5 text-sm font-medium text-white/65 transition-colors hover:text-white lg:inline-flex"
-          >
-            <User className="h-4 w-4" />
-            Account
-          </Link>
-
           {/* List CTA — desktop only (mobile users get it in the menu).
               Wrapped because ButtonLink's base `inline-flex` overrides `hidden`. */}
           <span className="hidden lg:inline-flex">
