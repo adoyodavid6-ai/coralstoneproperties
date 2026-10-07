@@ -1,28 +1,37 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { updateSupabaseSession } from "@/lib/supabase/proxy-session";
 
 /**
- * Server-side gate for the admin console.
+ * Request gate. Does two unrelated jobs, split by path:
  *
- * `/admin/*` is protected with HTTP Basic Auth so the pages — and the data they
- * bundle — are never served to the public. This replaces the old client-only
- * passphrase (`AdminGate`), which shipped the secret to the browser and was
- * trivially bypassable.
+ * 1. `/admin/*` — HTTP Basic Auth so the console (and the data it bundles) is
+ *    never served to the public. Replaces the old client-only passphrase.
+ * 2. Everything else — refreshes the buyer's Supabase Auth session cookie so
+ *    customer accounts stay signed in (Server Components can't rotate cookies).
  *
  * Config (e.g. Vercel → Settings → Environment Variables):
  *   ADMIN_USER      optional, defaults to "admin"
  *   ADMIN_PASSWORD  required in production to open /admin
  *
- * Fail-closed: if ADMIN_PASSWORD is unset, access is allowed in local
- * development (so you can work without a password) but BLOCKED in production,
- * so a forgotten env var can never expose the console.
+ * Fail-closed on admin: if ADMIN_PASSWORD is unset, access is allowed in local
+ * development but BLOCKED in production, so a forgotten env var can never expose
+ * the console.
  *
  * NOTE: this version of Next renames `middleware` → `proxy`
  * (node_modules/next/dist/docs/.../proxy.md). Proxy runs on the Node.js runtime.
  */
 const REALM = 'Basic realm="CoralStones admin", charset="UTF-8"';
 
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
+  if (request.nextUrl.pathname.startsWith("/admin")) {
+    return adminGate(request);
+  }
+  // Buyer account session refresh for all other matched routes.
+  return updateSupabaseSession(request);
+}
+
+function adminGate(request: NextRequest) {
   const expectedPass = process.env.ADMIN_PASSWORD;
   const expectedUser = process.env.ADMIN_USER || "admin";
 
@@ -56,5 +65,11 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin", "/admin/:path*"],
+  // Run on /admin (Basic Auth) and all app routes (session refresh), excluding
+  // Next internals and static assets so the proxy stays cheap.
+  matcher: [
+    "/admin",
+    "/admin/:path*",
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:png|jpg|jpeg|gif|webp|svg|ico|mp4|webm|woff2?)$).*)",
+  ],
 };

@@ -145,3 +145,38 @@ export const Mail = ({ className }: P) => (
 export const Send = ({ className }: P) => (
   <S className={className}><path d="M21 3 10.5 13.5M21 3l-6.5 18-4-8-8-4L21 3Z" /></S>
 );
+export const FileText = ({ className }: P) => (
+  <S className={className}>
+    <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z" />
+    <path d="M14 3v5h5M8.5 13h7M8.5 17h7M8.5 9H10" />
+  </S>
+);
+export const Upload = ({ className }: P) => (
+  <S className={className}>
+    <path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3" />
+    <path d="M12 16V4M7 9l5-5 5 5" />
+  </S>
+);
+export const Download = ({ className }: P) => (
+  <S className={className}>
+    <path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3" />
+    <path d="M12 4v12M7 11l5 5 5-5" />
+  </S>
+);
+export const LogOut = ({ className }: P) => (
+  <S className={className}>
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+    <path d="M16 17l5-5-5-5M21 12H9" />
+  </S>
+);
+export const User = ({ className }: P) => (
+  <S className={className}>
+    <circle cx="12" cy="8" r="4" />
+    <path d="M4 21a8 8 0 0 1 16 0" />
+  </S>
+);
+export const Trash = ({ className }: P) => (
+  <S className={className}>
+    <path d="M4 7h16M10 11v6M14 11v6M5 7l1 13a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2l1-13M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3" />
+  </S>
+);
