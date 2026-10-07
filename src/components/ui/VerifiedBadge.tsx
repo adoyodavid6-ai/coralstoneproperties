@@ -46,15 +46,23 @@ export function VerifiedStrip({
   kinds,
   size = "md",
   max,
+  vertical = false,
 }: {
   kinds: VerificationKind[];
   size?: "sm" | "md";
   max?: number;
+  /** Stack badges one above the other instead of wrapping in a row. */
+  vertical?: boolean;
 }) {
   const shown = max ? kinds.slice(0, max) : kinds;
   const rest = kinds.length - shown.length;
   return (
-    <div className="flex flex-wrap items-center gap-1.5">
+    <div
+      className={cn(
+        "flex gap-1.5",
+        vertical ? "flex-col items-start" : "flex-wrap items-center",
+      )}
+    >
       {shown.map((k) => (
         <VerifiedBadge key={k} kind={k} size={size} />
       ))}

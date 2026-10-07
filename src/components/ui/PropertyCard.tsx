@@ -142,8 +142,13 @@ export function PropertyCard({
           )}
         </div>
 
-        <div className={cn("mt-auto flex items-center justify-between gap-2 pt-1")}>
-          <VerifiedStrip kinds={listingVerified.map((v) => v.kind)} size="sm" max={2} />
+        <div className={cn("mt-auto flex items-start justify-between gap-2 pt-1")}>
+          <VerifiedStrip
+            kinds={listingVerified.map((v) => v.kind)}
+            size="sm"
+            max={2}
+            vertical
+          />
           <CompareButton id={property.id} />
         </div>
       </div>

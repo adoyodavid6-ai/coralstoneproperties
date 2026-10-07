@@ -334,3 +334,37 @@ create index if not exists campaigns_created_at_idx on public.campaigns (created
 
 -- Service role only (admin console). No anon access.
 alter table public.campaigns enable row level security;
+
+
+-- ===========================================================================
+-- PROPERTY ALERTS  (saved searches → email me when a matching listing appears)
+-- ===========================================================================
+create table if not exists public.property_alerts (
+  id                uuid primary key default gen_random_uuid(),
+  created_at        timestamptz not null default now(),
+  email             text not null,
+  name              text,
+  -- Search criteria (a serialised subset of SearchFilters).
+  q                 text,
+  intent            text,              -- sale | rent | short_let | all
+  type              text,              -- apartment | house | land | ... | all
+  country           text,
+  county            text,
+  area              text,
+  min_price         numeric,
+  max_price         numeric,
+  price_currency    text default 'KES',
+  beds              integer,
+  label             text,              -- human-readable description of the search
+  status            text not null default 'active' check (status in ('active','unsubscribed')),
+  token             text not null default gen_random_uuid()::text,
+  -- Listing ids we've already alerted this subscriber about (dedupe future runs).
+  notified_ids      jsonb not null default '[]'::jsonb,
+  last_notified_at  timestamptz
+);
+
+create index if not exists property_alerts_status_idx on public.property_alerts (status);
+create index if not exists property_alerts_token_idx  on public.property_alerts (token);
+
+-- Service role only (public create action, unsubscribe link, cron dispatch). No anon access.
+alter table public.property_alerts enable row level security;

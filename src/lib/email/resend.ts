@@ -76,13 +76,15 @@ type Message = {
   subject: string;
   html: string;
   replyTo?: string;
+  /** Override the default sender (brandFrom). Must be on a Resend-verified domain. */
+  from?: string;
   /** Extra SMTP-ish headers, e.g. List-Unsubscribe. */
   headers?: Record<string, string>;
 };
 
 function toPayload(msg: Message) {
   return {
-    from: brandFrom(),
+    from: msg.from || brandFrom(),
     to: Array.isArray(msg.to) ? msg.to : [msg.to],
     subject: msg.subject,
     html: msg.html,
