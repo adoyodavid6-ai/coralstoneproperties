@@ -1,15 +1,68 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { signInAction, signUpAction, type AuthState } from "@/lib/auth/actions";
 import { inputClass } from "@/components/admin/ui";
+import { Eye, EyeOff } from "@/components/ui/icons";
+import { cn } from "@/lib/cn";
+
+/** Password input with a show/hide eye toggle. Optionally controlled. */
+function PasswordField({
+  label,
+  name,
+  autoComplete,
+  placeholder,
+  minLength,
+  value,
+  onChange,
+}: {
+  label: string;
+  name: string;
+  autoComplete: string;
+  placeholder: string;
+  minLength?: number;
+  value?: string;
+  onChange?: (v: string) => void;
+}) {
+  const [show, setShow] = useState(false);
+  return (
+    <label className="block">
+      <span className="mb-1 block text-sm font-medium text-primary">{label}</span>
+      <div className="relative">
+        <input
+          name={name}
+          type={show ? "text" : "password"}
+          required
+          minLength={minLength}
+          autoComplete={autoComplete}
+          className={cn(inputClass, "pr-11")}
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange ? (e) => onChange(e.currentTarget.value) : undefined}
+        />
+        <button
+          type="button"
+          onClick={() => setShow((s) => !s)}
+          aria-label={show ? "Hide password" : "Show password"}
+          aria-pressed={show}
+          className="absolute inset-y-0 right-0 flex items-center px-3 text-ink-soft transition-colors hover:text-accent"
+        >
+          {show ? <EyeOff className="h-4.5 w-4.5" /> : <Eye className="h-4.5 w-4.5" />}
+        </button>
+      </div>
+    </label>
+  );
+}
 
 export function AuthForm({ mode, next }: { mode: "sign-in" | "sign-up"; next: string }) {
   const action = mode === "sign-in" ? signInAction : signUpAction;
   const [state, formAction, pending] = useActionState<AuthState, FormData>(action, undefined);
 
   const isSignUp = mode === "sign-up";
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const mismatch = isSignUp && confirm.length > 0 && password !== confirm;
 
   return (
     <form action={formAction} className="space-y-4">
@@ -41,22 +94,36 @@ export function AuthForm({ mode, next }: { mode: "sign-in" | "sign-up"; next: st
         </label>
       )}
 
-      <label className="block">
-        <span className="mb-1 block text-sm font-medium text-primary">Password</span>
-        <input
-          name="password"
-          type="password"
-          required
-          minLength={isSignUp ? 8 : undefined}
-          autoComplete={isSignUp ? "new-password" : "current-password"}
-          className={inputClass}
-          placeholder={isSignUp ? "At least 8 characters" : "Your password"}
-        />
-      </label>
+      <PasswordField
+        label="Password"
+        name="password"
+        autoComplete={isSignUp ? "new-password" : "current-password"}
+        placeholder={isSignUp ? "At least 8 characters" : "Your password"}
+        minLength={isSignUp ? 8 : undefined}
+        value={isSignUp ? password : undefined}
+        onChange={isSignUp ? setPassword : undefined}
+      />
+
+      {isSignUp && (
+        <div>
+          <PasswordField
+            label="Confirm password"
+            name="confirmPassword"
+            autoComplete="new-password"
+            placeholder="Re-enter your password"
+            minLength={8}
+            value={confirm}
+            onChange={setConfirm}
+          />
+          {mismatch && (
+            <p className="mt-1 text-xs text-danger">Passwords don&apos;t match.</p>
+          )}
+        </div>
+      )}
 
       <button
         type="submit"
-        disabled={pending}
+        disabled={pending || mismatch}
         className="w-full rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-accent-hover disabled:opacity-60"
       >
         {pending ? "Please wait…" : isSignUp ? "Create account" : "Sign in"}

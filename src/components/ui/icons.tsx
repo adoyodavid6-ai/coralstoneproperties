@@ -180,3 +180,15 @@ export const Trash = ({ className }: P) => (
     <path d="M4 7h16M10 11v6M14 11v6M5 7l1 13a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2l1-13M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3" />
   </S>
 );
+export const Eye = ({ className }: P) => (
+  <S className={className}>
+    <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" />
+    <circle cx="12" cy="12" r="3" />
+  </S>
+);
+export const EyeOff = ({ className }: P) => (
+  <S className={className}>
+    <path d="M3 3l18 18M10.6 10.6a3 3 0 0 0 4.2 4.2" />
+    <path d="M9.9 5.2A10.4 10.4 0 0 1 12 5c6.5 0 10 7 10 7a17.3 17.3 0 0 1-3.3 4.1M6.3 6.3A17.3 17.3 0 0 0 2 12s3.5 7 10 7a10.4 10.4 0 0 0 3.3-.5" />
+  </S>
+);

@@ -57,12 +57,15 @@ export async function signUpAction(
   const email = clean(formData.get("email"), 200).toLowerCase();
   const phone = clean(formData.get("phone"), 40);
   const password = clean(formData.get("password"), 200);
+  const confirmPassword = clean(formData.get("confirmPassword"), 200);
   const next = safeNext(formData.get("next"));
 
   if (name.length < 2) return { error: "Please enter your full name." };
   if (!isEmail(email)) return { error: "Please enter a valid email address." };
   if (password.length < 8)
     return { error: "Password must be at least 8 characters." };
+  if (password !== confirmPassword)
+    return { error: "Passwords don't match." };
 
   const supabase = await createSupabaseServerClient();
   if (!supabase) return { error: UNAVAILABLE };
