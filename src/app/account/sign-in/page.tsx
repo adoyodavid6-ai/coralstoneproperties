@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/dal";
 import { AuthForm } from "@/components/account/AuthForm";
+import { ResendConfirmation } from "@/components/account/ResendConfirmation";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Sign in" };
@@ -37,6 +38,7 @@ export default async function SignInPage({
           </p>
         )}
         <AuthForm mode="sign-in" next={target} />
+        <ResendConfirmation next={target} />
       </div>
     </div>
   );

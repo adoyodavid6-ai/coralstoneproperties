@@ -85,6 +85,18 @@ export async function signUpAction(
     return { error: error.message || "Could not create your account." };
   }
 
+  // Supabase obfuscates "email already registered" (anti-enumeration) by
+  // returning a user with an empty identities array and no error. Surface a
+  // clear message instead of a misleading "check your email".
+  const identities = data.user?.identities;
+  if (data.user && Array.isArray(identities) && identities.length === 0) {
+    return {
+      ok: true,
+      message:
+        "This email is already registered. Check your inbox for the confirmation link, or sign in instead.",
+    };
+  }
+
   // If the project requires email confirmation, no session is returned yet.
   if (!data.session) {
     return {
@@ -96,6 +108,37 @@ export async function signUpAction(
 
   revalidatePath("/", "layout");
   redirect(next);
+}
+
+/** Re-send the sign-up confirmation email (for when the first didn't arrive). */
+export async function resendConfirmationAction(
+  _prev: AuthState,
+  formData: FormData,
+): Promise<AuthState> {
+  const email = clean(formData.get("email"), 200).toLowerCase();
+  const next = safeNext(formData.get("next"));
+  if (!isEmail(email)) return { error: "Please enter a valid email address." };
+
+  const supabase = await createSupabaseServerClient();
+  if (!supabase) return { error: UNAVAILABLE };
+
+  const { error } = await supabase.auth.resend({
+    type: "signup",
+    email,
+    options: {
+      emailRedirectTo: `${SITE_URL}/account/callback?next=${encodeURIComponent(next)}`,
+    },
+  });
+  if (error) {
+    return {
+      error:
+        "Couldn't resend just now — you may have hit the email rate limit. Wait a minute and try again.",
+    };
+  }
+  return {
+    ok: true,
+    message: "If that account still needs confirming, a fresh link is on its way.",
+  };
 }
 
 export async function signOutAction(): Promise<void> {
