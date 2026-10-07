@@ -53,10 +53,7 @@ export function CookieConsent() {
                 <CheckShield className="h-4 w-4" />
               </span>
               <p className="text-sm leading-relaxed text-ink-soft">
-                We use essential cookies to run the site, plus optional{" "}
-                <strong className="text-primary">Vercel Analytics</strong> cookies (retained up to
-                24 months) to understand how it&apos;s used. No analytics load until you accept, and
-                you can change your choice anytime.{" "}
+                We use cookies to measure and improve site performance.{" "}
                 <Link href="/data-protection#cookies" className="font-semibold text-accent hover:brightness-90">
                   Cookie &amp; privacy policy
                 </Link>
