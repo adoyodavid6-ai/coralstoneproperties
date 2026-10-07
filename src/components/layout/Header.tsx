@@ -8,7 +8,7 @@ import { LOCALES } from "@/lib/i18n/dictionaries";
 import type { DisplayCurrency } from "@/lib/types";
 import { ButtonLink } from "@/components/ui/Button";
 import { Logo } from "@/components/ui/Logo";
-import { Globe, Close, Chevron, User } from "@/components/ui/icons";
+import { Globe, Close, Chevron, User, Check } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
 
 const CURRENCIES: { value: DisplayCurrency; label: string }[] = [
@@ -106,10 +106,14 @@ export function Header() {
   const [open, setOpen]         = useState(false);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [activeNav, setActiveNav] = useState<string | null>(null);
+  const [currencyOpen, setCurrencyOpen] = useState(false);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pathname = usePathname();
 
   if (pathname?.startsWith("/admin")) return null;
+
+  const activeCurrency =
+    CURRENCIES.find((c) => c.value === currency)?.label ?? "Local";
 
   function openNav(key: string) {
     if (closeTimer.current) clearTimeout(closeTimer.current);
@@ -144,27 +148,61 @@ export function Header() {
           }}
         />
         <div className="container-page flex h-9 items-center justify-end gap-4">
-          {/* Currency */}
-          <div className="flex items-center">
-            {CURRENCIES.map((c, i) => (
-              <span key={c.value} className="flex items-center">
-                {i > 0 && (
-                  <span className="mx-1.5 select-none text-white/20">·</span>
+          {/* Currency dropdown */}
+          <div
+            className="relative"
+            onMouseEnter={() => setCurrencyOpen(true)}
+            onMouseLeave={() => setCurrencyOpen(false)}
+          >
+            <button
+              type="button"
+              onClick={() => setCurrencyOpen((v) => !v)}
+              aria-haspopup="menu"
+              aria-expanded={currencyOpen}
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-white/65 transition-colors hover:text-white"
+            >
+              Currency
+              <span aria-hidden className="text-white/30">·</span>
+              <span className="figure text-rose">{activeCurrency}</span>
+              <Chevron
+                className={cn(
+                  "h-3 w-3 opacity-50 transition-transform duration-200",
+                  currencyOpen && "rotate-180",
                 )}
-                <button
-                  onClick={() => setCurrency(c.value)}
-                  aria-pressed={currency === c.value}
-                  className={cn(
-                    "figure text-xs font-semibold transition-colors",
-                    currency === c.value
-                      ? "text-rose"
-                      : "text-white/40 hover:text-white/75",
-                  )}
-                >
-                  {c.label}
-                </button>
-              </span>
-            ))}
+              />
+            </button>
+
+            {currencyOpen && (
+              <div
+                role="menu"
+                className="absolute right-0 top-full z-50 mt-1.5 w-36 overflow-hidden rounded-xl border border-line bg-surface-raised shadow-float animate-rise"
+              >
+                <ul className="py-1.5">
+                  {CURRENCIES.map((c) => (
+                    <li key={c.value}>
+                      <button
+                        type="button"
+                        role="menuitemradio"
+                        aria-checked={currency === c.value}
+                        onClick={() => {
+                          setCurrency(c.value);
+                          setCurrencyOpen(false);
+                        }}
+                        className={cn(
+                          "flex w-full items-center justify-between gap-2 px-4 py-2 text-sm transition-colors",
+                          currency === c.value
+                            ? "font-semibold text-accent"
+                            : "text-ink-soft hover:bg-accent-soft hover:text-accent",
+                        )}
+                      >
+                        {c.label}
+                        {currency === c.value && <Check className="h-3.5 w-3.5" />}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
 
           {/* Language */}
@@ -393,20 +431,21 @@ export function Header() {
 
           <div className="container-page flex items-center justify-between border-t border-white/10 py-4">
             <div className="flex items-center gap-3">
-              {CURRENCIES.map((c) => (
-                <button
-                  key={c.value}
-                  onClick={() => setCurrency(c.value)}
-                  className={cn(
-                    "figure text-sm font-semibold transition-colors",
-                    currency === c.value
-                      ? "text-rose"
-                      : "text-white/40 hover:text-white/75",
-                  )}
+              <label className="flex items-center gap-2 text-sm font-medium text-white/60">
+                Currency
+                <select
+                  value={currency}
+                  onChange={(e) => setCurrency(e.target.value as DisplayCurrency)}
+                  aria-label="Display currency"
+                  className="figure rounded-lg border border-white/15 bg-white/5 px-2 py-1 text-sm font-semibold text-white focus:border-rose focus:outline-none"
                 >
-                  {c.label}
-                </button>
-              ))}
+                  {CURRENCIES.map((c) => (
+                    <option key={c.value} value={c.value} className="text-ink">
+                      {c.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
               <span className="h-4 w-px bg-white/15" />
               <button
                 onClick={() => setLocale(locale === "en" ? "sw" : "en")}
