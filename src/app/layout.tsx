@@ -9,6 +9,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { CompareBar } from "@/components/ui/CompareBar";
 import { CookieConsent } from "@/components/layout/CookieConsent";
+import { ChatWidget } from "@/components/chat/ChatWidget";
 import { SITE_URL } from "@/lib/site";
 
 // Self-hosted, optimised fonts (no render-blocking <link> to Google).
@@ -79,6 +80,7 @@ export default function RootLayout({
             </BookingProvider>
           </CompareProvider>
         </LocaleProvider>
+        <ChatWidget />
         <CookieConsent />
       </body>
     </html>
