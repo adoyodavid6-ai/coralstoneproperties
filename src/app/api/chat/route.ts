@@ -154,5 +154,12 @@ export async function POST(req: Request) {
     },
   });
 
-  return result.toUIMessageStreamResponse(cookieHeader ? { headers: cookieHeader } : undefined);
+  return result.toUIMessageStreamResponse({
+    ...(cookieHeader ? { headers: cookieHeader } : {}),
+    // TEMP DIAGNOSTIC: surface the real provider error so we can confirm the key works.
+    onError: (error) => {
+      console.error("[chat] stream error:", error);
+      return error instanceof Error ? error.message : String(error);
+    },
+  });
 }
