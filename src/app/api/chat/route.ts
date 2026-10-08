@@ -1,4 +1,4 @@
-import { anthropic } from "@ai-sdk/anthropic";
+import { createAnthropic } from "@ai-sdk/anthropic";
 import {
   convertToModelMessages,
   stepCountIs,
@@ -20,6 +20,15 @@ export const maxDuration = 60;
 const MAX_MESSAGES = 40;
 const MAX_INPUT_CHARS = 2_000;
 const SESSION_COOKIE = "cs_chat";
+
+// Reads ANTHROPIC_API_KEY from the environment. If the key is org-scoped rather
+// than workspace-scoped, Anthropic requires an `anthropic-workspace-id` header —
+// set ANTHROPIC_WORKSPACE_ID to supply it (a workspace-scoped key needs neither).
+const anthropic = createAnthropic(
+  process.env.ANTHROPIC_WORKSPACE_ID
+    ? { headers: { "anthropic-workspace-id": process.env.ANTHROPIC_WORKSPACE_ID } }
+    : undefined,
+);
 
 function text(body: string, status: number, headers?: HeadersInit) {
   return new Response(body, { status, headers: { "Content-Type": "text/plain; charset=utf-8", ...headers } });
@@ -156,10 +165,11 @@ export async function POST(req: Request) {
 
   return result.toUIMessageStreamResponse({
     ...(cookieHeader ? { headers: cookieHeader } : {}),
-    // TEMP DIAGNOSTIC: surface the real provider error so we can confirm the key works.
     onError: (error) => {
+      // Log the real reason server-side (visible in Vercel logs); keep the
+      // client message generic so provider details aren't leaked to visitors.
       console.error("[chat] stream error:", error);
-      return error instanceof Error ? error.message : String(error);
+      return "Sorry, I hit a problem answering that. Please try again.";
     },
   });
 }
