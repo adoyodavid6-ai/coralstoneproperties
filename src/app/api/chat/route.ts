@@ -9,11 +9,41 @@ import {
 import { z } from "zod";
 import { CONCIERGE_SYSTEM } from "@/lib/chat/concierge";
 import { searchListings } from "@/lib/chat/listing-search";
+import { checkRateLimit } from "@/lib/chat/rate-limit";
 import { getListingBySlug } from "@/lib/data/listings";
 import { priceLabel } from "@/lib/format";
 
 // Chat replies stream token-by-token; allow a generous window for tool loops.
 export const maxDuration = 60;
+
+// Cost guards: cap how much context one request can carry to the model.
+const MAX_MESSAGES = 40;
+const MAX_INPUT_CHARS = 2_000;
+const SESSION_COOKIE = "cs_chat";
+
+function text(body: string, status: number, headers?: HeadersInit) {
+  return new Response(body, { status, headers: { "Content-Type": "text/plain; charset=utf-8", ...headers } });
+}
+
+/** Stable per-browser key for rate limiting; falls back to client IP. */
+function sessionKey(req: Request): { key: string; setCookie?: string } {
+  const cookie = req.headers.get("cookie") ?? "";
+  const match = cookie.match(/(?:^|;\s*)cs_chat=([a-f0-9-]+)/i);
+  if (match) return { key: match[1] };
+
+  const id = crypto.randomUUID();
+  const setCookie = `${SESSION_COOKIE}=${id}; Path=/; Max-Age=86400; SameSite=Lax; HttpOnly`;
+  return { key: id, setCookie };
+}
+
+function lastUserText(messages: UIMessage[]): string {
+  const last = [...messages].reverse().find((m) => m.role === "user");
+  if (!last) return "";
+  return last.parts
+    .filter((p): p is { type: "text"; text: string } => p.type === "text")
+    .map((p) => p.text)
+    .join(" ");
+}
 
 const INTENTS = ["sale", "rent", "short_let"] as const;
 const TYPES = [
@@ -29,9 +59,18 @@ const COUNTRIES = ["Kenya", "Uganda", "Tanzania", "Rwanda"] as const;
 
 export async function POST(req: Request) {
   if (!process.env.ANTHROPIC_API_KEY) {
-    return Response.json(
-      { error: "The assistant isn't configured yet. Please try again later." },
-      { status: 503 },
+    return text("The assistant isn't configured yet. Please try again later.", 503);
+  }
+
+  const { key, setCookie } = sessionKey(req);
+  const cookieHeader = setCookie ? { "Set-Cookie": setCookie } : undefined;
+
+  const limit = checkRateLimit(key);
+  if (!limit.ok) {
+    return text(
+      "You're sending messages a little too quickly. Please wait a moment and try again.",
+      429,
+      { ...cookieHeader, "Retry-After": String(limit.retryAfter ?? 30) },
     );
   }
 
@@ -39,7 +78,17 @@ export async function POST(req: Request) {
   try {
     ({ messages } = await req.json());
   } catch {
-    return Response.json({ error: "Invalid request body." }, { status: 400 });
+    return text("Invalid request.", 400, cookieHeader);
+  }
+
+  if (!Array.isArray(messages) || messages.length === 0) {
+    return text("No message provided.", 400, cookieHeader);
+  }
+  if (messages.length > MAX_MESSAGES) {
+    return text("This conversation is too long — please start a new chat.", 413, cookieHeader);
+  }
+  if (lastUserText(messages).length > MAX_INPUT_CHARS) {
+    return text("That message is too long. Please shorten it and try again.", 413, cookieHeader);
   }
 
   const result = streamText({
@@ -105,5 +154,5 @@ export async function POST(req: Request) {
     },
   });
 
-  return result.toUIMessageStreamResponse();
+  return result.toUIMessageStreamResponse(cookieHeader ? { headers: cookieHeader } : undefined);
 }

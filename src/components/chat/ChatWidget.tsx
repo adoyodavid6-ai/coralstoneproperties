@@ -122,7 +122,9 @@ export function ChatWidget() {
             )}
             {error && (
               <p className="text-sm text-danger">
-                Something went wrong. Please try again.
+                {error.message?.trim() && error.message.length < 200
+                  ? error.message
+                  : "Something went wrong. Please try again."}
               </p>
             )}
           </div>
