@@ -8,9 +8,11 @@ import { getFeatured, getTrending } from "@/lib/data/listings";
 import { Chevron, Calendar, Users, Bed, Star, Area, Cube } from "@/components/ui/icons";
 import { HeroVideo } from "@/components/home/HeroVideo";
 
-// Featured picks come from live inventory — render per request so newly
-// published listings appear without a redeploy.
-export const dynamic = "force-dynamic";
+// Featured picks come from live inventory. Serve a cached shell and refresh
+// every 5 minutes (ISR) rather than rendering per request — the homepage was
+// the one slow page (cold render + 2 DB queries on every hit). Newly published
+// listings appear within ~5 min instead of instantly, a fine launch trade-off.
+export const revalidate = 300;
 
 // The most sought-after ways people search — each links straight into the
 // matching /search filter.
