@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useMotion } from "@/lib/motion/MotionProvider";
 
@@ -25,6 +25,12 @@ const CROSSFADE = 1;
 
 export function HeroVideo({ className = "" }: { className?: string }) {
   const { tier } = useMotion();
+
+  // Defer the heavy video until after first paint. The poster renders instantly
+  // (SSR + pre-ready); the two <video> elements — each pulling the full MP4 —
+  // only mount once the browser is idle, so they never compete with the
+  // critical first paint. This was the home page's main lag source.
+  const [ready, setReady] = useState(false);
 
   const aRef = useRef<HTMLVideoElement>(null);
   const bRef = useRef<HTMLVideoElement>(null);
@@ -71,14 +77,30 @@ export function HeroVideo({ className = "" }: { className?: string }) {
     }
   }, []);
 
+  // Once mounted (client-only), wait for idle before loading the video.
   useEffect(() => {
     if (tier === "off") return;
-    const a = aRef.current;
-    if (a) void a.play();
+    const win = window as typeof window & {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+      cancelIdleCallback?: (id: number) => void;
+    };
+    if (win.requestIdleCallback) {
+      const id = win.requestIdleCallback(() => setReady(true), { timeout: 2000 });
+      return () => win.cancelIdleCallback?.(id);
+    }
+    const id = setTimeout(() => setReady(true), 300);
+    return () => clearTimeout(id);
   }, [tier]);
 
-  // Reduced motion / save-data (and the SSR pass) get the still frame only.
-  if (tier === "off") {
+  useEffect(() => {
+    if (!ready) return;
+    const a = aRef.current;
+    if (a) void a.play();
+  }, [ready]);
+
+  // Reduced motion / save-data, the SSR pass, and the pre-idle window all get
+  // the still poster only — so first paint never waits on the video.
+  if (tier === "off" || !ready) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
       <img
