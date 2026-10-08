@@ -50,6 +50,11 @@ yarn-error.log*
 # claude code — personal local settings (shared settings.json can be committed)
 .claude/settings.local.json
 
+# throwaway scratch scripts at repo root (perf/browser checks) — never commit
+/__*.mjs
+/__*.js
+/.scratch/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
