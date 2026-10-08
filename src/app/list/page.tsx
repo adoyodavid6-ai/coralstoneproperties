@@ -358,14 +358,16 @@ export default function ListPropertyPage() {
                 <Field label="Price" hint="asking price">
                   <div className="flex gap-2">
                     <select
-                      className={cn(inputCls, "w-24 shrink-0")}
+                      // Strip w-full from inputCls — cn() can't merge, so w-full
+                      // would otherwise override the fixed width and hog the row.
+                      className={cn(inputCls.replace("w-full", "w-20"), "shrink-0 px-2")}
                       value={data.currency}
                       onChange={(e) => set("currency", e.target.value as Currency)}
                     >
                       {CURRENCIES.map((c) => <option key={c} value={c}>{c}</option>)}
                     </select>
                     <input
-                      className={inputCls}
+                      className={cn(inputCls, "flex-1")}
                       placeholder={data.intent === "short_let" ? "per night" : "0"}
                       value={data.price}
                       onChange={(e) => set("price", e.target.value)}
