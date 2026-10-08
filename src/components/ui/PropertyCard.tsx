@@ -147,7 +147,7 @@ export function PropertyCard({
 
         <div className={cn("mt-auto flex flex-col gap-3 pt-2")}>
           {cardBadges.length > 0 && (
-            <div className="flex flex-col items-start gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               {cardBadges.map((k) => (
                 <VerifiedBadge key={k} kind={k} size="sm" />
               ))}

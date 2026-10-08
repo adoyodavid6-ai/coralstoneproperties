@@ -89,26 +89,26 @@ export default function ComparePage() {
         </button>
       </div>
 
-      <div className="mt-6 overflow-x-auto">
-        <table className="w-full min-w-[640px] border-collapse">
+      <div className="mt-6">
+        <table className="w-full table-fixed border-collapse">
           <thead>
             <tr>
-              <th className="w-32 sm:w-40" />
+              <th className="w-16 sm:w-40" />
               {items.map((p) => (
-                <th key={p.id} className="p-2 align-top">
+                <th key={p.id} className="p-1 align-top sm:p-2">
                   <div className="relative overflow-hidden rounded-xl border border-line bg-surface-raised">
                     <button
                       onClick={() => remove(p.id)}
                       aria-label="Remove from comparison"
-                      className="absolute right-2 top-2 z-10 grid h-7 w-7 place-items-center rounded-full bg-surface-raised/90 text-primary shadow-card"
+                      className="absolute right-1 top-1 z-10 grid h-6 w-6 place-items-center rounded-full bg-surface-raised/90 text-primary shadow-card sm:right-2 sm:top-2 sm:h-7 sm:w-7"
                     >
-                      <Close className="h-4 w-4" />
+                      <Close className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     </button>
                     <Link href={`/property/${p.slug}`} className="block aspect-[4/3]">
                       <SmartImage src={p.images[0]} alt={p.title} />
                     </Link>
-                    <Link href={`/property/${p.slug}`} className="block p-3">
-                      <span className="font-serif text-sm leading-snug text-primary hover:text-accent">
+                    <Link href={`/property/${p.slug}`} className="block p-1.5 sm:p-3">
+                      <span className="font-serif text-xs leading-snug text-primary hover:text-accent sm:text-sm">
                         {p.title}
                       </span>
                     </Link>
@@ -120,11 +120,11 @@ export default function ComparePage() {
           <tbody>
             {rows.map((r) => (
               <tr key={r.label} className="border-t border-line align-top transition-colors hover:bg-brand-soft/40">
-                <th scope="row" className="p-3 text-left text-xs font-semibold uppercase tracking-wide text-ink-soft">
+                <th scope="row" className="p-2 text-left text-[11px] font-semibold uppercase tracking-wide text-ink-soft sm:p-3 sm:text-xs">
                   {r.label}
                 </th>
                 {items.map((p) => (
-                  <td key={p.id} className="p-3 text-sm text-primary">
+                  <td key={p.id} className="break-words p-2 text-xs text-primary sm:p-3 sm:text-sm">
                     {r.render(p)}
                   </td>
                 ))}

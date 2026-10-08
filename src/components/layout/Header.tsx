@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 import { LOCALES } from "@/lib/i18n/dictionaries";
 import type { DisplayCurrency } from "@/lib/types";
@@ -108,7 +108,28 @@ export function Header() {
   const [activeNav, setActiveNav] = useState<string | null>(null);
   const [currencyOpen, setCurrencyOpen] = useState(false);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const currencyRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
+
+  // Close the currency menu on an outside click or Escape (click-to-open, so it
+  // stays put while you pick — no finicky hover timing).
+  useEffect(() => {
+    if (!currencyOpen) return;
+    const onDown = (e: MouseEvent) => {
+      if (currencyRef.current && !currencyRef.current.contains(e.target as Node)) {
+        setCurrencyOpen(false);
+      }
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setCurrencyOpen(false);
+    };
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [currencyOpen]);
 
   if (pathname?.startsWith("/admin")) return null;
 
@@ -149,11 +170,7 @@ export function Header() {
         />
         <div className="container-page flex h-9 items-center justify-end gap-4">
           {/* Currency dropdown */}
-          <div
-            className="relative"
-            onMouseEnter={() => setCurrencyOpen(true)}
-            onMouseLeave={() => setCurrencyOpen(false)}
-          >
+          <div ref={currencyRef} className="relative">
             <button
               type="button"
               onClick={() => setCurrencyOpen((v) => !v)}
