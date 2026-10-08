@@ -24,6 +24,9 @@
 .DS_Store
 *.pem
 
+# raw hero source art (huge PNGs) — optimized WebPs live in public/media/hero/
+/Hero PNG/
+
 # local reference/planning docs (not part of the codebase) — keep internal docs OUT of the public repo
 payment model real estate review.pdf
 *.pdf

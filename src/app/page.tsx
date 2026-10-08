@@ -6,7 +6,7 @@ import { SplitHeading } from "@/lib/motion/SplitHeading";
 import { Magnetic } from "@/lib/motion/Magnetic";
 import { getFeatured, getTrending } from "@/lib/data/listings";
 import { Chevron, Calendar, Users, Bed, Star, Area, Cube } from "@/components/ui/icons";
-import { HeroVideo } from "@/components/home/HeroVideo";
+import { HeroSlideshow } from "@/components/home/HeroSlideshow";
 
 // Featured picks come from live inventory. Serve a cached shell and refresh
 // every 5 minutes (ISR) rather than rendering per request — the homepage was
@@ -72,26 +72,18 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* Hero — cinematic villa video (Higgsfield / Veo 3.1) behind the copy */}
+      {/* Hero — crossfading verified-property photos behind the copy */}
       <section className="relative flex min-h-[72svh] items-center overflow-hidden bg-surface-dark">
         <div aria-hidden className="absolute inset-0">
-          <HeroVideo />
-          {/* Even dark wash so white copy reads over the bright sunset */}
-          <div className="absolute inset-0 bg-[rgba(11,20,28,0.42)]" />
-          {/* Radial vignette — darkens edges, keeps the centre luminous */}
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "radial-gradient(ellipse 90% 80% at 50% 45%, transparent 20%, rgba(22,66,91,0.6) 100%)",
-            }}
-          />
-          {/* Bottom fade — anchors text legibility and blends into the page */}
+          <HeroSlideshow />
+          {/* Neutral (no blue cast) wash so white copy stays legible over the photos */}
+          <div className="absolute inset-0 bg-[rgba(0,0,0,0.30)]" />
+          {/* Bottom fade — anchors text legibility; neutral black, no blue tint */}
           <div
             className="absolute inset-x-0 bottom-0 h-1/2"
             style={{
               background:
-                "linear-gradient(to top, rgba(22,66,91,0.8) 0%, transparent 100%)",
+                "linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 100%)",
             }}
           />
         </div>
