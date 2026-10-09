@@ -176,15 +176,24 @@ export function BookingWidget({ property }: { property: Property }) {
           <CheckShield className="h-8 w-8" />
         </span>
         <p className="mt-4 font-serif text-lg text-primary">
-          {perDay ? "Date reserved" : "Booking confirmed"}
+          {confirmed.demo ? "Request sent" : perDay ? "Date reserved" : "Booking confirmed"}
         </p>
         <p className="mt-1 text-sm text-ink-soft">
-          {nUnit(confirmed.nights)} · {money(breakdown.guestTotal)} paid.
-          Confirmation <span className="figure">{confirmed.id}</span>.
+          {confirmed.demo ? (
+            <>
+              {nUnit(confirmed.nights)} · {money(breakdown.guestTotal)}.
+              Reference <span className="figure">{confirmed.id}</span>.
+            </>
+          ) : (
+            <>
+              {nUnit(confirmed.nights)} · {money(breakdown.guestTotal)} paid.
+              Confirmation <span className="figure">{confirmed.id}</span>.
+            </>
+          )}
         </p>
         <p className="mt-2 text-xs text-ink-soft">
           {confirmed.demo
-            ? "Demo reservation — payment gateway not yet active."
+            ? "Your request has reached the CoralStones team, who will confirm availability and arrange payment with you."
             : confirmed.method === "mpesa"
               ? "Paid via M-Pesa. Saved to your trips."
               : "Payment received. Saved to your trips."}

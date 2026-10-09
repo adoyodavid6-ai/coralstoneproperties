@@ -288,7 +288,7 @@ function ActionModal({
     doneKind === "deposit"
       ? { title: "Deposit received", body: `${depositLabel} paid via M-Pesa. The verified agent will be in touch to take your reservation forward.` }
       : doneKind === "deposit_demo"
-        ? { title: "Almost there", body: `Demo mode — in the live product a ${depositLabel} M-Pesa deposit would be taken now. Your enquiry has reached the team.` }
+        ? { title: "Request sent", body: `Your reservation request has reached the CoralStones team. The verified agent will be in touch to confirm availability and arrange the ${depositLabel} deposit.` }
         : { title: "Request sent", body: "Your request has reached the CoralStones team, who will pass it to the verified agent for this listing. We'll be in touch shortly." };
 
   const buttonLabel = busy
