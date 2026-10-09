@@ -163,10 +163,9 @@ export async function POST(req: Request) {
   return result.toUIMessageStreamResponse({
     ...(cookieHeader ? { headers: cookieHeader } : {}),
     onError: (error) => {
-      // Log the real reason server-side (visible in Vercel logs); keep the
-      // client message generic so provider details aren't leaked to visitors.
+      // TEMP DIAGNOSTIC (round 3): surface the real provider error.
       console.error("[chat] stream error:", error);
-      return "Sorry, I hit a problem answering that. Please try again.";
+      return error instanceof Error ? error.message : String(error);
     },
   });
 }
