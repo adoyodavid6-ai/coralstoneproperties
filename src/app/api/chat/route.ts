@@ -22,10 +22,11 @@ const MAX_INPUT_CHARS = 2_000;
 const SESSION_COOKIE = "cs_chat";
 
 // Google Gemini via the Generative AI API. The provider reads
-// GOOGLE_GENERATIVE_AI_API_KEY from the environment. gemini-2.5-flash is cheap
-// and handles tool calling well; swap to "gemini-2.5-flash-lite" for even lower
-// cost, or a newer flash model, by changing this one string.
-const MODEL = "gemini-2.5-flash";
+// GOOGLE_GENERATIVE_AI_API_KEY from the environment. gemini-3.8-flash is the
+// current cheap flash model with strong tool calling (gemini-2.5-flash is no
+// longer available to new API keys). Swap to "gemini-3.5-flash-lite" for even
+// lower cost by changing this one string.
+const MODEL = "gemini-3.8-flash";
 
 function text(body: string, status: number, headers?: HeadersInit) {
   return new Response(body, { status, headers: { "Content-Type": "text/plain; charset=utf-8", ...headers } });
