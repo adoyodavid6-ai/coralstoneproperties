@@ -75,7 +75,7 @@ export const SEED_PLANS: SubscriptionPlan[] = [
 export const SEED_FLAGS: FeatureFlag[] = [
   { id: "immersive_3d", label: "Immersive 3D showcase", description: "The draggable 3D property carousel across the site.", enabled: true },
   { id: "diaspora_currency", label: "Diaspora currency toggle", description: "Local / USD / GBP price switching in the header.", enabled: true },
-  { id: "ai_concierge", label: "AI concierge chat", description: "Anthropic-grounded assistant on listings. Human-gated.", enabled: false },
+  { id: "ai_concierge", label: "AI concierge chat", description: "Gemini-grounded assistant on listings. Human-gated.", enabled: false },
   { id: "title_search", label: "Title-search (Ardhisasa)", description: "Buyer-initiated title verification on land PDPs.", enabled: false },
   { id: "mpesa_payments", label: "M-Pesa reservations", description: "STK Push reservation deposits and boost purchases.", enabled: false },
   { id: "masked_calling", label: "Masked in-app calling", description: "Proxy-number calls logged to the agent CRM.", enabled: false },

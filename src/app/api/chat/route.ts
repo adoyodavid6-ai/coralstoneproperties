@@ -1,4 +1,4 @@
-import { createAnthropic } from "@ai-sdk/anthropic";
+import { google } from "@ai-sdk/google";
 import {
   convertToModelMessages,
   stepCountIs,
@@ -21,14 +21,11 @@ const MAX_MESSAGES = 40;
 const MAX_INPUT_CHARS = 2_000;
 const SESSION_COOKIE = "cs_chat";
 
-// Reads ANTHROPIC_API_KEY from the environment. If the key is org-scoped rather
-// than workspace-scoped, Anthropic requires an `anthropic-workspace-id` header —
-// set ANTHROPIC_WORKSPACE_ID to supply it (a workspace-scoped key needs neither).
-const anthropic = createAnthropic(
-  process.env.ANTHROPIC_WORKSPACE_ID
-    ? { headers: { "anthropic-workspace-id": process.env.ANTHROPIC_WORKSPACE_ID } }
-    : undefined,
-);
+// Google Gemini via the Generative AI API. The provider reads
+// GOOGLE_GENERATIVE_AI_API_KEY from the environment. gemini-2.5-flash is cheap
+// and handles tool calling well; swap to "gemini-2.5-flash-lite" for even lower
+// cost, or a newer flash model, by changing this one string.
+const MODEL = "gemini-2.5-flash";
 
 function text(body: string, status: number, headers?: HeadersInit) {
   return new Response(body, { status, headers: { "Content-Type": "text/plain; charset=utf-8", ...headers } });
@@ -67,7 +64,7 @@ const TYPES = [
 const COUNTRIES = ["Kenya", "Uganda", "Tanzania", "Rwanda"] as const;
 
 export async function POST(req: Request) {
-  if (!process.env.ANTHROPIC_API_KEY) {
+  if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
     return text("The assistant isn't configured yet. Please try again later.", 503);
   }
 
@@ -101,7 +98,7 @@ export async function POST(req: Request) {
   }
 
   const result = streamText({
-    model: anthropic("claude-haiku-4-5"),
+    model: google(MODEL),
     system: CONCIERGE_SYSTEM,
     messages: await convertToModelMessages(messages),
     // Let the model call a tool, read the result, then answer in one turn.
