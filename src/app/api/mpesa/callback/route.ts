@@ -68,6 +68,9 @@ export async function POST(req: Request) {
           .from("bookings")
           .update({
             status: "paid",
+            // Stamp the escrow-hold time only on the pending→paid transition, so
+            // an enrichment pass on an already-paid row doesn't reset it.
+            ...(row.status === "pending" ? { escrow_held_at: new Date().toISOString() } : {}),
             totals: {
               ...totals,
               mpesa_receipt: field("MpesaReceiptNumber") ?? (totals as { mpesa_receipt?: unknown }).mpesa_receipt ?? null,

@@ -41,10 +41,20 @@ async function insertPendingBooking(
   input: StartPaymentInput,
   extraTotals?: Record<string, unknown>,
 ): Promise<string | null> {
+  // Link the payout owner + set the escrow release date (= check-in) up front,
+  // so the `paid` transition only has to stamp escrow_held_at. owner_id is null
+  // for demo-seed listings not present in the properties table — that's fine.
+  const { data: prop } = await supabase
+    .from("properties")
+    .select("owner_id")
+    .eq("id", input.propertyId)
+    .maybeSingle();
+
   const { data, error } = await supabase
     .from("bookings")
     .insert({
       property_id: input.propertyId,
+      owner_id: (prop?.owner_id as string | null) ?? null,
       guest_name: input.guestName,
       guest_email: input.guestEmail || null,
       check_in: input.checkIn,
@@ -53,6 +63,7 @@ async function insertPendingBooking(
       unit: input.unit,
       currency: input.currency,
       status: "pending",
+      release_due_at: input.checkIn,
       totals: extraTotals ? { ...input.breakdown, ...extraTotals } : input.breakdown,
     })
     .select("id")
@@ -140,7 +151,7 @@ export async function confirmBookingPayment(
 
   const { data: booking, error } = await supabase
     .from("bookings")
-    .update({ status: "paid" })
+    .update({ status: "paid", escrow_held_at: new Date().toISOString() }) // funds now held in escrow
     .eq("id", txRef)
     .eq("status", "pending") // idempotency guard — won't double-confirm
     .select("id, property_id, currency, check_in, check_out, totals, properties(slug, title)")
@@ -408,7 +419,11 @@ export async function pollMpesaBooking(checkoutRequestId: string): Promise<Mpesa
         const freshTotals = (fresh?.totals ?? row.totals ?? {}) as BookingBreakdown;
         await supabase
           .from("bookings")
-          .update({ status: "paid", totals: { ...freshTotals, mpesa_result_desc: q.resultDesc } })
+          .update({
+            status: "paid",
+            escrow_held_at: new Date().toISOString(),
+            totals: { ...freshTotals, mpesa_result_desc: q.resultDesc },
+          })
           .eq("id", row.id)
           .eq("status", "pending");
         const { data: settled } = await supabase.from("bookings").select(bookingCols).eq("id", row.id).maybeSingle();
