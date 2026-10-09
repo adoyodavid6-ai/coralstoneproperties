@@ -27,6 +27,7 @@ const NAV = [
   { href: "/admin/bookings", label: "Bookings", icon: Calendar },
   { href: "/admin/documents", label: "Documents", icon: FileText },
   { href: "/admin/agents", label: "Agents", icon: CheckShield },
+  { href: "/admin/owners", label: "Owners", icon: Users },
   { href: "/admin/subscribers", label: "Subscribers", icon: Users },
   { href: "/admin/email", label: "Email", icon: Mail },
   { href: "/admin/settings", label: "Settings", icon: Sliders },

@@ -2,11 +2,14 @@ import "server-only";
 import { cache } from "react";
 import { createSupabaseServerClient } from "@/lib/supabase/auth-server";
 
+export type UserRole = "user" | "agent" | "admin" | "owner";
+
 export interface CurrentUser {
   id: string;
   email: string;
   name: string;
   phone: string;
+  role: UserRole;
 }
 
 /**
@@ -27,10 +30,21 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
   if (!user) return null;
 
   const meta = (user.user_metadata ?? {}) as Record<string, unknown>;
+
+  // Role lives in the profiles table (elevated only via the service role).
+  // RLS "profiles read own" lets a user read their own row with this client.
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .maybeSingle();
+  const role = (profile?.role as UserRole | undefined) ?? "user";
+
   return {
     id: user.id,
     email: user.email ?? "",
     name: typeof meta.full_name === "string" ? meta.full_name : "",
     phone: typeof meta.phone === "string" ? meta.phone : "",
+    role,
   };
 });

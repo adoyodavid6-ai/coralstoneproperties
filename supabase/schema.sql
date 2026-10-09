@@ -55,8 +55,14 @@ create table if not exists public.profiles (
   updated_at  timestamptz not null default now(),
   full_name   text,
   phone       text,
-  role        text not null default 'user' check (role in ('user','agent','admin'))
+  role        text not null default 'user' check (role in ('user','agent','admin','owner'))
 );
+
+-- Migrate databases whose role check predates 'owner' (hosts). Owners, like
+-- agents, are only ever elevated via the service role — never self-service.
+alter table public.profiles drop constraint if exists profiles_role_check;
+alter table public.profiles
+  add constraint profiles_role_check check (role in ('user','agent','admin','owner'));
 
 drop trigger if exists profiles_set_updated_at on public.profiles;
 create trigger profiles_set_updated_at before update on public.profiles
@@ -233,6 +239,13 @@ create policy "properties public read active" on public.properties
 drop policy if exists "properties admin write" on public.properties;
 create policy "properties admin write" on public.properties
   for all using (public.is_admin()) with check (public.is_admin());
+
+-- Owner link for mediated (short-let / venue) listings: the auth user who
+-- hosts this property and receives payouts. Nullable — unlinked / sales-side
+-- listings leave it null; `agent_id` still drives the public agent card.
+alter table public.properties
+  add column if not exists owner_id uuid references auth.users (id) on delete set null;
+create index if not exists properties_owner_idx on public.properties (owner_id);
 
 
 -- ===========================================================================
@@ -502,3 +515,37 @@ create policy "messages read participants" on public.messages
     select 1 from public.message_threads t
     where t.id = thread_id
       and (auth.uid() = t.buyer_id or auth.uid() = t.owner_id or public.is_admin())));
+
+
+-- ===========================================================================
+-- PAYOUT ACCOUNTS  (owner/host payout destinations — M-Pesa or bank)
+-- ===========================================================================
+-- `secret_enc` holds the raw payout details (phone / account number) encrypted
+-- by the app (AES-256-GCM, key in PAYOUT_ENC_KEY) — it is NEVER selected into a
+-- client bundle, email, or RLS read. Only `display_label` (last-4) is shown.
+-- The table is fully locked (RLS on, NO anon policy): every read/write goes
+-- through the service role in src/lib/host/payoutAccounts.ts (same posture as
+-- subscribers). Decryption happens only at payout time, server-side.
+create table if not exists public.payout_accounts (
+  id            uuid primary key default gen_random_uuid(),
+  created_at    timestamptz not null default now(),
+  updated_at    timestamptz not null default now(),
+  owner_id      uuid not null references auth.users (id) on delete cascade,
+  method        text not null check (method in ('mpesa','bank')),
+  display_label text not null,
+  secret_enc    text,
+  is_default    boolean not null default false,
+  verified      boolean not null default false,
+  status        text not null default 'active' check (status in ('active','disabled'))
+);
+
+create index if not exists payout_accounts_owner_idx on public.payout_accounts (owner_id);
+
+drop trigger if exists payout_accounts_set_updated_at on public.payout_accounts;
+create trigger payout_accounts_set_updated_at before update on public.payout_accounts
+  for each row execute function public.set_updated_at();
+
+-- Locked down: no anon/user access at all (secret_enc must never be reachable
+-- via the anon key). Host reads go through the service role and return only
+-- masked columns.
+alter table public.payout_accounts enable row level security;
