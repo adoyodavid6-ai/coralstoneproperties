@@ -442,3 +442,63 @@ create policy "buyer docs delete own" on storage.objects
     bucket_id = 'buyer-documents'
     and ((storage.foldername(name))[1] = auth.uid()::text or public.is_admin())
   );
+
+
+-- ===========================================================================
+-- MESSAGING  (on-platform, PII-masked threads — keeps buyer↔owner talk on-site)
+-- ===========================================================================
+-- One thread per (property, buyer). `owner_id` is nullable: until a property is
+-- linked to an owner account (Stage B) the CoralStones team relays. Message
+-- bodies are PII-scrubbed in the server action before insert so neither side
+-- can leak a phone/email back-channel. property_id is NOT a FK (listings may be
+-- demo-seed rows not present in `properties`) — we snapshot slug/title, like
+-- buyer_documents. Writes go through the service role; RLS is defence-in-depth.
+create table if not exists public.message_threads (
+  id              uuid primary key default gen_random_uuid(),
+  created_at      timestamptz not null default now(),
+  updated_at      timestamptz not null default now(),
+  property_id     text not null,
+  property_slug   text,
+  property_title  text,
+  buyer_id        uuid not null references auth.users (id) on delete cascade,
+  owner_id        uuid references auth.users (id) on delete set null,
+  subject         text,
+  last_message_at timestamptz not null default now(),
+  buyer_unread    integer not null default 0,
+  owner_unread    integer not null default 0,
+  status          text not null default 'open' check (status in ('open','closed')),
+  unique (property_id, buyer_id)
+);
+
+create index if not exists message_threads_buyer_idx on public.message_threads (buyer_id, last_message_at desc);
+create index if not exists message_threads_owner_idx on public.message_threads (owner_id, last_message_at desc);
+
+drop trigger if exists message_threads_set_updated_at on public.message_threads;
+create trigger message_threads_set_updated_at before update on public.message_threads
+  for each row execute function public.set_updated_at();
+
+create table if not exists public.messages (
+  id          uuid primary key default gen_random_uuid(),
+  created_at  timestamptz not null default now(),
+  thread_id   uuid not null references public.message_threads (id) on delete cascade,
+  sender_id   uuid references auth.users (id) on delete set null,  -- null = system/admin relay
+  sender_role text not null check (sender_role in ('buyer','owner','system','admin')),
+  body        text not null,
+  read_at     timestamptz
+);
+
+create index if not exists messages_thread_idx on public.messages (thread_id, created_at);
+
+alter table public.message_threads enable row level security;
+alter table public.messages enable row level security;
+
+drop policy if exists "threads read participants" on public.message_threads;
+create policy "threads read participants" on public.message_threads
+  for select using (auth.uid() = buyer_id or auth.uid() = owner_id or public.is_admin());
+
+drop policy if exists "messages read participants" on public.messages;
+create policy "messages read participants" on public.messages
+  for select using (exists (
+    select 1 from public.message_threads t
+    where t.id = thread_id
+      and (auth.uid() = t.buyer_id or auth.uid() = t.owner_id or public.is_admin())));

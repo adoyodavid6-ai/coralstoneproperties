@@ -17,7 +17,7 @@
   --color-brand-bright: #1e5a7e;     /* lighter — on-dark accent, glow */
   --color-brand-hover: #0f2f43;      /* darker — hover on dark panels */
   --color-brand-soft: #dde8ef;       /* very light teal — chips, icon wells */
-  --color-header: #16425b;
+  --color-header: #022b3c;           /* deep teal — main nav bar + mobile menu */
 
   /* ── Coral — #ff8559 · interactive / tabs / CTAs ────────────────────── */
   --color-rose: #ff8559;

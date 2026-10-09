@@ -13,9 +13,8 @@ import { Price } from "@/components/ui/Price";
 import { SaveButton } from "@/components/ui/SaveButton";
 import { Avatar } from "@/components/ui/Avatar";
 import { VerifiedStrip } from "@/components/ui/VerifiedBadge";
+import { MessageHostModal } from "@/components/property/MessageHostModal";
 import {
-  Whatsapp,
-  Phone,
   Calendar,
   CheckShield,
   Clock,
@@ -54,10 +53,6 @@ export function ConversionRail({ property }: { property: Property }) {
   const [action, setAction] = useState<Action | null>(null);
   const agent = property.agent;
 
-  const waText = encodeURIComponent(
-    `Hi ${agent.name}, I'm interested in "${property.title}" on CoralStones Properties Listings.`,
-  );
-
   const open = (a: Action) => setAction(a);
 
   return (
@@ -84,24 +79,18 @@ export function ConversionRail({ property }: { property: Property }) {
         >
           {t("pdp.enquire")}
         </button>
-        <div className="grid grid-cols-2 gap-2.5">
-          <a
-            href={`https://wa.me/${agent.whatsapp}?text=${waText}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-verified text-sm font-medium text-white transition hover:brightness-95"
-          >
-            <Whatsapp className="h-4 w-4" />
-            {t("pdp.whatsapp")}
-          </a>
-          <a
-            href={`tel:${agent.phone}`}
-            className="inline-flex h-11 items-center justify-center gap-2 rounded-full border border-line-strong text-sm font-medium text-primary transition-colors hover:border-accent hover:text-accent"
-          >
-            <Phone className="h-4 w-4" />
-            {t("pdp.call")}
-          </a>
-        </div>
+        <MessageHostModal
+          property={property}
+          trigger={(openModal) => (
+            <button
+              onClick={openModal}
+              className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-verified text-sm font-medium text-white transition hover:brightness-95"
+            >
+              <CheckShield className="h-4 w-4" />
+              Message host
+            </button>
+          )}
+        />
         <button
           onClick={() => open("book")}
           className="inline-flex h-11 items-center justify-center gap-2 rounded-full border border-line-strong text-sm font-medium text-primary transition-colors hover:border-accent hover:text-accent"

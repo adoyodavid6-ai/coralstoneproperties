@@ -7,6 +7,7 @@ import { formatMoney } from "@/lib/format";
 import { useBookings } from "@/lib/booking/BookingProvider";
 import { calcBooking, nightsBetween } from "@/lib/booking/calc";
 import { VerifiedStrip } from "@/components/ui/VerifiedBadge";
+import { MessageHostModal } from "@/components/property/MessageHostModal";
 import { CheckShield, Star, Calendar, Users } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
 import { startBookingPayment, startMpesaBooking } from "@/lib/payment/actions";
@@ -405,6 +406,18 @@ export function BookingWidget({ property }: { property: Property }) {
           <span className="text-sm font-medium text-primary">Hosted by {property.agent.name}</span>
         </div>
         <div className="mt-2"><VerifiedStrip kinds={property.agent.verified} size="sm" /></div>
+        <MessageHostModal
+          property={property}
+          trigger={(openModal) => (
+            <button
+              type="button"
+              onClick={openModal}
+              className="mt-3 inline-flex h-10 w-full items-center justify-center rounded-full border border-line-strong text-sm font-medium text-primary transition-colors hover:border-accent hover:text-accent"
+            >
+              Message host
+            </button>
+          )}
+        />
       </div>
     </form>
   );
