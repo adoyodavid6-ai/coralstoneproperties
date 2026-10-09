@@ -87,13 +87,6 @@ export function Footer() {
             {t("footer.tagline")} We check the agent, the agency, the listing and
             the title — so East Africa can buy, rent and invest without fear.
           </p>
-          <div className="mt-5 flex flex-wrap gap-2 text-xs">
-            <span className="rounded-full bg-white/10 px-3 py-1.5">M-Pesa</span>
-            <span className="rounded-full bg-white/10 px-3 py-1.5">MTN MoMo</span>
-            <span className="rounded-full bg-white/10 px-3 py-1.5">Airtel Money</span>
-            <span className="rounded-full bg-white/10 px-3 py-1.5">EN · SW</span>
-            <span className="rounded-full bg-white/10 px-3 py-1.5">USSD ready</span>
-          </div>
         </div>
 
         {/* Phones: two columns, filled top-to-bottom per column — Explore+Intelligence
