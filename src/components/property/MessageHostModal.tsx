@@ -90,7 +90,7 @@ export function MessageHostModal({
                 </span>
                 <p className="mt-4 font-serif text-lg text-primary">Message sent</p>
                 <p className="mt-1 text-sm text-ink-soft">
-                  We've kept this on-platform so everything is traceable. You'll get replies in your inbox.
+                  We&apos;ve kept this on-platform so everything is traceable. You&apos;ll get replies in your inbox.
                 </p>
                 <div className="mt-5 flex justify-center gap-2">
                   <button

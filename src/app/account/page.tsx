@@ -59,15 +59,23 @@ export default async function AccountPage() {
             <p className="text-sm text-ink-soft">{user.email}</p>
           </div>
         </div>
-        <form action={signOutAction}>
-          <button
-            type="submit"
-            className="inline-flex items-center gap-2 rounded-full border border-line-strong px-4 py-2 text-sm font-medium text-primary transition-colors hover:border-danger hover:text-danger"
+        <div className="flex items-center gap-2">
+          <Link
+            href="/account/messages"
+            className="inline-flex items-center gap-2 rounded-full border border-line-strong px-4 py-2 text-sm font-medium text-primary transition-colors hover:border-accent hover:text-accent"
           >
-            <LogOut className="h-4 w-4" />
-            Sign out
-          </button>
-        </form>
+            Messages
+          </Link>
+          <form action={signOutAction}>
+            <button
+              type="submit"
+              className="inline-flex items-center gap-2 rounded-full border border-line-strong px-4 py-2 text-sm font-medium text-primary transition-colors hover:border-danger hover:text-danger"
+            >
+              <LogOut className="h-4 w-4" />
+              Sign out
+            </button>
+          </form>
+        </div>
       </div>
 
       {/* Documents */}
