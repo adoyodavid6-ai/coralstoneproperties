@@ -82,7 +82,18 @@ export async function signUpAction(
   });
 
   if (error) {
-    return { error: error.message || "Could not create your account." };
+    const msg = error.message || "";
+    // Supabase couldn't hand the email to its mail provider (SMTP not configured
+    // / misconfigured / rate-limited). Give a human message rather than the raw
+    // "Error sending confirmation email".
+    if (/sending.*email|smtp|rate ?limit/i.test(msg)) {
+      console.error("[auth] confirmation email send failed:", msg);
+      return {
+        error:
+          "We couldn't send the confirmation email right now. Please try again in a minute — if it keeps happening, contact support@coralstonesproperties.co.ke.",
+      };
+    }
+    return { error: msg || "Could not create your account." };
   }
 
   // Supabase obfuscates "email already registered" (anti-enumeration) by
