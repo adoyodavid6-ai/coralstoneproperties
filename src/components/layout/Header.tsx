@@ -158,14 +158,14 @@ export function Header() {
       />
 
       {/* Sub-header (top utility bar) — desktop only; mobile keeps these in the menu */}
-      <div className="relative hidden bg-[#9fa9b1] lg:block">
-        {/* Hairline between sub-header and main header */}
+      <div className="relative hidden bg-[#1f3b43] lg:block">
+        {/* White fading hairline between sub-header and main header */}
         <span
           aria-hidden
           className="pointer-events-none absolute inset-x-0 bottom-0 h-px"
           style={{
             background:
-              "linear-gradient(90deg, transparent 0%, rgba(2,43,60,0.25) 25%, rgba(2,43,60,0.25) 75%, transparent 100%)",
+              "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 25%, rgba(255,255,255,0.3) 75%, transparent 100%)",
           }}
         />
         <div className="container-page flex h-9 items-center justify-end gap-4">
@@ -176,11 +176,11 @@ export function Header() {
               onClick={() => setCurrencyOpen((v) => !v)}
               aria-haspopup="menu"
               aria-expanded={currencyOpen}
-              className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#022b3c]/80 transition-colors hover:text-[#022b3c]"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-white/70 transition-colors hover:text-white"
             >
               Currency
-              <span aria-hidden className="text-[#022b3c]/40">·</span>
-              <span className="figure text-accent-hover">{activeCurrency}</span>
+              <span aria-hidden className="text-white/30">·</span>
+              <span className="figure text-rose">{activeCurrency}</span>
               <Chevron
                 className={cn(
                   "h-3 w-3 opacity-50 transition-transform duration-200",
@@ -226,17 +226,17 @@ export function Header() {
           <button
             onClick={() => setLocale(locale === "en" ? "sw" : "en")}
             aria-label="Switch language"
-            className="inline-flex items-center gap-1 text-xs font-semibold text-[#022b3c]/60 transition-colors hover:text-[#022b3c]"
+            className="inline-flex items-center gap-1 text-xs font-semibold text-white/50 transition-colors hover:text-white/85"
           >
             <Globe className="h-3.5 w-3.5" />
             {LOCALES.find((l) => l.code === locale)?.short}
           </button>
 
-          <span aria-hidden className="h-3.5 w-px bg-[#022b3c]/20" />
+          <span aria-hidden className="h-3.5 w-px bg-white/15" />
 
           <Link
             href="/account"
-            className="-ml-[0.2cm] inline-flex items-center gap-1.5 text-sm font-medium text-[#022b3c]/80 transition-colors hover:text-[#022b3c]"
+            className="-ml-[0.2cm] inline-flex items-center gap-1.5 text-sm font-medium text-white/70 transition-colors hover:text-white"
           >
             <User className="h-4 w-4" />
             Account
