@@ -1,34 +1,13 @@
-import { revalidatePath } from "next/cache";
 import { getBookings } from "@/lib/booking/adminService";
 import type { AdminBooking } from "@/lib/booking/adminService";
 import type { Currency } from "@/lib/types";
 import { formatMoney, convertBetween } from "@/lib/format";
 import { Panel } from "@/components/admin/ui";
 import { FeeModelPanel } from "@/components/admin/FeeModelPanel";
-import { getEscrowBookings, getEscrowSummary, listRecentPayouts } from "@/lib/payment/adminPayouts";
-import { releaseBooking, refundBooking, markBookingRefunded } from "@/lib/payment/payout";
 import { cn } from "@/lib/cn";
 
 // Live data from Supabase — always render per request.
 export const dynamic = "force-dynamic";
-
-async function releaseAction(formData: FormData) {
-  "use server";
-  await releaseBooking({ bookingId: String(formData.get("id") ?? ""), actor: "admin", force: true });
-  revalidatePath("/admin/bookings");
-}
-
-async function refundAction(formData: FormData) {
-  "use server";
-  await refundBooking({ bookingId: String(formData.get("id") ?? ""), actor: "admin" });
-  revalidatePath("/admin/bookings");
-}
-
-async function markRefundedAction(formData: FormData) {
-  "use server";
-  await markBookingRefunded(String(formData.get("id") ?? ""));
-  revalidatePath("/admin/bookings");
-}
 
 const fmtDate = (iso: string) =>
   new Date(iso).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
@@ -91,9 +70,6 @@ function MethodPill({ method }: { method: AdminBooking["method"] }) {
 
 export default async function AdminBookings() {
   const bookings = await getBookings();
-  const escrow = await getEscrowBookings();
-  const escrowSummary = await getEscrowSummary(escrow);
-  const payouts = await listRecentPayouts();
 
   const paid = bookings.filter((b) => b.status === "paid");
   const pending = bookings.filter((b) => b.status === "pending");
@@ -123,104 +99,6 @@ export default async function AdminBookings() {
           sub="paid, normalised to KES"
         />
       </div>
-
-      <Panel title="Escrow &amp; payouts">
-        <div className="mb-4 grid grid-cols-2 gap-4 lg:grid-cols-4">
-          <StatCard
-            label="Held in escrow"
-            value={`≈ ${formatMoney(escrowSummary.heldKes, "KES", { compact: true })}`}
-            sub={`${escrowSummary.heldCount} booking(s) · owner share`}
-          />
-          <StatCard
-            label="Released"
-            value={`≈ ${formatMoney(escrowSummary.releasedKes, "KES", { compact: true })}`}
-            sub={`${escrowSummary.releasedCount} paid out`}
-          />
-        </div>
-        {escrow.length === 0 ? (
-          <p className="py-4 text-center text-sm text-ink-soft">
-            No funds in escrow. Paid short-let/venue bookings appear here, with a Release control once
-            the guest has checked in.
-          </p>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[720px] text-left text-sm">
-              <thead className="border-b border-line text-xs uppercase tracking-wide text-ink-soft">
-                <tr>
-                  <th className="px-3 py-3 font-medium">Listing</th>
-                  <th className="px-3 py-3 text-right font-medium">Owner payout</th>
-                  <th className="px-3 py-3 font-medium">Status</th>
-                  <th className="px-3 py-3 font-medium">Release due</th>
-                  <th className="px-3 py-3 font-medium">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-line">
-                {escrow.map((b) => (
-                  <tr key={b.id} className="hover:bg-surface-muted/50">
-                    <td className="px-3 py-3">
-                      <span className="block max-w-56 truncate font-medium text-primary">{b.propertyTitle}</span>
-                    </td>
-                    <td className="figure px-3 py-3 text-right text-primary">
-                      {formatMoney(b.ownerPayout, b.currency as Currency, { compact: true })}
-                    </td>
-                    <td className="px-3 py-3">
-                      <StatusPill status={b.status} />
-                    </td>
-                    <td className="figure px-3 py-3 text-xs text-ink-soft">
-                      {b.releaseDueAt ? fmtDate(b.releaseDueAt) : "—"}
-                    </td>
-                    <td className="px-3 py-3">
-                      <div className="flex flex-wrap gap-2">
-                        {(b.status === "paid" || b.status === "payout_failed") && (
-                          <form action={releaseAction}>
-                            <input type="hidden" name="id" value={b.id} />
-                            <button className="rounded-full bg-ink-black px-3 py-1 text-xs font-medium text-white">
-                              {b.status === "payout_failed" ? "Retry payout" : b.releasable ? "Release" : "Release (early)"}
-                            </button>
-                          </form>
-                        )}
-                        {b.status === "paid" && (
-                          <form action={refundAction}>
-                            <input type="hidden" name="id" value={b.id} />
-                            <button className="rounded-full border border-line-strong px-3 py-1 text-xs font-medium text-primary hover:border-danger hover:text-danger">
-                              Refund
-                            </button>
-                          </form>
-                        )}
-                        {b.status === "refund_pending" && (
-                          <form action={markRefundedAction}>
-                            <input type="hidden" name="id" value={b.id} />
-                            <button className="rounded-full border border-line-strong px-3 py-1 text-xs font-medium text-primary">
-                              Mark refunded
-                            </button>
-                          </form>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-        {payouts.length > 0 && (
-          <div className="mt-5">
-            <p className="mb-2 text-xs font-medium uppercase tracking-wide text-ink-soft">Payout ledger</p>
-            <ul className="divide-y divide-line text-sm">
-              {payouts.map((p) => (
-                <li key={p.id} className="flex items-center justify-between gap-3 py-2">
-                  <span className="text-ink-soft">
-                    {p.method} · {p.receipt || p.status}
-                  </span>
-                  <span className="figure text-primary">
-                    {formatMoney(p.amount, p.currency as Currency, { compact: true })} · {p.status}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </Panel>
 
       <Panel title={`Payments ledger (${bookings.length})`}>
         {bookings.length === 0 ? (

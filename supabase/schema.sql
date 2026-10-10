@@ -280,22 +280,21 @@ create table if not exists public.bookings (
   check_out     date not null,
   guests        integer not null default 1,
   unit          text not null default 'night' check (unit in ('night','day')),
-  status        text not null default 'pending' check (status in ('pending','confirmed','cancelled','paid','release_pending','payout_completed','payout_failed','refund_pending','refunded')),
+  status        text not null default 'pending' check (status in ('pending','awaiting_payment','payment_reported','confirmed','paid','declined','cancelled')),
   currency      text,
   totals        jsonb,
   fees          jsonb
 );
 
--- Escrow lifecycle (mediated short-let/venue): widen the status set on existing
--- databases, and add the hold/release bookkeeping columns.
+-- Owner-direct booking lifecycle: guest requests → pays the HOST directly →
+-- reports payment → host confirms receipt. CoralStones never holds the money.
+-- Widen the status set on existing databases and link the owner for routing.
 alter table public.bookings drop constraint if exists bookings_status_check;
 alter table public.bookings
   add constraint bookings_status_check check (status in
-    ('pending','confirmed','cancelled','paid','release_pending','payout_completed','payout_failed','refund_pending','refunded'));
+    ('pending','awaiting_payment','payment_reported','confirmed','paid','declined','cancelled'));
 alter table public.bookings
-  add column if not exists owner_id       uuid references auth.users (id) on delete set null,
-  add column if not exists escrow_held_at timestamptz,
-  add column if not exists release_due_at date;
+  add column if not exists owner_id uuid references auth.users (id) on delete set null;
 
 create index if not exists bookings_property_idx on public.bookings (property_id);
 create index if not exists bookings_user_idx     on public.bookings (user_id);
@@ -573,14 +572,14 @@ create policy "messages read participants" on public.messages
 
 
 -- ===========================================================================
--- PAYOUT ACCOUNTS  (owner/host payout destinations — M-Pesa or bank)
+-- PAYMENT ACCOUNTS  (owner/host payment details shown to paying guests)
 -- ===========================================================================
--- `secret_enc` holds the raw payout details (phone / account number) encrypted
--- by the app (AES-256-GCM, key in PAYOUT_ENC_KEY) — it is NEVER selected into a
--- client bundle, email, or RLS read. Only `display_label` (last-4) is shown.
--- The table is fully locked (RLS on, NO anon policy): every read/write goes
--- through the service role in src/lib/host/payoutAccounts.ts (same posture as
--- subscribers). Decryption happens only at payout time, server-side.
+-- Guests pay the HOST directly, so these details are REVEALED to a guest who
+-- has made a booking request (not public). `details` holds the structured
+-- payable fields; `instructions` is the ready-to-show "how to pay me" string.
+-- The table stays RLS-locked (no anon policy): the host manages rows via the
+-- service role, and a guest only ever sees the `instructions` for the specific
+-- booking they created (returned by the requestBooking action, server-side).
 create table if not exists public.payout_accounts (
   id            uuid primary key default gen_random_uuid(),
   created_at    timestamptz not null default now(),
@@ -588,11 +587,16 @@ create table if not exists public.payout_accounts (
   owner_id      uuid not null references auth.users (id) on delete cascade,
   method        text not null check (method in ('mpesa','bank')),
   display_label text not null,
-  secret_enc    text,
+  details       jsonb,                 -- structured payable fields (till/paybill/phone/bank acct)
+  instructions  text,                  -- client-facing "pay me like this" string
+  secret_enc    text,                  -- legacy (unused by owner-direct model)
   is_default    boolean not null default false,
   verified      boolean not null default false,
   status        text not null default 'active' check (status in ('active','disabled'))
 );
+
+alter table public.payout_accounts add column if not exists details jsonb;
+alter table public.payout_accounts add column if not exists instructions text;
 
 create index if not exists payout_accounts_owner_idx on public.payout_accounts (owner_id);
 
@@ -600,7 +604,6 @@ drop trigger if exists payout_accounts_set_updated_at on public.payout_accounts;
 create trigger payout_accounts_set_updated_at before update on public.payout_accounts
   for each row execute function public.set_updated_at();
 
--- Locked down: no anon/user access at all (secret_enc must never be reachable
--- via the anon key). Host reads go through the service role and return only
--- masked columns.
+-- Locked down: no anon/user access. Host manages via the service role; a guest
+-- sees only the instructions for their own booking request (server-returned).
 alter table public.payout_accounts enable row level security;

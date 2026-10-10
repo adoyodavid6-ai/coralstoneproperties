@@ -3,14 +3,15 @@ import { confirmVerificationPayment } from "@/lib/payment/actions";
 import { CheckShield } from "@/components/ui/icons";
 import { formatMoney } from "@/lib/format";
 
-// Flutterwave redirects here after a listing verification-fee payment.
+// Paystack redirects here after a listing verification-fee payment
+// (`?reference=…&trxref=…`).
 export default async function ListVerificationCallbackPage({
   searchParams,
 }: {
-  searchParams: Promise<{ transaction_id?: string; status?: string; tier?: string }>;
+  searchParams: Promise<{ reference?: string; trxref?: string; tier?: string }>;
 }) {
-  const { transaction_id, status, tier } = await searchParams;
-  const result = await confirmVerificationPayment(transaction_id ?? "", status ?? "");
+  const { reference, trxref, tier } = await searchParams;
+  const result = await confirmVerificationPayment(reference ?? trxref ?? "");
 
   if (!result.ok) {
     return (

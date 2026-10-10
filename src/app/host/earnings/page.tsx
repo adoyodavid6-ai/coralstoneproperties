@@ -14,19 +14,19 @@ export default async function HostEarnings() {
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
         <div className="rounded-2xl border border-line bg-surface-raised p-5 shadow-card">
-          <p className="text-xs font-medium uppercase tracking-wide text-ink-soft">Held in escrow</p>
-          <p className="figure mt-2 text-2xl font-semibold text-primary">{formatMoney(e.held, cur)}</p>
-          <p className="mt-1 text-xs text-ink-soft">Released to you after each guest checks in.</p>
+          <p className="text-xs font-medium uppercase tracking-wide text-ink-soft">Confirmed</p>
+          <p className="figure mt-2 text-2xl font-semibold text-primary">{formatMoney(e.confirmed, cur)}</p>
+          <p className="mt-1 text-xs text-ink-soft">Payments you&apos;ve confirmed receiving directly.</p>
         </div>
         <div className="rounded-2xl border border-line bg-surface-raised p-5 shadow-card">
-          <p className="text-xs font-medium uppercase tracking-wide text-ink-soft">Paid out</p>
-          <p className="figure mt-2 text-2xl font-semibold text-primary">{formatMoney(e.released, cur)}</p>
+          <p className="text-xs font-medium uppercase tracking-wide text-ink-soft">Awaiting confirmation</p>
+          <p className="figure mt-2 text-2xl font-semibold text-primary">{formatMoney(e.pending, cur)}</p>
           <p className="mt-1 text-xs text-ink-soft">Across {e.bookingsCount} booking(s).</p>
         </div>
       </div>
       <p className="text-sm text-ink-soft">
-        CoralStones holds each guest payment securely and releases your share (after the service fee)
-        to your default payout method once the stay begins.
+        Guests pay you directly to your payment details — CoralStones never holds the money. Confirm
+        each payment from your Bookings tab once it lands in your account.
       </p>
     </div>
   );

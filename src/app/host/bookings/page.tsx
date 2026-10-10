@@ -1,28 +1,42 @@
+import { revalidatePath } from "next/cache";
 import { requireOwner } from "@/lib/auth/roles";
 import { getHostBookings } from "@/lib/host/service";
+import { confirmBookingReceived, declineBooking } from "@/lib/host/bookingActions";
 import { formatMoney } from "@/lib/format";
 import type { Currency } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
+async function confirmAction(formData: FormData) {
+  "use server";
+  await confirmBookingReceived(String(formData.get("id") ?? ""));
+  revalidatePath("/host/bookings");
+}
+
+async function declineAction(formData: FormData) {
+  "use server";
+  await declineBooking(String(formData.get("id") ?? ""));
+  revalidatePath("/host/bookings");
+}
+
 const STATUS_TONE: Record<string, string> = {
   pending: "bg-surface-muted text-ink-soft",
-  paid: "bg-warning-soft text-warning",
-  release_pending: "bg-warning-soft text-warning",
-  payout_completed: "bg-verified-soft text-verified",
-  payout_failed: "bg-danger-soft text-danger",
+  awaiting_payment: "bg-warning-soft text-warning",
+  payment_reported: "bg-warning-soft text-warning",
+  confirmed: "bg-verified-soft text-verified",
+  paid: "bg-verified-soft text-verified",
+  declined: "bg-danger-soft text-danger",
   cancelled: "bg-surface-muted text-ink-soft",
-  refunded: "bg-surface-muted text-ink-soft",
 };
 
 const STATUS_LABEL: Record<string, string> = {
-  pending: "Pending payment",
-  paid: "Held in escrow",
-  release_pending: "Payout processing",
-  payout_completed: "Paid out",
-  payout_failed: "Payout failed",
+  pending: "Pending",
+  awaiting_payment: "Awaiting payment",
+  payment_reported: "Payment reported",
+  confirmed: "Confirmed",
+  paid: "Confirmed",
+  declined: "Declined",
   cancelled: "Cancelled",
-  refunded: "Refunded",
 };
 
 const fmt = (iso: string) =>
@@ -58,6 +72,22 @@ export default async function HostBookings() {
             <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-medium ${STATUS_TONE[b.status] ?? "bg-surface-muted text-ink-soft"}`}>
               {STATUS_LABEL[b.status] ?? b.status}
             </span>
+            {b.status === "payment_reported" && (
+              <div className="flex gap-1.5">
+                <form action={confirmAction}>
+                  <input type="hidden" name="id" value={b.id} />
+                  <button className="rounded-full bg-ink-black px-3 py-1 text-xs font-medium text-white">
+                    Confirm received
+                  </button>
+                </form>
+                <form action={declineAction}>
+                  <input type="hidden" name="id" value={b.id} />
+                  <button className="rounded-full border border-line-strong px-3 py-1 text-xs font-medium text-ink-soft hover:border-danger hover:text-danger">
+                    Decline
+                  </button>
+                </form>
+              </div>
+            )}
           </div>
         </li>
       ))}

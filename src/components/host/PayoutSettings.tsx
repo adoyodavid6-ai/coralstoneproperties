@@ -1,10 +1,10 @@
 "use client";
 
 /**
- * Host payout-method manager. Shows masked accounts only (the real number never
- * leaves the server) and lets the host add an M-Pesa or bank destination, pick
- * a default, or remove one. All mutations go through the payoutAccounts server
- * actions; we refresh the server component after each.
+ * Host payment-method manager. These are the details GUESTS use to pay the host
+ * directly (CoralStones never collects). The host enters an M-Pesa destination
+ * (send-money / Till / Paybill) or a bank account; we show the ready-to-share
+ * instruction. All mutations go through the payoutAccounts server actions.
  */
 
 import { useState } from "react";
@@ -13,13 +13,23 @@ import {
   addPayoutAccount,
   setDefaultPayoutAccount,
   disablePayoutAccount,
-  type MaskedPayoutAccount,
+  type PaymentMethod,
+  type AddPaymentInput,
 } from "@/lib/host/payoutAccounts";
 
-export function PayoutSettings({ accounts }: { accounts: MaskedPayoutAccount[] }) {
+export function PayoutSettings({ accounts }: { accounts: PaymentMethod[] }) {
   const router = useRouter();
   const [method, setMethod] = useState<"mpesa" | "bank">("mpesa");
-  const [form, setForm] = useState({ msisdn: "", bankName: "", accountName: "", accountNumber: "", bankCode: "" });
+  const [mpesaChannel, setMpesaChannel] = useState<"phone" | "till" | "paybill">("phone");
+  const [form, setForm] = useState({
+    phone: "",
+    till: "",
+    paybill: "",
+    account: "",
+    bankName: "",
+    accountName: "",
+    accountNumber: "",
+  });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
@@ -30,10 +40,11 @@ export function PayoutSettings({ accounts }: { accounts: MaskedPayoutAccount[] }
     if (busy) return;
     setBusy(true);
     setError("");
-    const res = await addPayoutAccount({ method, ...form });
+    const input: AddPaymentInput = { method, mpesaChannel, ...form };
+    const res = await addPayoutAccount(input);
     setBusy(false);
     if (res.ok) {
-      setForm({ msisdn: "", bankName: "", accountName: "", accountNumber: "", bankCode: "" });
+      setForm({ phone: "", till: "", paybill: "", account: "", bankName: "", accountName: "", accountNumber: "" });
       router.refresh();
     } else {
       setError(res.error);
@@ -58,11 +69,12 @@ export function PayoutSettings({ accounts }: { accounts: MaskedPayoutAccount[] }
         <ul className="divide-y divide-line rounded-2xl border border-line bg-surface-raised">
           {accounts.map((a) => (
             <li key={a.id} className="flex items-center justify-between gap-3 px-5 py-4">
-              <div>
+              <div className="min-w-0">
                 <p className="font-medium text-primary">{a.display_label}</p>
-                {a.is_default && <span className="text-xs font-medium text-verified">Default</span>}
+                <p className="truncate text-xs text-ink-soft">{a.instructions}</p>
+                {a.is_default && <span className="text-xs font-medium text-verified">Default — shown to guests</span>}
               </div>
-              <div className="flex items-center gap-2 text-sm">
+              <div className="flex shrink-0 items-center gap-2 text-sm">
                 {!a.is_default && (
                   <button onClick={() => makeDefault(a.id)} className="rounded-full border border-line-strong px-3 py-1 text-primary hover:border-accent hover:text-accent">
                     Make default
@@ -78,7 +90,9 @@ export function PayoutSettings({ accounts }: { accounts: MaskedPayoutAccount[] }
       )}
 
       <form onSubmit={add} className="rounded-2xl border border-line bg-surface-raised p-5 shadow-card">
-        <h2 className="font-serif text-lg text-primary">Add a payout method</h2>
+        <h2 className="font-serif text-lg text-primary">Add a payment method</h2>
+        <p className="mt-1 text-xs text-ink-soft">Guests pay you directly using this — it&apos;s shown to them when they book.</p>
+
         <div className="mt-3 inline-flex rounded-full border border-line-strong p-0.5 text-sm">
           {(["mpesa", "bank"] as const).map((m) => (
             <button
@@ -94,31 +108,46 @@ export function PayoutSettings({ accounts }: { accounts: MaskedPayoutAccount[] }
 
         <div className="mt-4 space-y-3">
           {method === "mpesa" ? (
-            <input
-              inputMode="numeric"
-              placeholder="M-Pesa number, e.g. 07XX XXX XXX"
-              value={form.msisdn}
-              onChange={(e) => set("msisdn", e.target.value)}
-              className={inputCls}
-            />
+            <>
+              <div className="inline-flex flex-wrap gap-1.5 text-xs">
+                {(["phone", "till", "paybill"] as const).map((c) => (
+                  <button
+                    key={c}
+                    type="button"
+                    onClick={() => setMpesaChannel(c)}
+                    className={`rounded-full px-3 py-1 font-medium ${mpesaChannel === c ? "bg-accent-soft text-accent" : "border border-line-strong text-ink-soft"}`}
+                  >
+                    {c === "phone" ? "Send Money" : c === "till" ? "Till (Buy Goods)" : "Paybill"}
+                  </button>
+                ))}
+              </div>
+              {mpesaChannel === "phone" && (
+                <input placeholder="M-Pesa number, e.g. 07XX XXX XXX" value={form.phone} onChange={(e) => set("phone", e.target.value)} className={inputCls} inputMode="numeric" />
+              )}
+              {mpesaChannel === "till" && (
+                <input placeholder="Till number" value={form.till} onChange={(e) => set("till", e.target.value)} className={inputCls} inputMode="numeric" />
+              )}
+              {mpesaChannel === "paybill" && (
+                <>
+                  <input placeholder="Paybill / business number" value={form.paybill} onChange={(e) => set("paybill", e.target.value)} className={inputCls} inputMode="numeric" />
+                  <input placeholder="Account reference" value={form.account} onChange={(e) => set("account", e.target.value)} className={inputCls} />
+                </>
+              )}
+            </>
           ) : (
             <>
               <input placeholder="Bank name" value={form.bankName} onChange={(e) => set("bankName", e.target.value)} className={inputCls} />
               <input placeholder="Account name" value={form.accountName} onChange={(e) => set("accountName", e.target.value)} className={inputCls} />
-              <input inputMode="numeric" placeholder="Account number" value={form.accountNumber} onChange={(e) => set("accountNumber", e.target.value)} className={inputCls} />
-              <input placeholder="Bank / branch code (optional)" value={form.bankCode} onChange={(e) => set("bankCode", e.target.value)} className={inputCls} />
+              <input placeholder="Account number" value={form.accountNumber} onChange={(e) => set("accountNumber", e.target.value)} className={inputCls} inputMode="numeric" />
             </>
           )}
-          <p className="text-xs text-ink-soft">
-            Your details are encrypted and only used to pay you. We only ever display the last 4 digits.
-          </p>
           {error && <p className="text-xs text-danger">{error}</p>}
           <button
             type="submit"
             disabled={busy}
             className="rounded-full bg-ink-black px-6 py-2.5 text-sm font-medium text-white disabled:opacity-60"
           >
-            {busy ? "Saving…" : "Save payout method"}
+            {busy ? "Saving…" : "Save payment method"}
           </button>
         </div>
       </form>

@@ -10,9 +10,8 @@ import { VerifiedStrip } from "@/components/ui/VerifiedBadge";
 import { MessageHostModal } from "@/components/property/MessageHostModal";
 import { CheckShield, Star, Calendar, Users } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
-import { startBookingPayment, startMpesaBooking } from "@/lib/payment/actions";
+import { requestBooking, reportBookingPayment } from "@/lib/booking/ownerDirect";
 import { normalizePhone } from "@/lib/payment/phone";
-import { pollMpesa } from "@/lib/payment/poll";
 
 const inputCls =
   "w-full rounded-lg border border-line-strong bg-surface px-3 py-2 text-sm text-primary outline-none focus:border-accent focus:ring-2 focus:ring-accent/20";
@@ -46,14 +45,12 @@ export function BookingWidget({ property }: { property: Property }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  // M-Pesa only settles in KES; card/Flutterwave covers every currency.
-  const mpesaAvailable = property.currency === "KES";
-  const [method, setMethod] = useState<"card" | "mpesa">(mpesaAvailable ? "mpesa" : "card");
   const [payError, setPayError] = useState("");
-  const [waitMsg, setWaitMsg] = useState(""); // M-Pesa STK "check your phone" status
-  const [confirmed, setConfirmed] = useState<
-    { id: string; nights: number; demo: boolean; method: "card" | "mpesa" } | null
-  >(null);
+  // Owner-direct flow: form → pay (show host's details) → done.
+  const [stage, setStage] = useState<"form" | "pay" | "done">("form");
+  const [bookingId, setBookingId] = useState("");
+  const [payInfo, setPayInfo] = useState<{ instructions: string; label: string } | null>(null);
+  const [reference, setReference] = useState("");
   const [isPending, startTransition] = useTransition();
 
   // Guard against setState after unmount (navigation during the ~2min M-Pesa poll).
@@ -78,27 +75,11 @@ export function BookingWidget({ property }: { property: Property }) {
   }, [checkIn, checkOut, nights, bookingsFor, property.id]);
 
   const emailValid = email === "" || isEmail(email);
-  const phoneValid = normalizePhone(phone) !== null;
+  const phoneValid = phone === "" || normalizePhone(phone) !== null;
   const money = (n: number) => formatMoney(n, property.currency);
-  const baseOk = nights >= 1 && !clash && name.trim().length > 1;
-  const canBook = method === "mpesa" ? baseOk && phoneValid : baseOk && isEmail(email);
+  const canBook = nights >= 1 && !clash && name.trim().length > 1 && isEmail(email) && phoneValid;
 
-  const commonInput = () => ({
-    propertyId: property.id,
-    propertySlug: property.slug,
-    propertyTitle: property.title,
-    currency: property.currency,
-    unit,
-    checkIn,
-    checkOut,
-    guests,
-    guestName: name.trim(),
-    guestEmail: email.trim(),
-    breakdown,
-  });
-
-  // Mirror a confirmed booking into local "My trips" (the bookings page is
-  // device-local). The Flutterwave redirect path can't do this; M-Pesa & demo can.
+  // Mirror the booking into local "My trips" (the bookings page is device-local).
   const recordLocalBooking = () =>
     createBooking({
       propertyId: property.id,
@@ -113,91 +94,131 @@ export function BookingWidget({ property }: { property: Property }) {
       guestName: name.trim(),
     });
 
+  // Step 1 — request to book (no charge). Returns the host's payment details.
   const reserve = (e: React.FormEvent) => {
     e.preventDefault();
     if (!canBook || isPending) return;
     setPayError("");
-    setWaitMsg("");
-
     startTransition(async () => {
-      if (method === "card") {
-        const result = await startBookingPayment(commonInput());
-        if ("paymentUrl" in result) {
-          // Real payment — redirect to the Flutterwave hosted page (even if unmounting).
-          window.location.href = result.paymentUrl;
-          return;
-        }
-        if (!alive.current) return;
-        if (!result.ok) {
-          setPayError(result.error);
-          return;
-        }
-        // Demo fallback (Flutterwave not configured).
-        recordLocalBooking();
-        setConfirmed({ id: result.bookingId, nights, demo: true, method: "card" });
-        return;
-      }
-
-      // M-Pesa: trigger the STK push, then poll until it settles.
-      const started = await startMpesaBooking({ ...commonInput(), phone: phone.trim() });
+      const res = await requestBooking({
+        propertyId: property.id,
+        propertySlug: property.slug,
+        propertyTitle: property.title,
+        currency: property.currency,
+        unit,
+        checkIn,
+        checkOut,
+        guests,
+        guestName: name.trim(),
+        guestEmail: email.trim(),
+        guestPhone: phone.trim(),
+        breakdown,
+      });
       if (!alive.current) return;
-      if (!started.ok) {
-        setPayError(started.error);
+      if (!res.ok) {
+        setPayError(res.error);
         return;
       }
-      if ("demo" in started) {
-        recordLocalBooking();
-        setConfirmed({ id: started.bookingId, nights, demo: true, method: "mpesa" });
-        return;
-      }
-
-      setWaitMsg(`Check your phone — enter your M-Pesa PIN to pay ${money(breakdown.guestTotal)}.`);
-      const final = await pollMpesa(started.checkoutRequestId);
-      if (!alive.current) return;
-      setWaitMsg("");
-      if (final.kind === "paid") {
-        recordLocalBooking();
-        setConfirmed({ id: final.bookingId, nights, demo: false, method: "mpesa" });
-        return;
-      }
-      if (final.kind === "failed") {
-        setPayError(final.error);
-        return;
-      }
-      setPayError(
-        "We didn't get confirmation in time. If you completed the payment it will reflect shortly — check My Trips or contact support.",
-      );
+      setBookingId(res.bookingId);
+      setPayInfo(res.payment);
+      setStage("pay");
     });
   };
 
-  if (confirmed) {
+  // Step 2 — guest paid the host directly, reports it with a reference.
+  const reportPaid = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (isPending) return;
+    setPayError("");
+    startTransition(async () => {
+      const res = await reportBookingPayment({ bookingId, reference: reference.trim() });
+      if (!alive.current) return;
+      if (!res.ok) {
+        setPayError(res.error ?? "Could not record your payment.");
+        return;
+      }
+      recordLocalBooking();
+      setStage("done");
+    });
+  };
+
+  // Step 2 — show the host's payment details and collect the payment reference.
+  if (stage === "pay") {
+    return (
+      <form onSubmit={reportPaid} className="rounded-2xl bg-surface-raised/80 p-6 shadow-card ring-1 ring-line backdrop-blur-xl">
+        <p className="font-serif text-lg text-primary">Pay the host directly</p>
+        <p className="mt-1 text-sm text-ink-soft">
+          {nUnit(nights)} · <span className="figure font-semibold text-primary">{money(breakdown.guestTotal)}</span>
+        </p>
+
+        {payInfo ? (
+          <div className="mt-4 rounded-xl border border-line bg-surface p-4">
+            <p className="text-[11px] font-medium uppercase tracking-wide text-ink-soft">How to pay {property.agent.name}</p>
+            <p className="mt-1 text-sm font-medium text-primary">{payInfo.instructions}</p>
+            <p className="mt-2 text-xs text-ink-soft">
+              Pay the full amount, then enter your transaction reference below so the host can confirm.
+              CoralStones doesn&apos;t handle this payment.
+            </p>
+          </div>
+        ) : (
+          <div className="mt-4 rounded-xl border border-warning/30 bg-warning-soft p-4 text-sm text-warning">
+            The host hasn&apos;t added payment details yet. We&apos;ve saved your request — the host will be
+            in touch with how to pay.
+          </div>
+        )}
+
+        {payInfo && (
+          <label className="mt-4 block">
+            <span className="block text-[11px] font-medium uppercase tracking-wide text-ink-soft">
+              M-Pesa / transfer reference
+            </span>
+            <input
+              className={cn(inputCls, "figure mt-1")}
+              value={reference}
+              onChange={(e) => setReference(e.target.value)}
+              placeholder="e.g. SVV3XYZ012"
+            />
+          </label>
+        )}
+
+        {payError && <p className="mt-3 rounded-lg bg-danger-soft px-3 py-2 text-xs text-danger">{payError}</p>}
+
+        {payInfo ? (
+          <button
+            type="submit"
+            disabled={isPending || reference.trim().length < 3}
+            className="mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-rose text-sm font-semibold text-ink-black transition-[filter] hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {isPending ? "Saving…" : "I've paid — notify the host"}
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setStage("done")}
+            className="mt-4 inline-flex h-12 w-full items-center justify-center rounded-full bg-ink-black text-sm font-semibold text-white"
+          >
+            Done
+          </button>
+        )}
+      </form>
+    );
+  }
+
+  // Step 3 — request recorded / payment reported.
+  if (stage === "done") {
     return (
       <div className="rounded-2xl bg-surface-raised/80 p-6 text-center shadow-card ring-1 ring-line backdrop-blur-xl">
         <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-verified-soft text-verified">
           <CheckShield className="h-8 w-8" />
         </span>
-        <p className="mt-4 font-serif text-lg text-primary">
-          {confirmed.demo ? "Request sent" : perDay ? "Date reserved" : "Booking confirmed"}
-        </p>
+        <p className="mt-4 font-serif text-lg text-primary">Request sent</p>
         <p className="mt-1 text-sm text-ink-soft">
-          {confirmed.demo ? (
-            <>
-              {nUnit(confirmed.nights)} · {money(breakdown.guestTotal)}.
-              Reference <span className="figure">{confirmed.id}</span>.
-            </>
-          ) : (
-            <>
-              {nUnit(confirmed.nights)} · {money(breakdown.guestTotal)} paid.
-              Confirmation <span className="figure">{confirmed.id}</span>.
-            </>
-          )}
+          {nUnit(nights)} · {money(breakdown.guestTotal)}.
         </p>
         <p className="mt-2 text-xs text-ink-soft">
-          {confirmed.demo
-            ? "Your request has reached the CoralStones team, who will confirm availability and arrange payment with you."
-            : confirmed.method === "mpesa"
-              ? "Paid via M-Pesa. Saved to your trips."
-              : "Payment received. Saved to your trips."}
+          {payInfo
+            ? `Thanks — ${property.agent.name} will confirm once your payment lands. You can follow it in My Trips.`
+            : "Your request has reached the host, who will be in touch about payment."}
         </p>
         <Link
           href="/bookings"
@@ -311,9 +332,7 @@ export function BookingWidget({ property }: { property: Property }) {
       </label>
 
       <label className="mt-3 block">
-        <span className="block text-[11px] font-medium uppercase tracking-wide text-ink-soft">
-          {method === "mpesa" ? "Email (optional)" : "Email"}
-        </span>
+        <span className="block text-[11px] font-medium uppercase tracking-wide text-ink-soft">Email</span>
         <input
           type="email"
           className={cn(inputCls, "mt-1", !emailValid && "border-danger focus:border-danger focus:ring-danger/20")}
@@ -324,53 +343,21 @@ export function BookingWidget({ property }: { property: Property }) {
         {!emailValid && <p className="mt-1 text-xs text-danger">Enter a valid email address.</p>}
       </label>
 
-      {/* Payment method — M-Pesa STK push (KES listings) or card/other via Flutterwave. */}
-      {mpesaAvailable && (
-        <div className="mt-4">
-          <span className="block text-[11px] font-medium uppercase tracking-wide text-ink-soft">Pay with</span>
-          <div className="mt-1 grid grid-cols-2 gap-2">
-            {(["mpesa", "card"] as const).map((m) => (
-              <button
-                key={m}
-                type="button"
-                onClick={() => setMethod(m)}
-                className={cn(
-                  "rounded-lg border px-3 py-2 text-sm font-medium transition-colors",
-                  method === m
-                    ? "border-accent bg-accent-soft text-accent"
-                    : "border-line-strong text-primary hover:border-accent",
-                )}
-              >
-                {m === "mpesa" ? "M-Pesa" : "Card / other"}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {method === "mpesa" && (
-        <label className="mt-3 block">
-          <span className="block text-[11px] font-medium uppercase tracking-wide text-ink-soft">M-Pesa phone number</span>
-          <input
-            type="tel"
-            inputMode="numeric"
-            className={cn(inputCls, "figure mt-1", phone !== "" && !phoneValid && "border-danger focus:border-danger focus:ring-danger/20")}
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            placeholder="07XX XXX XXX"
-          />
-          {phone !== "" && !phoneValid && (
-            <p className="mt-1 text-xs text-danger">Enter a valid Safaricom number.</p>
-          )}
-        </label>
-      )}
-
-      {waitMsg && (
-        <p className="mt-3 flex items-center gap-2 rounded-lg bg-accent-soft px-3 py-2 text-xs text-accent">
-          <span className="h-3.5 w-3.5 shrink-0 animate-spin rounded-full border-2 border-current border-t-transparent" />
-          {waitMsg}
-        </p>
-      )}
+      {/* Contact phone (optional) — so the host can reach the guest about payment. */}
+      <label className="mt-3 block">
+        <span className="block text-[11px] font-medium uppercase tracking-wide text-ink-soft">Phone (optional)</span>
+        <input
+          type="tel"
+          inputMode="numeric"
+          className={cn(inputCls, "figure mt-1", phone !== "" && !phoneValid && "border-danger focus:border-danger focus:ring-danger/20")}
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          placeholder="07XX XXX XXX"
+        />
+        {phone !== "" && !phoneValid && (
+          <p className="mt-1 text-xs text-danger">Enter a valid Safaricom number.</p>
+        )}
+      </label>
 
       {payError && (
         <p className="mt-3 rounded-lg bg-danger-soft px-3 py-2 text-xs text-danger">{payError}</p>
@@ -386,18 +373,10 @@ export function BookingWidget({ property }: { property: Property }) {
         ) : (
           <Calendar className="h-4 w-4" />
         )}
-        {isPending
-          ? method === "mpesa"
-            ? "Waiting for M-Pesa…"
-            : "Redirecting to payment…"
-          : nights >= 1
-            ? `Pay ${money(breakdown.guestTotal)}${method === "mpesa" ? " with M-Pesa" : ""}`
-            : "Reserve"}
+        {isPending ? "Requesting…" : "Request to book"}
       </button>
       <p className="mt-2 text-center text-xs text-ink-soft">
-        {method === "mpesa"
-          ? "Lipa na M-Pesa · a PIN prompt will pop up on your phone"
-          : "Secure checkout via Flutterwave · Visa, Mastercard, mobile money"}
+        No charge now — you&apos;ll pay the host directly and they confirm your booking.
       </p>
 
       {/* Host trust */}

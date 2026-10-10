@@ -33,8 +33,8 @@ export type HostBooking = {
 
 export type HostEarnings = {
   currency: string;
-  held: number; // paid, awaiting release
-  released: number; // paid out
+  confirmed: number; // owner-confirmed payments received (direct to owner)
+  pending: number; // reported by guest / awaiting the owner's confirmation
   bookingsCount: number;
 };
 
@@ -90,11 +90,11 @@ export async function getHostBookings(ownerId: string): Promise<HostBooking[]> {
 export async function getHostEarnings(ownerId: string): Promise<HostEarnings> {
   const bookings = await getHostBookings(ownerId);
   const currency = bookings[0]?.currency ?? "KES";
-  let held = 0;
-  let released = 0;
+  let confirmed = 0;
+  let pending = 0;
   for (const b of bookings) {
-    if (b.status === "paid" || b.status === "release_pending") held += b.ownerPayout;
-    if (b.status === "payout_completed") released += b.ownerPayout;
+    if (b.status === "confirmed" || b.status === "paid") confirmed += b.ownerPayout;
+    else if (b.status === "payment_reported" || b.status === "awaiting_payment") pending += b.ownerPayout;
   }
-  return { currency, held, released, bookingsCount: bookings.length };
+  return { currency, confirmed, pending, bookingsCount: bookings.length };
 }
