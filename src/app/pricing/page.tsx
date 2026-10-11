@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ButtonLink } from "@/components/ui/Button";
+import { PricingExplorer } from "@/components/pricing/PricingExplorer";
 import { VerifiedBadge } from "@/components/ui/VerifiedBadge";
 import { CheckShield, Check, Trend, Sparkle, Users, Globe, Star } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
@@ -235,6 +236,9 @@ export default function PricingPage() {
           ))}
         </div>
       </section>
+
+      {/* ── Horizontal pricing explorer (hover to preview, click for full) ── */}
+      <PricingExplorer />
 
       {/* ── Listing tiers ────────────────────────────────────────────────── */}
       <section className="container-page py-16 sm:py-20">
