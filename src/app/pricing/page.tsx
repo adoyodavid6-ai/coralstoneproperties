@@ -321,9 +321,12 @@ export default function PricingPage() {
               </div>
             ))}
           </div>
-          <div className="mt-7">
+          <div className="mt-7 flex flex-wrap gap-3">
             <ButtonLink href="/contact" variant="primary">
               Talk to our developer team
+            </ButtonLink>
+            <ButtonLink href="/projects#developers" variant="outline">
+              See projects we market
             </ButtonLink>
           </div>
         </div>

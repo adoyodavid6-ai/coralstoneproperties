@@ -92,6 +92,20 @@ const NAV: NavItem[] = [
       { label: "Beachfront Cottages", href: "/search?intent=short_let" },
     ],
   },
+  {
+    key: "nav.projects",
+    href: "/projects",
+    children: [
+      { label: "All Projects", href: "/projects" },
+      { label: "Buy in a Project", href: "/projects?intent=sale" },
+      { label: "Rent in a Project", href: "/projects?intent=rent" },
+      { label: "Off-plan Launches", href: "/projects?stage=off_plan" },
+      { label: "Completing Soon", href: "/projects?stage=completing" },
+      { label: "Ready to Move In", href: "/projects?stage=ready" },
+      { label: "Developer Showcases", href: "/projects#developers" },
+      { label: "Market Your Project", href: "/pricing#developers" },
+    ],
+  },
 ];
 
 export function Header() {
@@ -144,7 +158,7 @@ export function Header() {
       <div aria-hidden className="h-1 w-full bg-accent" />
 
       {/* 2 · Brand / utility row — desktop */}
-      <div className="hidden bg-[#ecf5fe] lg:block">
+      <div className="hidden bg-[#FEF1EC] lg:block">
         <div className="container-page flex h-11 items-center justify-between gap-4">
           <span className="text-sm font-bold uppercase tracking-[0.14em] text-primary">
             CoralStones Properties <span className="text-accent">·</span> East Africa

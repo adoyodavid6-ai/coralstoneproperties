@@ -10,6 +10,7 @@ export const dynamic = "force-dynamic";
 // with no SEO value.
 const STATIC_PATHS: { path: string; priority: number }[] = [
   { path: "/search", priority: 0.9 },
+  { path: "/projects", priority: 0.8 },
   { path: "/pricing", priority: 0.8 },
   { path: "/premium-marketing", priority: 0.8 },
   { path: "/list", priority: 0.8 },
