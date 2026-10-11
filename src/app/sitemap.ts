@@ -11,6 +11,7 @@ export const dynamic = "force-dynamic";
 const STATIC_PATHS: { path: string; priority: number }[] = [
   { path: "/search", priority: 0.9 },
   { path: "/pricing", priority: 0.8 },
+  { path: "/premium-marketing", priority: 0.8 },
   { path: "/list", priority: 0.8 },
   { path: "/verification", priority: 0.7 },
   { path: "/valuation", priority: 0.7 },

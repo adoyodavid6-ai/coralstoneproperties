@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { ButtonLink } from "@/components/ui/Button";
 import { VerifiedBadge } from "@/components/ui/VerifiedBadge";
 import { CheckShield, Check, Trend, Sparkle, Users, Globe, Star } from "@/components/ui/icons";
@@ -322,6 +321,27 @@ export default function PricingPage() {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Premium Marketing & Sales callout */}
+        <div className="container-page mt-8">
+          <div className="flex flex-col items-start gap-5 rounded-2xl border border-accent/30 bg-accent-soft p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
+            <div>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-accent/15 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-accent">
+                <Sparkle className="h-3.5 w-3.5" /> Premium Marketing &amp; Sales
+              </span>
+              <h3 className="mt-3 font-serif text-2xl font-semibold text-primary">
+                Get your property marketed to serious buyers
+              </h3>
+              <p className="mt-2 max-w-xl text-sm text-ink-soft">
+                Full-service promotion across YouTube and social media, professional presentation and
+                lead generation — on a success-based commission (5% land · 3% developments), payable only on a sale.
+              </p>
+            </div>
+            <ButtonLink href="/premium-marketing" variant="coral" size="lg" className="shrink-0">
+              Explore the package
+            </ButtonLink>
+          </div>
         </div>
       </section>
 

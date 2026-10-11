@@ -46,6 +46,7 @@ const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
     links: [
       { label: "About", href: "/about" },
       { label: "Pricing", href: "/pricing" },
+      { label: "Premium Marketing & Sales", href: "/premium-marketing" },
       { label: "For agents & agencies", href: "/pricing#plans" },
       { label: "Developer packages", href: "/pricing#developer" },
       { label: "Contact us", href: "/contact" },
