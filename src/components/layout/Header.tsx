@@ -254,8 +254,8 @@ export function Header() {
         </button>
       </div>
 
-      {/* 4 · Nav bar — desktop grey bar */}
-      <div className="hidden border-y border-line bg-[#dde0e3] lg:block">
+      {/* 4 · Nav bar — desktop navy bar */}
+      <div className="hidden bg-surface-dark lg:block">
         <nav className="container-page flex h-12 items-center gap-1" aria-label="Property categories">
           {NAV.map((n) => {
             const isOpen = activeNav === n.key;
@@ -270,7 +270,7 @@ export function Header() {
                   href={n.href}
                   className={cn(
                     "flex items-center gap-1 rounded-md px-3.5 py-1.5 text-sm font-semibold transition-colors",
-                    isOpen ? "text-accent" : "text-primary hover:text-accent",
+                    isOpen ? "bg-white/10 text-white" : "text-white/85 hover:bg-white/10 hover:text-white",
                   )}
                 >
                   {t(n.key)}
@@ -281,7 +281,7 @@ export function Header() {
 
                 {n.children && isOpen && (
                   <div
-                    className="absolute left-0 top-full z-50 mt-0 w-52 rounded-b-xl border border-line bg-surface-raised shadow-float animate-rise"
+                    className="absolute left-0 top-full z-50 mt-0 w-52 rounded-b-xl border border-white/10 bg-surface-dark shadow-float animate-rise"
                     onMouseEnter={() => openNav(n.key)}
                     onMouseLeave={scheduleClose}
                   >
@@ -292,10 +292,10 @@ export function Header() {
                             <span
                               aria-disabled
                               title="Coming soon"
-                              className="flex cursor-not-allowed items-center justify-between gap-2.5 px-4 py-2.5 text-sm text-ink-soft/50"
+                              className="flex cursor-not-allowed items-center justify-between gap-2.5 px-4 py-2.5 text-sm text-white/40"
                             >
                               {child.label}
-                              <span className="rounded-full bg-surface-muted px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-ink-soft">
+                              <span className="rounded-full bg-white/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-white/60">
                                 Soon
                               </span>
                             </span>
@@ -305,7 +305,7 @@ export function Header() {
                             <Link
                               href={child.href}
                               onClick={() => setActiveNav(null)}
-                              className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-ink-soft transition-colors hover:bg-accent-soft hover:text-accent"
+                              className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-white/80 transition-colors hover:bg-white/10 hover:text-white"
                             >
                               {child.label}
                             </Link>
@@ -313,8 +313,8 @@ export function Header() {
                         ),
                       )}
                     </ul>
-                    <div className="border-t border-line px-4 py-2.5">
-                      <Link href={n.href} onClick={() => setActiveNav(null)} className="text-xs font-semibold text-accent hover:brightness-90">
+                    <div className="border-t border-white/10 px-4 py-2.5">
+                      <Link href={n.href} onClick={() => setActiveNav(null)} className="text-xs font-semibold text-accent-on-dark hover:text-white">
                         View all →
                       </Link>
                     </div>
