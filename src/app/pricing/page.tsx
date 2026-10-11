@@ -1,32 +1,26 @@
 import type { Metadata } from "next";
 import { ButtonLink } from "@/components/ui/Button";
-import { PricingExplorer } from "@/components/pricing/PricingExplorer";
 import { VerifiedBadge } from "@/components/ui/VerifiedBadge";
-import { CheckShield, Check, Trend, Sparkle, Users, Globe, Star } from "@/components/ui/icons";
+import { Check, Trend, Globe, Sparkle } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
 import type { VerificationKind } from "@/lib/types";
 
 export const metadata: Metadata = {
   title: "Pricing — CoralStones Properties",
   description:
-    "Transparent pricing for agents, developers and buyers. Free listing, paid promotion, subscriptions, verification and transaction fees — all designed for the East African market.",
+    "Simple, honest pricing. Free to list and free to search — pay only for extra visibility, verification, or when a sale completes.",
 };
 
-// ── Listing boost tiers ──────────────────────────────────────────────────────
+// ── Listing tiers (property owners) ──────────────────────────────────────────
 const BOOST_TIERS = [
   {
     id: "free",
     label: "Free",
     price: "KSh 0",
     period: "forever",
-    blurb: "Get your property in front of buyers. No credit card needed.",
+    blurb: "Get your property in front of buyers — no card needed.",
     highlight: false,
-    features: [
-      "1 active listing",
-      "Standard search visibility",
-      "Enquiry inbox",
-      "Basic listing analytics",
-    ],
+    features: ["1 active listing", "Appears in search", "Enquiry inbox", "Basic analytics"],
     cta: "List for free",
     ctaVariant: "outline" as const,
   },
@@ -35,39 +29,33 @@ const BOOST_TIERS = [
     label: "Featured",
     price: "KSh 750",
     period: "per 7 days",
-    blurb: "Move up the results page and appear in the homepage featured rail.",
-    highlight: false,
-    features: [
-      "Priority placement in search results",
-      "Homepage 'Verified & featured' rail",
-      "Up to 20 photos",
-      "Extended caption & description",
-      "Seen by verified buyers first",
-    ],
-    cta: "Boost your listing",
-    ctaVariant: "outline" as const,
+    blurb: "Move up the results and onto the homepage featured rail.",
+    highlight: true,
+    features: ["Priority in search results", "Homepage featured rail", "Up to 20 photos", "Seen by verified buyers first"],
+    cta: "Boost a listing",
+    ctaVariant: "coral" as const,
   },
   {
     id: "spotlight",
     label: "Spotlight",
     price: "KSh 2,250",
     period: "per 7 days",
-    blurb: "Top billing everywhere on the platform, including the 3D immersive showcase.",
-    highlight: true,
-    features: [
-      "Top position across every page",
-      "Immersive 3D showcase stage",
-      "Drone & walkthrough video tours",
-      "Maximum photo allowance",
-      "Priority in diaspora & USD/GBP views",
-      "Dedicated listing concierge",
-    ],
+    blurb: "Top billing across the whole platform.",
+    highlight: false,
+    features: ["Top position everywhere", "Immersive 3D showcase", "Drone & video tours", "Priority in USD/GBP views"],
     cta: "Get Spotlight",
-    ctaVariant: "coral" as const,
+    ctaVariant: "outline" as const,
   },
 ];
 
-// ── Agent subscription plans ─────────────────────────────────────────────────
+// ── Verification tiers ───────────────────────────────────────────────────────
+const VERIF_TIERS: { label: string; price: string; kind: VerificationKind; blurb: string }[] = [
+  { label: "Basic", price: "KSh 1,000", kind: "listing", blurb: "Photos, location and property details confirmed as real." },
+  { label: "Standard", price: "KSh 2,500", kind: "agent", blurb: "Adds agent identity and licence credential checks." },
+  { label: "Full Title", price: "KSh 5,000", kind: "title", blurb: "Title-deed search and ownership confirmed. Required for land." },
+];
+
+// ── Agent & agency plans ─────────────────────────────────────────────────────
 const AGENT_PLANS = [
   {
     id: "starter",
@@ -76,180 +64,115 @@ const AGENT_PLANS = [
     period: "per year",
     sub: "≈ KSh 167 / month",
     highlight: false,
-    cap: "10 active listings",
-    features: [
-      "10 active listings",
-      "Enquiry inbox",
-      "Basic analytics dashboard",
-      "Standard search visibility",
-      "Extra listings billed individually",
-    ],
+    features: ["10 active listings", "Enquiry inbox", "Basic analytics", "Appears in search"],
     cta: "Get Starter",
+    href: "/list",
     ctaVariant: "outline" as const,
   },
   {
     id: "professional",
     label: "Professional",
     price: "KSh 5,000",
-    period: "/ month",
-    sub: null,
+    period: "per month",
+    sub: "50 active listings",
     highlight: true,
-    cap: "50 active listings",
-    features: [
-      "50 active listings",
-      "1 free Featured boost each month",
-      "Lead management CRM",
-      "Advanced analytics & reports",
-      "WhatsApp enquiry integration",
-      "Priority agent verification badge",
-      "Appear in professional agent directory",
-    ],
-    cta: "Start free trial",
-    ctaVariant: "primary" as const,
+    features: ["50 active listings", "1 free Featured boost / month", "Lead management CRM", "WhatsApp enquiries", "Priority verification badge"],
+    cta: "Start Professional",
+    href: "/list",
+    ctaVariant: "coral" as const,
   },
   {
     id: "corporate",
     label: "Corporate",
     price: "From KSh 15,000",
-    period: "/ month",
-    sub: "Up to KSh 30,000 / month",
+    period: "per month",
+    sub: "Unlimited listings",
     highlight: false,
-    cap: "Unlimited listings",
-    features: [
-      "Unlimited active listings",
-      "Multiple agent seats",
-      "Full analytics suite",
-      "Dedicated developer project page",
-      "3 free Spotlight boosts each month",
-      "Branded agency profile page",
-      "Priority onboarding & support",
-    ],
+    features: ["Unlimited listings", "Multiple agent seats", "Branded agency page", "Dedicated support"],
     cta: "Contact us",
+    href: "/contact",
     ctaVariant: "outline" as const,
   },
 ];
 
-// ── Verification tiers ───────────────────────────────────────────────────────
-const VERIF_TIERS: {
-  label: string;
-  price: string;
-  kind: VerificationKind;
-  blurb: string;
-}[] = [
-  {
-    label: "Basic",
-    price: "KSh 1,000",
-    kind: "listing",
-    blurb: "Listing photos, location and property details confirmed as real.",
-  },
-  {
-    label: "Standard",
-    price: "KSh 2,500",
-    kind: "agent",
-    blurb: "Listing verification plus agent identity and licence credentials checked.",
-  },
-  {
-    label: "Full Title",
-    price: "KSh 5,000",
-    kind: "title",
-    blurb: "Title deed search, ownership confirmed, all badges awarded. Required for land.",
-  },
+// ── Buyer membership perks ───────────────────────────────────────────────────
+const BUYER_PERKS = [
+  "Early access to new listings",
+  "Price-drop alerts on saved properties",
+  "Advanced filters & side-by-side compare",
+  "Priority booking & viewing slots",
 ];
 
-// ── Additional revenue streams ───────────────────────────────────────────────
-const STREAMS = [
-  {
-    icon: <Trend className="h-6 w-6" />,
-    title: "Commission on sale",
-    body: "1.5%–5% on a successfully completed property transaction. Paid by the lister, the buyer, or split — agreed at listing time.",
-    example: "KSh 80,000 earned on a KSh 8M sale at 1%.",
-  },
-  {
-    icon: <Star className="h-6 w-6" />,
-    title: "Booking & reservation fee",
-    body: "10% of the deposit when a buyer or tenant reserves a property through the platform. Higher-value transactions always use a percentage, never a flat fee.",
-    example: "KSh 10,000 earned on a KSh 100,000 deposit.",
-  },
-  {
-    icon: <Users className="h-6 w-6" />,
-    title: "Pay-per-lead",
-    body: "Agents and developers pay for qualified, platform-verified leads. Ordinary enquiries cost KSh 100–300; a verified, highly-qualified buyer costs KSh 500–1,000.",
-    example: "30 qualified leads × KSh 300 = KSh 9,000.",
-  },
-  {
-    icon: <Globe className="h-6 w-6" />,
-    title: "Fixed listing fee (no commission)",
-    body: "List and promote for KSh 5,000–10,000 upfront with no success commission. Or list free and pay 1–5% only if the property sells through the platform.",
-    example: "You choose: pay now, or pay on success.",
-  },
+const JUMP = [
+  { href: "#owners", label: "Property owners" },
+  { href: "#agents", label: "Agents & agencies" },
+  { href: "#developers", label: "Developers" },
+  { href: "#buyers", label: "Buyers" },
 ];
+
+function FeatureList({ items, onDark = false }: { items: string[]; onDark?: boolean }) {
+  return (
+    <ul className="mt-5 grow space-y-2.5">
+      {items.map((f) => (
+        <li key={f} className="flex items-start gap-2.5 text-sm">
+          <Check className={cn("mt-0.5 h-4 w-4 shrink-0", onDark ? "text-accent-on-dark" : "text-verified")} />
+          <span className={onDark ? "text-white/80" : "text-ink-soft"}>{f}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
 
 export default function PricingPage() {
   return (
     <>
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-surface-dark px-6 pb-20 pt-24 text-center">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-60"
-          style={{
-            background:
-              "radial-gradient(700px 320px at 85% 0%, rgb(22 66 91 / 0.35), transparent 60%)",
-          }}
-        />
-        <div className="relative mx-auto max-w-2xl">
-          <p className="eyebrow text-white/60">Transparent monetisation</p>
+      <section className="bg-surface-dark px-6 pb-16 pt-20 text-center sm:pb-20 sm:pt-24">
+        <div className="mx-auto max-w-2xl">
+          <p className="eyebrow text-white/60">Pricing</p>
           <h1 className="mt-4 font-serif text-4xl font-semibold text-white sm:text-5xl">
-            One platform.&nbsp;
-            <span className="text-rose">Nine ways</span> to grow.
+            Simple, honest pricing
           </h1>
-          <p className="mt-5 text-lg leading-relaxed text-white/70">
-            Free access brings people onto the platform. Paid promotion generates
-            immediate revenue. Leads generate recurring revenue. Subscriptions make
-            it predictable. Commissions generate high-value revenue when transactions close.
+          <p className="mt-5 text-lg leading-relaxed text-white/75">
+            It&apos;s free to list your property and free to search. You only pay for extra
+            visibility, verification, or a commission when a sale completes.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <ButtonLink href="/list" size="lg" variant="coral">
-              List a property
+              List a property free
             </ButtonLink>
-            <ButtonLink href="#plans" size="lg" className="bg-white/10 text-white ring-1 ring-white/20 hover:bg-white/20">
-              See agent plans
+            <ButtonLink href="/search" size="lg" className="bg-white/10 text-white ring-1 ring-white/20 hover:bg-white/20">
+              Browse properties
             </ButtonLink>
           </div>
         </div>
       </section>
 
-      {/* ── Revenue principle strip ──────────────────────────────────────── */}
-      <section className="border-y border-line bg-surface-muted">
-        <div className="container-page grid divide-y divide-line sm:grid-cols-5 sm:divide-x sm:divide-y-0">
-          {[
-            { label: "Free listing", detail: "Builds the database" },
-            { label: "Paid promotion", detail: "Immediate revenue" },
-            { label: "Subscriptions", detail: "Predictable monthly" },
-            { label: "Qualified leads", detail: "Recurring revenue" },
-            { label: "Commissions", detail: "High-value at close" },
-          ].map((s) => (
-            <div key={s.label} className="flex flex-col items-center py-5 text-center">
-              <span className="text-sm font-semibold text-primary">{s.label}</span>
-              <span className="mt-0.5 text-xs text-ink-soft">{s.detail}</span>
-            </div>
+      {/* ── Jump links ───────────────────────────────────────────────────── */}
+      <nav aria-label="Pricing sections" className="sticky top-16 z-20 border-b border-line bg-surface-raised/95 backdrop-blur">
+        <div className="container-page flex flex-wrap items-center justify-center gap-2 py-3">
+          {JUMP.map((j) => (
+            <a
+              key={j.href}
+              href={j.href}
+              className="rounded-full border border-line px-4 py-1.5 text-sm font-medium text-ink-soft transition-colors hover:border-accent hover:text-accent"
+            >
+              {j.label}
+            </a>
           ))}
         </div>
-      </section>
+      </nav>
 
-      {/* ── Horizontal pricing explorer (hover to preview, click for full) ── */}
-      <PricingExplorer />
-
-      {/* ── Listing tiers ────────────────────────────────────────────────── */}
-      <section className="container-page py-16 sm:py-20">
+      {/* ── Property owners ──────────────────────────────────────────────── */}
+      <section id="owners" className="container-page scroll-mt-28 py-16 sm:py-20">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="eyebrow">Listing promotion</p>
+          <p className="eyebrow">Property owners</p>
           <h2 className="mt-3 font-serif text-3xl font-semibold text-primary sm:text-4xl">
-            Free to list. Pay for the results you want.
+            List your property
           </h2>
           <p className="mt-3 text-[15px] text-ink-soft">
-            A normal listing is free. Featured and Spotlight placements give your property
-            the visibility edge — priced to work for both KSh 2M rentals and KSh 50M sales.
+            Listing is always free. Choose a boost only when you want more visibility — and you
+            only pay a commission (agreed upfront) if it sells through CoralStones.
           </p>
         </div>
 
@@ -259,9 +182,7 @@ export default function PricingPage() {
               key={tier.id}
               className={cn(
                 "relative flex flex-col rounded-2xl border p-7 shadow-card",
-                tier.highlight
-                  ? "border-accent bg-surface-dark text-white"
-                  : "border-line bg-surface-raised",
+                tier.highlight ? "border-accent bg-surface-dark text-white" : "border-line bg-surface-raised",
               )}
             >
               {tier.highlight && (
@@ -269,56 +190,24 @@ export default function PricingPage() {
                   Most popular
                 </span>
               )}
-              <p
-                className={cn(
-                  "text-sm font-semibold uppercase tracking-widest",
-                  tier.highlight ? "text-accent-on-dark" : "text-accent",
-                )}
-              >
+              <p className={cn("text-sm font-semibold uppercase tracking-widest", tier.highlight ? "text-accent-on-dark" : "text-accent")}>
                 {tier.label}
               </p>
               <div className="mt-3 flex items-baseline gap-2">
-                <span
-                  className={cn(
-                    "figure text-3xl font-semibold",
-                    tier.highlight ? "text-white" : "text-primary",
-                  )}
-                >
+                <span className={cn("figure text-3xl font-semibold", tier.highlight ? "text-white" : "text-primary")}>
                   {tier.price}
                 </span>
-                <span className={cn("text-sm", tier.highlight ? "text-white/60" : "text-ink-soft")}>
-                  {tier.period}
-                </span>
+                <span className={cn("text-sm", tier.highlight ? "text-white/60" : "text-ink-soft")}>{tier.period}</span>
               </div>
-              <p
-                className={cn(
-                  "mt-2 text-sm leading-relaxed",
-                  tier.highlight ? "text-white/70" : "text-ink-soft",
-                )}
-              >
+              <p className={cn("mt-2 text-sm leading-relaxed", tier.highlight ? "text-white/70" : "text-ink-soft")}>
                 {tier.blurb}
               </p>
-              <ul className="mt-5 grow space-y-2.5">
-                {tier.features.map((f) => (
-                  <li key={f} className="flex items-start gap-2.5 text-sm">
-                    <Check
-                      className={cn(
-                        "mt-0.5 h-4 w-4 shrink-0",
-                        tier.highlight ? "text-rose" : "text-verified",
-                      )}
-                    />
-                    <span className={tier.highlight ? "text-white/80" : "text-ink-soft"}>{f}</span>
-                  </li>
-                ))}
-              </ul>
+              <FeatureList items={tier.features} onDark={tier.highlight} />
               <div className="mt-7">
                 <ButtonLink
-                  href="/search"
+                  href="/list"
                   variant={tier.ctaVariant}
-                  className={cn(
-                    "w-full",
-                    tier.highlight && "bg-rose text-white hover:brightness-105",
-                  )}
+                  className={cn("w-full", tier.highlight && "bg-rose text-white hover:brightness-105")}
                 >
                   {tier.cta}
                 </ButtonLink>
@@ -327,40 +216,48 @@ export default function PricingPage() {
           ))}
         </div>
 
-        {/* Premium Marketing & Sales callout */}
-        <div className="container-page mt-8">
-          <div className="flex flex-col items-start gap-5 rounded-2xl border border-accent/30 bg-accent-soft p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
-            <div>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-accent/15 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-accent">
-                <Sparkle className="h-3.5 w-3.5" /> Premium Marketing &amp; Sales
-              </span>
-              <h3 className="mt-3 font-serif text-2xl font-semibold text-primary">
-                Get your property marketed to serious buyers
-              </h3>
-              <p className="mt-2 max-w-xl text-sm text-ink-soft">
-                Full-service promotion across YouTube and social media, professional presentation and
-                lead generation — on a success-based commission (5% land · 3% developments), payable only on a sale.
-              </p>
+        {/* Verification — compact, folded into the owner journey */}
+        <div className="mx-auto mt-14 max-w-3xl">
+          <div className="rounded-2xl border border-line bg-surface-raised p-6 shadow-card sm:p-8">
+            <div className="flex flex-wrap items-end justify-between gap-3">
+              <div>
+                <p className="eyebrow">Optional · get verified</p>
+                <h3 className="mt-2 font-serif text-xl font-semibold text-primary">
+                  Earn the trust badges buyers look for
+                </h3>
+              </div>
+              <a href="/verification" className="text-sm font-semibold text-accent hover:brightness-90">
+                How verification works →
+              </a>
             </div>
-            <ButtonLink href="/premium-marketing" variant="coral" size="lg" className="shrink-0">
-              Explore the package
-            </ButtonLink>
+            <div className="mt-5 space-y-3">
+              {VERIF_TIERS.map((tier) => (
+                <div key={tier.label} className="flex items-start gap-4 rounded-xl border border-line bg-surface p-4">
+                  <VerifiedBadge kind={tier.kind} />
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between gap-3">
+                      <h4 className="text-sm font-medium text-primary">{tier.label} verification</h4>
+                      <span className="figure shrink-0 text-sm font-semibold text-rose">{tier.price}</span>
+                    </div>
+                    <p className="mt-1 text-sm text-ink-soft">{tier.blurb}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ── Agent subscription plans ─────────────────────────────────────── */}
-      <section id="plans" className="bg-surface-muted py-16 sm:py-20">
+      {/* ── Agents & agencies ────────────────────────────────────────────── */}
+      <section id="agents" className="scroll-mt-28 bg-surface-muted py-16 sm:py-20">
         <div className="container-page">
           <div className="mx-auto max-w-2xl text-center">
-            <p className="eyebrow">Agent & agency subscriptions</p>
+            <p className="eyebrow">Agents &amp; agencies</p>
             <h2 className="mt-3 font-serif text-3xl font-semibold text-primary sm:text-4xl">
-              A subscription plan for every scale.
+              Plans that scale with you
             </h2>
             <p className="mt-3 text-[15px] text-ink-soft">
-              Predictable monthly revenue for the platform; predictable costs and more leads
-              for you. Agents on paid plans close deals faster — they receive more enquiries,
-              higher-quality leads and priority verification.
+              More listings, better leads and priority verification — from a solo agent to a full agency.
             </p>
           </div>
 
@@ -369,10 +266,8 @@ export default function PricingPage() {
               <div
                 key={plan.id}
                 className={cn(
-                  "relative flex flex-col rounded-2xl border p-7 shadow-card",
-                  plan.highlight
-                    ? "border-accent bg-surface-raised ring-2 ring-accent"
-                    : "border-line bg-surface-raised",
+                  "relative flex flex-col rounded-2xl border bg-surface-raised p-7 shadow-card",
+                  plan.highlight ? "border-accent ring-2 ring-accent" : "border-line",
                 )}
               >
                 {plan.highlight && (
@@ -380,339 +275,104 @@ export default function PricingPage() {
                     Recommended
                   </span>
                 )}
-                <p className="text-sm font-semibold uppercase tracking-widest text-accent">
-                  {plan.label}
-                </p>
+                <p className="text-sm font-semibold uppercase tracking-widest text-accent">{plan.label}</p>
                 <div className="mt-3 flex items-baseline gap-2">
                   <span className="figure text-3xl font-semibold text-primary">{plan.price}</span>
                   <span className="text-sm text-ink-soft">{plan.period}</span>
                 </div>
-                {plan.sub && (
-                  <p className="figure mt-1 text-xs text-ink-soft">{plan.sub}</p>
-                )}
-                <p className="mt-2 rounded-lg bg-accent-soft px-3 py-1.5 text-sm font-medium text-accent">
-                  {plan.cap}
-                </p>
-                <ul className="mt-5 grow space-y-2.5">
-                  {plan.features.map((f) => (
-                    <li key={f} className="flex items-start gap-2.5 text-sm">
-                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-verified" />
-                      <span className="text-ink-soft">{f}</span>
-                    </li>
-                  ))}
-                </ul>
+                <p className="mt-1 text-xs text-ink-soft">{plan.sub}</p>
+                <FeatureList items={plan.features} />
                 <div className="mt-7">
-                  <ButtonLink href="/search" variant={plan.ctaVariant} className="w-full">
+                  <ButtonLink href={plan.href} variant={plan.ctaVariant} className="w-full">
                     {plan.cta}
                   </ButtonLink>
                 </div>
               </div>
             ))}
           </div>
-
           <p className="mt-6 text-center text-sm text-ink-soft">
-            All plans include access to the enquiry inbox, the moderation-reviewed listing process, and
-            basic analytics. Prices are shown in Kenyan Shillings.
+            All plans include the enquiry inbox, the reviewed listing process and basic analytics. Prices in Kenyan Shillings.
           </p>
         </div>
       </section>
 
-      {/* ── Developer packages ───────────────────────────────────────────── */}
-      <section className="container-page py-16 sm:py-20">
-        <div className="grid items-center gap-12 lg:grid-cols-2">
-          <div>
-            <p className="eyebrow">Developer project packages</p>
-            <h2 className="mt-3 font-serif text-3xl font-semibold text-primary sm:text-4xl">
-              One developer. Hundreds of units.
-            </h2>
-            <p className="mt-4 text-[15px] leading-relaxed text-ink-soft">
-              Property developers are the platform&apos;s highest-value commercial partners. A single
-              developer brings hundreds of units, a branded project page, and a long-lived
-              marketing relationship — not a one-off listing fee.
-            </p>
-            <div className="mt-8 space-y-4">
-              {[
-                {
-                  title: "Dedicated project page",
-                  price: "From KSh 50,000 / month",
-                  detail:
-                    "All units on one branded page. Includes photos, videos, floor plans, payment plans, available unit tracker, enquiry flow and booking functionality.",
-                },
-                {
-                  title: "Premium marketing campaign",
-                  price: "KSh 100,000 – 300,000+",
-                  detail:
-                    "Full digital campaign — external traffic, social, SEO and partner placements. Scoped to the development size and target audience.",
-                },
-                {
-                  title: "Transaction commission",
-                  price: "1.5% – 5% on completion",
-                  detail:
-                    "Optional on top of the package fee. Aligns the platform&apos;s incentive with the developer&apos;s — we earn more when you sell more.",
-                },
-              ].map((item) => (
-                <div key={item.title} className="rounded-xl border border-line bg-surface-raised p-5 shadow-card">
-                  <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-                    <h3 className="font-serif text-lg text-primary">{item.title}</h3>
-                    <span className="figure whitespace-nowrap text-sm font-semibold text-rose">
-                      {item.price}
-                    </span>
-                  </div>
-                  <p className="mt-2 text-sm leading-relaxed text-ink-soft">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="mt-6">
-              <ButtonLink href="/search" variant="primary">
-                Talk to our developer team
-              </ButtonLink>
-            </div>
-          </div>
-
-          {/* Platform revenue illustration */}
-          <div className="rounded-3xl border border-line bg-surface-raised p-8 shadow-card">
-            <div className="flex items-center gap-3 border-b border-line pb-5">
-              <span className="grid h-11 w-11 place-items-center rounded-full bg-rose-soft text-rose">
-                <Trend className="h-6 w-6" />
-              </span>
-              <div>
-                <p className="font-serif text-lg text-primary">Example: One KSh 8M listing</p>
-                <p className="text-sm text-ink-soft">What the platform can earn from a single property</p>
+      {/* ── Developers ───────────────────────────────────────────────────── */}
+      <section id="developers" className="container-page scroll-mt-28 py-16 sm:py-20">
+        <div className="mx-auto max-w-3xl rounded-3xl border border-line bg-surface-raised p-8 shadow-card sm:p-10">
+          <span className="grid h-11 w-11 place-items-center rounded-xl bg-brand-soft text-accent">
+            <Trend className="h-6 w-6" />
+          </span>
+          <h2 className="mt-4 font-serif text-2xl font-semibold text-primary sm:text-3xl">
+            For developers
+          </h2>
+          <p className="mt-3 text-[15px] leading-relaxed text-ink-soft">
+            A branded project page for all your units, plus full-service marketing — a long-term
+            partnership, not a one-off listing. Pricing is scoped to your development.
+          </p>
+          <div className="mt-6 grid gap-3 sm:grid-cols-3">
+            {[
+              { t: "Branded project page", p: "From KSh 50,000 / mo" },
+              { t: "Marketing campaign", p: "Scoped to the project" },
+              { t: "Commission on sales", p: "Optional, on completion" },
+            ].map((d) => (
+              <div key={d.t} className="rounded-xl border border-line bg-surface p-4">
+                <p className="text-sm font-medium text-primary">{d.t}</p>
+                <p className="figure mt-1 text-sm font-semibold text-rose">{d.p}</p>
               </div>
-            </div>
-            <ul className="mt-6 space-y-4">
-              {[
-                { label: "Featured boost (7 days)", value: "KSh 1,000" },
-                { label: "20 qualified leads × KSh 300", value: "KSh 6,000" },
-                { label: "1% transaction commission", value: "KSh 80,000" },
-                { label: "Booking reservation fee (10%)", value: "KSh 10,000" },
-              ].map((row) => (
-                <li key={row.label} className="flex items-center justify-between gap-4 text-sm">
-                  <span className="text-ink-soft">{row.label}</span>
-                  <span className="figure font-semibold text-primary">{row.value}</span>
-                </li>
-              ))}
-              <li className="flex items-center justify-between gap-4 border-t border-line pt-4 text-sm font-semibold">
-                <span className="text-primary">Total from one property</span>
-                <span className="figure text-lg text-rose">KSh 97,000</span>
-              </li>
-            </ul>
-            <p className="mt-5 text-xs text-ink-soft">
-              The goal is not to become another listing site. The platform earns at every stage:
-              discovery, verification, enquiry, viewing, reservation, and completion.
-            </p>
+            ))}
+          </div>
+          <div className="mt-7">
+            <ButtonLink href="/contact" variant="primary">
+              Talk to our developer team
+            </ButtonLink>
           </div>
         </div>
       </section>
 
-      {/* ── Verification fees ────────────────────────────────────────────── */}
-      <section className="bg-surface-muted py-16 sm:py-20">
-        <div className="container-page">
-          <div className="grid items-start gap-12 lg:grid-cols-2">
+      {/* ── Buyers & tenants ─────────────────────────────────────────────── */}
+      <section id="buyers" className="scroll-mt-28 bg-surface-muted py-16 sm:py-20">
+        <div className="container-page mx-auto max-w-3xl">
+          <div className="grid items-center gap-8 rounded-3xl border border-line bg-surface-raised p-8 shadow-card sm:p-10 md:grid-cols-[1fr_auto]">
             <div>
-              <p className="eyebrow">Property verification</p>
-              <h2 className="mt-3 font-serif text-3xl font-semibold text-primary sm:text-4xl">
-                Trust is the moat — and the revenue.
-              </h2>
-              <p className="mt-4 text-[15px] leading-relaxed text-ink-soft">
-                In the Kenyan real estate market, buyers are right to be cautious. Verified
-                properties earn more enquiries and faster offers. Agents with verification
-                badges win the trust competition before a word is exchanged.
-              </p>
-              <p className="mt-3 text-[15px] leading-relaxed text-ink-soft">
-                We charge a verification fee to cover the human review, the document checks
-                and the title search. The badge is the proof — not a sticker.
-              </p>
-            </div>
-
-            <div className="space-y-4">
-              {VERIF_TIERS.map((tier) => (
-                <div
-                  key={tier.label}
-                  className="flex items-start gap-5 rounded-xl border border-line bg-surface-raised p-5 shadow-card"
-                >
-                  <VerifiedBadge kind={tier.kind} />
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between gap-3">
-                      <h3 className="font-serif text-base font-medium text-primary">
-                        {tier.label} verification
-                      </h3>
-                      <span className="figure whitespace-nowrap text-sm font-semibold text-rose">
-                        {tier.price}
-                      </span>
-                    </div>
-                    <p className="mt-1 text-sm text-ink-soft">{tier.blurb}</p>
-                  </div>
-                </div>
-              ))}
-              <p className="pt-1 text-sm text-ink-soft">
-                Verified listings, agents and developers receive a permanent badge displayed
-                on every search result, property card and detail page.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Additional revenue streams ───────────────────────────────────── */}
-      <section className="container-page py-16 sm:py-20">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="eyebrow">Transaction & lead revenue</p>
-          <h2 className="mt-3 font-serif text-3xl font-semibold text-primary sm:text-4xl">
-            Revenue at every stage of the journey.
-          </h2>
-        </div>
-        <div className="mt-12 grid gap-5 sm:grid-cols-2" data-animate-group>
-          {STREAMS.map((s) => (
-            <div
-              key={s.title}
-              className="rounded-2xl border border-line bg-surface-raised p-6 shadow-card"
-            >
-              <span className="grid h-11 w-11 place-items-center rounded-xl bg-brand-soft text-accent">
-                {s.icon}
-              </span>
-              <h3 className="mt-4 font-serif text-lg text-primary">{s.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-ink-soft">{s.body}</p>
-              <p className="mt-3 rounded-lg bg-rose-soft px-3 py-2 text-sm font-medium text-rose">
-                Example: {s.example}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── Premium buyer membership ─────────────────────────────────────── */}
-      <section className="bg-surface-muted py-16 sm:py-20">
-        <div className="container-page">
-          <div className="mx-auto max-w-3xl">
-            <div className="grid items-center gap-8 rounded-3xl border border-line bg-surface-raised p-8 shadow-card md:grid-cols-[1fr_auto]">
-              <div>
-                <p className="eyebrow">Premium buyer membership</p>
-                <h2 className="mt-3 font-serif text-2xl font-semibold text-primary sm:text-3xl">
-                  Searching stays free. Serious buyers go further.
-                </h2>
-                <p className="mt-3 text-[15px] leading-relaxed text-ink-soft">
-                  The platform needs as many buyers and tenants as possible — so basic property
-                  search is always free. Premium members get an edge before anyone else sees the
-                  listing.
-                </p>
-                <ul className="mt-5 space-y-2">
-                  {[
-                    "Early access to new listings before they go public",
-                    "Price reduction alerts on saved properties",
-                    "Investment opportunity signals & yield estimates",
-                    "Advanced filters & side-by-side property comparison",
-                    "Priority booking & viewing slots",
-                  ].map((f) => (
-                    <li key={f} className="flex items-start gap-2.5 text-sm">
-                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-verified" />
-                      <span className="text-ink-soft">{f}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="shrink-0 text-center">
-                <p className="figure text-4xl font-semibold text-primary">KSh 100</p>
-                <p className="text-sm text-ink-soft">to KSh 500 / month</p>
-                <ButtonLink href="/search" variant="primary" className="mt-5">
-                  Join as premium buyer
-                </ButtonLink>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Recommended model summary ────────────────────────────────────── */}
-      <section className="container-page py-16 sm:py-20">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="eyebrow">Who pays what</p>
-          <h2 className="mt-3 font-serif text-3xl font-semibold text-primary sm:text-4xl">
-            The right model for every user type.
-          </h2>
-        </div>
-        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            {
-              who: "Property owner",
-              icon: <CheckShield className="h-6 w-6" />,
-              streams: [
-                "Free listing",
-                "Optional paid promotion",
-                "Verification badge (KSh 1,000–5,000)",
-                "Commission on sale or lease",
-              ],
-            },
-            {
-              who: "Real estate agent",
-              icon: <Users className="h-6 w-6" />,
-              streams: [
-                "Free (1 listing) or annual subscription",
-                "Paid promotion on key listings",
-                "Qualified lead charges",
-                "Success commission",
-              ],
-            },
-            {
-              who: "Property developer",
-              icon: <Sparkle className="h-6 w-6" />,
-              streams: [
-                "Corporate subscription",
-                "Dedicated project pages",
-                "Premium marketing campaigns",
-                "Transaction commission",
-              ],
-            },
-            {
-              who: "Buyer / tenant",
-              icon: <Globe className="h-6 w-6" />,
-              streams: [
-                "Search is always free",
-                "Property viewing fees (future)",
-                "Booking & reservation fee",
-                "Premium buyer membership",
-              ],
-            },
-          ].map((col) => (
-            <div
-              key={col.who}
-              className="rounded-2xl border border-line bg-surface-raised p-6 shadow-card"
-            >
               <span className="grid h-11 w-11 place-items-center rounded-xl bg-accent-soft text-accent">
-                {col.icon}
+                <Globe className="h-6 w-6" />
               </span>
-              <h3 className="mt-4 font-serif text-lg text-primary">{col.who}</h3>
-              <ul className="mt-3 space-y-2">
-                {col.streams.map((s) => (
-                  <li key={s} className="flex items-start gap-2 text-sm text-ink-soft">
-                    <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-rose" />
-                    {s}
+              <h2 className="mt-4 font-serif text-2xl font-semibold text-primary sm:text-3xl">
+                For buyers &amp; tenants
+              </h2>
+              <p className="mt-3 text-[15px] leading-relaxed text-ink-soft">
+                Searching is always free. An optional membership gives serious buyers a head start.
+              </p>
+              <ul className="mt-5 grid gap-2.5 sm:grid-cols-2">
+                {BUYER_PERKS.map((f) => (
+                  <li key={f} className="flex items-start gap-2.5 text-sm">
+                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-verified" />
+                    <span className="text-ink-soft">{f}</span>
                   </li>
                 ))}
               </ul>
             </div>
-          ))}
+            <div className="shrink-0 text-center">
+              <p className="figure text-4xl font-semibold text-primary">Free</p>
+              <p className="mt-1 text-sm text-ink-soft">to search · membership from KSh 100/mo</p>
+              <ButtonLink href="/search" variant="primary" className="mt-5">
+                Start searching
+              </ButtonLink>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* ── CTA ──────────────────────────────────────────────────────────── */}
-      <section className="container-page pb-20">
-        <div className="grain relative overflow-hidden rounded-3xl bg-surface-dark px-8 py-14 text-center ring-1 ring-white/10 sm:px-16">
-          <div
-            aria-hidden
-            className="absolute inset-0 opacity-60"
-            style={{
-              background:
-                "radial-gradient(700px 300px at 90% 0%, rgb(22 66 91 / 0.25) 0%, transparent 60%)",
-            }}
-          />
-          <div className="relative mx-auto max-w-2xl">
-            <h2 className="font-serif text-3xl font-semibold text-white sm:text-4xl">
-              Ready to list where trust already lives?
+      <section className="container-page py-16 sm:py-20">
+        <div className="relative overflow-hidden rounded-3xl bg-surface-dark px-8 py-14 text-center sm:px-16">
+          <div className="mx-auto max-w-2xl">
+            <Sparkle className="mx-auto h-7 w-7 text-accent-on-dark" />
+            <h2 className="mt-4 font-serif text-3xl font-semibold text-white sm:text-4xl">
+              Ready to get started?
             </h2>
             <p className="mt-4 text-white/75">
-              Start with a free listing today. Upgrade when you want more visibility,
-              more leads, and more closings.
+              List your property free today. Upgrade only when you want more reach.
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <ButtonLink href="/list" size="lg" variant="coral">
