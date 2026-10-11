@@ -158,7 +158,12 @@ export function Header() {
       <div aria-hidden className="h-1 w-full bg-accent" />
 
       {/* 2 · Brand / utility row — desktop */}
-      <div className="hidden bg-[#FEF1EC] lg:block">
+      <div className="relative hidden bg-[#FEF1EC] lg:block">
+        {/* Navy hairline that fades out toward both edges */}
+        <div
+          aria-hidden
+          className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[#16425b] to-transparent"
+        />
         <div className="container-page flex h-9 items-center justify-between gap-4">
           <span className="text-sm font-bold uppercase tracking-[0.14em] text-primary">
             CoralStones Properties <span className="text-accent">·</span> East Africa
