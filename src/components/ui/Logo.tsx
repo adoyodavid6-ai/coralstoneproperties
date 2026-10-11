@@ -75,6 +75,8 @@ export function Logo({
   monoTone?: "ink" | "paper";
 }) {
   const dark = variant === "full-dark";
+  // Logo renders 1.2× the requested size everywhere (mark and wordmark together).
+  size = Math.round(size * 1.2);
 
   // ---- mono: single-colour outline mark for print / edge cases ----
   if (variant === "mono") {
@@ -84,10 +86,10 @@ export function Logo({
       <Link href={href} aria-label="CoralStones Properties — home" className="inline-flex items-center gap-2.5">
         <MonoMark size={size} colour={c} />
         <span className="leading-tight">
-          <span className={cn("block font-serif text-[19px] font-semibold tracking-tight", textCls)}>
+          <span className={cn("block font-serif text-[23px] font-semibold tracking-tight", textCls)}>
             CoralStones
           </span>
-          <SpreadWord word="Properties" className={cn("-mt-0.5 text-[10px] font-medium uppercase", textCls)} />
+          <SpreadWord word="Properties" className={cn("-mt-0.5 text-[12px] font-bold uppercase", textCls)} />
         </span>
       </Link>
     );
@@ -122,11 +124,11 @@ export function Logo({
     >
       {mark}
       <span className="leading-tight">
-        <span className="block font-serif text-[19px] font-semibold tracking-tight">
+        <span className="block font-serif text-[23px] font-semibold tracking-tight">
           <span className={coralText}>Coral</span>
           <span className={cn("font-medium", stoneText)}>Stones</span>
         </span>
-        <SpreadWord word="Properties" className={cn("-mt-0.5 text-[10px] font-medium uppercase", subText)} />
+        <SpreadWord word="Properties" className={cn("-mt-0.5 text-[12px] font-bold uppercase", subText)} />
       </span>
     </Link>
   );
