@@ -143,11 +143,11 @@ export function Header() {
       {/* 1 · Coral accent strip */}
       <div aria-hidden className="h-1 w-full bg-accent" />
 
-      {/* 2 · Brand / utility row — desktop (light-navy bar) */}
-      <div className="hidden bg-brand-bright lg:block">
+      {/* 2 · Brand / utility row — desktop */}
+      <div className="hidden bg-[#ecf5fe] lg:block">
         <div className="container-page flex h-11 items-center justify-between gap-4">
-          <span className="text-sm font-semibold uppercase tracking-[0.14em] text-white">
-            CoralStones Properties <span className="text-accent-on-dark">·</span> East Africa
+          <span className="text-sm font-bold uppercase tracking-[0.14em] text-primary">
+            CoralStones Properties <span className="text-accent">·</span> East Africa
           </span>
 
           <div className="flex items-center gap-4">
@@ -158,11 +158,11 @@ export function Header() {
                 onClick={() => setCurrencyOpen((v) => !v)}
                 aria-haspopup="menu"
                 aria-expanded={currencyOpen}
-                className="inline-flex items-center gap-1.5 text-xs font-semibold text-white/90 transition-colors hover:text-white"
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-primary transition-colors hover:text-accent"
               >
                 Currency
-                <span aria-hidden className="text-white/40">·</span>
-                <span className="figure text-accent-on-dark">{activeCurrency}</span>
+                <span aria-hidden className="text-primary/40">·</span>
+                <span className="figure text-accent">{activeCurrency}</span>
                 <Chevron className={cn("h-3 w-3 opacity-50 transition-transform duration-200", currencyOpen && "rotate-180")} />
               </button>
               {currencyOpen && (
@@ -197,21 +197,21 @@ export function Header() {
             <button
               onClick={() => setLocale(locale === "en" ? "sw" : "en")}
               aria-label="Switch language"
-              className="inline-flex items-center gap-1 text-xs font-semibold text-white/90 transition-colors hover:text-white"
+              className="inline-flex items-center gap-1 text-xs font-bold text-primary transition-colors hover:text-accent"
             >
               <Globe className="h-3.5 w-3.5" />
               {LOCALES.find((l) => l.code === locale)?.short}
             </button>
 
-            <span aria-hidden className="h-4 w-px bg-white/25" />
+            <span aria-hidden className="h-4 w-px bg-primary/15" />
 
             {/* Bold slash links (Visit / Apply / Give style) */}
-            <nav aria-label="Quick links" className="flex items-center gap-2 text-sm font-bold text-white">
-              <Link href="/pricing" className="transition-colors hover:text-accent-on-dark">Pricing</Link>
-              <span aria-hidden className="text-accent-on-dark">/</span>
-              <Link href="/list" className="transition-colors hover:text-accent-on-dark">List a property</Link>
-              <span aria-hidden className="text-accent-on-dark">/</span>
-              <Link href="/account" className="inline-flex items-center gap-1 transition-colors hover:text-accent-on-dark">
+            <nav aria-label="Quick links" className="flex items-center gap-2 text-sm font-bold text-primary">
+              <Link href="/pricing" className="transition-colors hover:text-accent">Pricing</Link>
+              <span aria-hidden className="text-accent">/</span>
+              <Link href="/list" className="transition-colors hover:text-accent">List a property</Link>
+              <span aria-hidden className="text-accent">/</span>
+              <Link href="/account" className="inline-flex items-center gap-1 transition-colors hover:text-accent">
                 <User className="h-4 w-4" />
                 Account
               </Link>
