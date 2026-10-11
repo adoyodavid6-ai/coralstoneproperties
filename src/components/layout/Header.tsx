@@ -159,7 +159,7 @@ export function Header() {
 
       {/* 2 · Brand / utility row — desktop */}
       <div className="hidden bg-[#FEF1EC] lg:block">
-        <div className="container-page flex h-11 items-center justify-between gap-4">
+        <div className="container-page flex h-9 items-center justify-between gap-4">
           <span className="text-sm font-bold uppercase tracking-[0.14em] text-primary">
             CoralStones Properties <span className="text-accent">·</span> East Africa
           </span>
@@ -235,7 +235,7 @@ export function Header() {
       </div>
 
       {/* 3 · Logo + search row */}
-      <div className="container-page flex h-16 items-center justify-between gap-6 lg:h-[88px]">
+      <div className="container-page flex h-16 items-center justify-between gap-6 lg:h-[74px]">
         <Logo variant="full-light" />
 
         {/* Search — desktop */}
@@ -246,12 +246,12 @@ export function Header() {
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search properties, areas…"
             aria-label="Search properties"
-            className="h-11 w-full rounded-l-lg border border-r-0 border-line-strong bg-surface-raised px-4 text-sm text-ink placeholder:text-ink-soft focus:border-accent focus:outline-none"
+            className="h-10 w-full rounded-l-lg border border-r-0 border-line-strong bg-surface-raised px-4 text-sm text-ink placeholder:text-ink-soft focus:border-accent focus:outline-none"
           />
           <button
             type="submit"
             aria-label="Search"
-            className="grid h-11 w-12 shrink-0 place-items-center rounded-r-lg border border-line-strong bg-surface-muted text-primary transition-colors hover:border-accent hover:bg-accent hover:text-white"
+            className="grid h-10 w-12 shrink-0 place-items-center rounded-r-lg border border-line-strong bg-surface-muted text-primary transition-colors hover:border-accent hover:bg-accent hover:text-white"
           >
             <Search className="h-5 w-5" />
           </button>

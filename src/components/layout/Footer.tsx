@@ -56,6 +56,10 @@ const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
   },
 ];
 
+const MAX_LINKS = Math.max(...COLUMNS.map((c) => c.links.length));
+// Static class names so Tailwind can see them: place the link list under its title on md+.
+const COL_START = ["md:col-start-1", "md:col-start-2", "md:col-start-3", "md:col-start-4"];
+
 export function Footer() {
   const { t } = useLocale();
   const pathname = usePathname();
@@ -65,7 +69,8 @@ export function Footer() {
   // The admin console runs its own chrome — hide the public footer there.
   if (pathname?.startsWith("/admin")) return null;
 
-  const current = COLUMNS.find((c) => c.title === active) ?? COLUMNS[0];
+  const activeIndex = Math.max(0, COLUMNS.findIndex((c) => c.title === active));
+  const current = COLUMNS[activeIndex];
 
   return (
     <footer className="relative mt-20 overflow-hidden bg-surface-dark text-white/80">
@@ -97,7 +102,7 @@ export function Footer() {
 
         {/* All four section titles on one line; the hovered (or tapped) section's links show below. */}
         <div className="min-w-0">
-          <div role="tablist" aria-label="Footer sections" className="flex items-end justify-between gap-3 border-b border-white/10 pb-3">
+          <div role="tablist" aria-label="Footer sections" className="flex items-end justify-between gap-2 border-b border-white/10 pb-3 md:grid md:grid-cols-4 md:gap-3">
             {COLUMNS.map((col) => {
               const isActive = col.title === current.title;
               return (
@@ -112,8 +117,8 @@ export function Footer() {
                   onFocus={() => setActive(col.title)}
                   onClick={() => setActive(col.title)}
                   className={cn(
-                    "relative bg-gradient-to-r from-accent to-[#a9c8dc] bg-clip-text font-sans font-semibold leading-tight text-transparent transition-opacity",
-                    "text-[clamp(15px,4.4vw,24.5px)]",
+                    "relative justify-self-start bg-gradient-to-r from-accent to-[#a9c8dc] bg-clip-text text-left font-sans font-semibold leading-tight text-transparent transition-opacity",
+                    "text-[clamp(14px,4.1vw,24.5px)]",
                     isActive ? "opacity-100" : "opacity-70 hover:opacity-100",
                   )}
                 >
@@ -130,13 +135,16 @@ export function Footer() {
             })}
           </div>
 
+          {/* Links stack vertically under the active section's title (full width on phones).
+              The min height fits the longest list so the footer doesn't jump while hovering. */}
           <nav
             id="footer-links"
             role="tabpanel"
             aria-labelledby={`footer-tab-${current.title}`}
-            className="min-h-[4.5rem] pt-4"
+            className="grid grid-cols-4 gap-3 pt-4"
+            style={{ minHeight: `${MAX_LINKS * 1.75 + 1}rem` }}
           >
-            <ul className="flex flex-wrap gap-x-6 gap-y-2.5 text-sm">
+            <ul className={cn("col-span-4 flex flex-col gap-2 text-sm md:col-span-1", COL_START[activeIndex])}>
               {current.links.map((l) => (
                 <li key={l.label}>
                   <Link href={l.href} className="text-white/75 transition-colors hover:text-accent-on-dark">
