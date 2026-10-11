@@ -146,7 +146,7 @@ export function Header() {
       {/* 2 · Brand / utility row — desktop */}
       <div className="hidden border-b border-line lg:block">
         <div className="container-page flex h-11 items-center justify-between gap-4">
-          <span className="text-sm font-semibold uppercase tracking-[0.14em] text-primary">
+          <span className="text-sm font-semibold uppercase tracking-[0.14em] text-brand-bright">
             CoralStones Properties <span className="text-accent">·</span> East Africa
           </span>
 
@@ -158,10 +158,10 @@ export function Header() {
                 onClick={() => setCurrencyOpen((v) => !v)}
                 aria-haspopup="menu"
                 aria-expanded={currencyOpen}
-                className="inline-flex items-center gap-1.5 text-xs font-semibold text-ink-soft transition-colors hover:text-primary"
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-brand-bright transition-colors hover:text-primary"
               >
                 Currency
-                <span aria-hidden className="text-ink-soft/40">·</span>
+                <span aria-hidden className="text-brand-bright/40">·</span>
                 <span className="figure text-accent">{activeCurrency}</span>
                 <Chevron className={cn("h-3 w-3 opacity-50 transition-transform duration-200", currencyOpen && "rotate-180")} />
               </button>
@@ -197,7 +197,7 @@ export function Header() {
             <button
               onClick={() => setLocale(locale === "en" ? "sw" : "en")}
               aria-label="Switch language"
-              className="inline-flex items-center gap-1 text-xs font-semibold text-ink-soft transition-colors hover:text-primary"
+              className="inline-flex items-center gap-1 text-xs font-semibold text-brand-bright transition-colors hover:text-primary"
             >
               <Globe className="h-3.5 w-3.5" />
               {LOCALES.find((l) => l.code === locale)?.short}
@@ -206,7 +206,7 @@ export function Header() {
             <span aria-hidden className="h-4 w-px bg-line-strong" />
 
             {/* Bold slash links (Visit / Apply / Give style) */}
-            <nav aria-label="Quick links" className="flex items-center gap-2 text-sm font-bold text-primary">
+            <nav aria-label="Quick links" className="flex items-center gap-2 text-sm font-bold text-brand-bright">
               <Link href="/pricing" className="transition-colors hover:text-accent">Pricing</Link>
               <span aria-hidden className="text-accent">/</span>
               <Link href="/list" className="transition-colors hover:text-accent">List a property</Link>
