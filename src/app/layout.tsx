@@ -7,6 +7,7 @@ import { BookingProvider } from "@/lib/booking/BookingProvider";
 import { MotionProvider } from "@/lib/motion/MotionProvider";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { getSocialLinks } from "@/lib/siteSettings";
 import { CompareBar } from "@/components/ui/CompareBar";
 import { CookieConsent } from "@/components/layout/CookieConsent";
 import { ChatWidget } from "@/components/chat/ChatWidget";
@@ -50,9 +51,10 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const socials = await getSocialLinks();
   return (
     <html
       lang="en"
@@ -74,7 +76,7 @@ export default function RootLayout({
               <main id="main" className="flex-1">
                 {children}
               </main>
-              <Footer />
+              <Footer socials={socials} />
               <CompareBar />
             </MotionProvider>
             </BookingProvider>

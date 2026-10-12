@@ -565,3 +565,17 @@ create trigger payout_accounts_set_updated_at before update on public.payout_acc
 -- Locked down: no anon/user access. Host manages via the service role; a guest
 -- sees only the instructions for their own booking request (server-returned).
 alter table public.payout_accounts enable row level security;
+
+
+-- ===========================================================================
+-- Site settings — admin-editable key/value config (e.g. footer social links,
+-- set at /admin/social). Locked down like subscribers: no anon access; the
+-- server reads and writes with the service role.
+-- ===========================================================================
+create table if not exists public.site_settings (
+  key         text primary key,
+  value       jsonb not null default '{}'::jsonb,
+  updated_at  timestamptz not null default now()
+);
+
+alter table public.site_settings enable row level security;

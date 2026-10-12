@@ -17,6 +17,7 @@ import {
   Mail,
   FileText,
   Star,
+  Globe,
 } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
 
@@ -32,6 +33,7 @@ const NAV = [
   { href: "/admin/branding", label: "Project branding", icon: Star },
   { href: "/admin/subscribers", label: "Subscribers", icon: Users },
   { href: "/admin/email", label: "Email", icon: Mail },
+  { href: "/admin/social", label: "Social links", icon: Globe },
   { href: "/admin/settings", label: "Settings", icon: Sliders },
 ] as const;
 
