@@ -274,7 +274,12 @@ export function Header() {
       </div>
 
       {/* 4 · Nav bar — desktop navy bar */}
-      <div className="hidden bg-surface-dark lg:block">
+      <div className="relative hidden bg-surface-dark lg:block">
+        {/* White hairline along the bottom edge, fading out toward both sides */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/80 to-transparent"
+        />
         <nav className="container-page flex h-12 items-center gap-1" aria-label="Property categories">
           {NAV.map((n) => {
             const isOpen = activeNav === n.key;
