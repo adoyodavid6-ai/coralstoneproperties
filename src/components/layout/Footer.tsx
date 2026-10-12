@@ -7,6 +7,15 @@ import { useLocale } from "@/lib/i18n/LocaleProvider";
 import { Logo } from "@/components/ui/Logo";
 import { SubscribeForm } from "./SubscribeForm";
 import { cn } from "@/lib/cn";
+import { SOCIAL_PLATFORMS, type SocialLinks, type SocialPlatform } from "@/lib/social";
+import { Instagram, LinkedIn, TikTok, YouTube } from "@/components/ui/icons";
+
+const SOCIAL_ICON: Record<SocialPlatform, (p: { className?: string }) => React.ReactNode> = {
+  tiktok: TikTok,
+  youtube: YouTube,
+  instagram: Instagram,
+  linkedin: LinkedIn,
+};
 
 const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
   {
@@ -60,7 +69,7 @@ const MAX_LINKS = Math.max(...COLUMNS.map((c) => c.links.length));
 // Static class names so Tailwind can see them: place the link list under its title on md+.
 const COL_START = ["md:col-start-1", "md:col-start-2", "md:col-start-3", "md:col-start-4"];
 
-export function Footer() {
+export function Footer({ socials }: { socials: SocialLinks }) {
   const { t } = useLocale();
   const pathname = usePathname();
   // Which section's links are showing. Hover (desktop), focus (keyboard) or tap (touch) switches it.
@@ -98,6 +107,36 @@ export function Footer() {
             {t("footer.tagline")} We check the agent, the agency, the listing and
             the title — so East Africa can buy, rent and invest without fear.
           </p>
+          {/* Social profiles — URLs are managed at /admin/social. Unset ones stay greyed out. */}
+          <ul aria-label="CoralStones on social media" className="mt-5 flex items-center gap-2.5">
+            {SOCIAL_PLATFORMS.map(({ id, label }) => {
+              const Icon = SOCIAL_ICON[id];
+              const href = socials[id];
+              return (
+                <li key={id}>
+                  {href ? (
+                    <a
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`CoralStones on ${label}`}
+                      className="grid h-10 w-10 place-items-center rounded-full bg-white/10 text-white transition-colors hover:bg-accent"
+                    >
+                      <Icon className="h-[18px] w-[18px]" />
+                    </a>
+                  ) : (
+                    <span
+                      aria-label={`${label} — coming soon`}
+                      title={`${label} — coming soon`}
+                      className="grid h-10 w-10 place-items-center rounded-full bg-white/5 text-white/35"
+                    >
+                      <Icon className="h-[18px] w-[18px]" />
+                    </span>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
         </div>
 
         {/* All four section titles on one line; the hovered (or tapped) section's links show below. */}
