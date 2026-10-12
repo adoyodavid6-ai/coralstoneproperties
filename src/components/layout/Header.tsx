@@ -75,6 +75,7 @@ const NAV: NavItem[] = [
     key: "nav.offplan",
     href: "/search?type=off_plan",
     children: [
+      { label: "Off-plan Launches", href: "/projects?stage=off_plan" },
       { label: "Apartments", href: "/search?type=off_plan" },
       { label: "Gated Communities", href: "/search?type=off_plan" },
       { label: "Mixed Developments", href: "/search?type=off_plan" },
@@ -99,7 +100,6 @@ const NAV: NavItem[] = [
       { label: "All Projects", href: "/projects" },
       { label: "Buy in a Project", href: "/projects?intent=sale" },
       { label: "Rent in a Project", href: "/projects?intent=rent" },
-      { label: "Off-plan Launches", href: "/projects?stage=off_plan" },
       { label: "Completing Soon", href: "/projects?stage=completing" },
       { label: "Ready to Move In", href: "/projects?stage=ready" },
       { label: "Developer Showcases", href: "/projects#developers" },
@@ -159,10 +159,10 @@ export function Header() {
 
       {/* 2 · Brand / utility row — desktop */}
       <div className="relative hidden bg-[#FEF1EC] lg:block">
-        {/* Navy hairline that fades out toward both edges */}
+        {/* Full-width navy hairline */}
         <div
           aria-hidden
-          className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[#16425b] to-transparent"
+          className="absolute inset-x-0 bottom-0 h-px bg-[#16425b]"
         />
         <div className="container-page flex h-9 items-center justify-between gap-4">
           <span className="text-sm font-bold uppercase tracking-[0.14em] text-primary">
