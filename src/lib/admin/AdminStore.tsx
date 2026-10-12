@@ -16,8 +16,8 @@ import type {
 } from "@/lib/types";
 import { PROPERTIES } from "@/lib/data/properties";
 import { AGENTS } from "@/lib/data/agents";
-import type { AdminState, AuditEntry, BoostTier, SubscriptionPlan } from "./types";
-import { SEED_BOOST_TIERS, SEED_FLAGS, SEED_PLANS, SEED_REPORTS } from "./seed";
+import type { AdminState, AuditEntry, BoostTier, ProjectBrand, SubscriptionPlan } from "./types";
+import { SEED_BOOST_TIERS, SEED_FLAGS, SEED_PLANS, SEED_PROJECT_BRANDS, SEED_REPORTS } from "./seed";
 
 const STORAGE_KEY = "anchorstone_admin_v1";
 const ACTOR = "admin";
@@ -31,6 +31,7 @@ function seedState(): AdminState {
     pricing: { boostTiers: clone(SEED_BOOST_TIERS), plans: clone(SEED_PLANS) },
     flags: clone(SEED_FLAGS),
     reports: clone(SEED_REPORTS),
+    projectBrands: clone(SEED_PROJECT_BRANDS),
     audit: [],
   };
 }
@@ -69,6 +70,10 @@ export interface AdminApi extends AdminState {
   updatePlan: (id: string, patch: Partial<SubscriptionPlan>) => void;
   addPlan: () => string;
   deletePlan: (id: string) => void;
+  // project branding
+  addProjectBrand: () => string;
+  updateProjectBrand: (id: string, patch: Partial<ProjectBrand>) => void;
+  deleteProjectBrand: (id: string) => void;
   // flags + meta
   toggleFlag: (id: string) => void;
   resetAll: () => void;
@@ -112,8 +117,9 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw) as AdminState;
+        // Saved copies from before a slice existed (e.g. projectBrands) get the seed for it.
         // eslint-disable-next-line react-hooks/set-state-in-effect
-        if (parsed?.properties) setState(parsed);
+        if (parsed?.properties) setState({ ...seedState(), ...parsed });
       }
     } catch {
       /* corrupt storage → fall back to seed */
@@ -379,6 +385,51 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
+  const addProjectBrand = useCallback<AdminApi["addProjectBrand"]>(() => {
+    const id = `pb_${Date.now().toString(36)}`;
+    setState((prev) => ({
+      ...prev,
+      projectBrands: [
+        ...prev.projectBrands,
+        {
+          id,
+          name: "New project",
+          developer: "",
+          location: "",
+          tagline: "",
+          primaryColor: "#16425b",
+          accentColor: "#ff8559",
+          logo: "",
+          status: "onboarding",
+        },
+      ],
+      audit: [entry("brand.create", "New project", "Project brand added"), ...prev.audit],
+    }));
+    return id;
+  }, []);
+
+  const updateProjectBrand = useCallback<AdminApi["updateProjectBrand"]>((id, patch) => {
+    setState((prev) => {
+      const brand = prev.projectBrands.find((b) => b.id === id);
+      return {
+        ...prev,
+        projectBrands: prev.projectBrands.map((b) => (b.id === id ? { ...b, ...patch } : b)),
+        audit: [entry("brand.update", brand?.name ?? id, `Updated ${Object.keys(patch).join(", ")}`), ...prev.audit],
+      };
+    });
+  }, []);
+
+  const deleteProjectBrand = useCallback<AdminApi["deleteProjectBrand"]>((id) => {
+    setState((prev) => {
+      const brand = prev.projectBrands.find((b) => b.id === id);
+      return {
+        ...prev,
+        projectBrands: prev.projectBrands.filter((b) => b.id !== id),
+        audit: [entry("brand.delete", brand?.name ?? id, "Project brand removed"), ...prev.audit],
+      };
+    });
+  }, []);
+
   const toggleFlag = useCallback<AdminApi["toggleFlag"]>((id) => {
     setState((prev) => {
       const flag = prev.flags.find((f) => f.id === id);
@@ -412,6 +463,9 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
     updatePlan,
     addPlan,
     deletePlan,
+    addProjectBrand,
+    updateProjectBrand,
+    deleteProjectBrand,
     toggleFlag,
     resetAll,
   };

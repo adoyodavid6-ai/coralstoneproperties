@@ -55,12 +55,33 @@ export interface AuditEntry {
   detail: string;
 }
 
+/** Where a developer project is in onboarding. */
+export type ProjectBrandStatus = "onboarding" | "live" | "paused";
+
+/** Brand kit for a developer project marketed on CoralStones. */
+export interface ProjectBrand {
+  id: string;
+  name: string;
+  developer: string;
+  /** Linked agent (developer account) id, when the developer is on the platform. */
+  agentId?: string;
+  location: string;
+  tagline: string;
+  /** Hex colours, e.g. "#16425b". */
+  primaryColor: string;
+  accentColor: string;
+  /** Data URL (uploaded) or https URL. Empty = initials badge. */
+  logo: string;
+  status: ProjectBrandStatus;
+}
+
 export interface AdminState {
   properties: Property[];
   agents: Agent[];
   pricing: PricingConfig;
   flags: FeatureFlag[];
   reports: Report[];
+  projectBrands: ProjectBrand[];
   audit: AuditEntry[];
 }
 

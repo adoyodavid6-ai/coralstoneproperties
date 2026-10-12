@@ -1,4 +1,4 @@
-import type { BoostTier, FeatureFlag, Report, SubscriptionPlan } from "./types";
+import type { BoostTier, FeatureFlag, ProjectBrand, Report, SubscriptionPlan } from "./types";
 
 /** Placement fees (KES base) — mirror the boost tiers on listings. */
 export const SEED_BOOST_TIERS: BoostTier[] = [
@@ -98,5 +98,33 @@ export const SEED_REPORTS: Report[] = [
     detail: "Monthly rent seems far below the area median — possible bait listing.",
     reportedOn: "2026-07-08",
     status: "open",
+  },
+];
+
+/** Developer projects already marketed on the platform (the demo developer's two schemes). */
+export const SEED_PROJECT_BRANDS: ProjectBrand[] = [
+  {
+    id: "pb_riverbourne_court",
+    name: "Riverbourne Court",
+    developer: "Riverbourne Developments",
+    agentId: "ag_riverbourne",
+    location: "Msasani Peninsula, Dar es Salaam",
+    tagline: "Phase-two waterfront living",
+    primaryColor: "#1f5f6b",
+    accentColor: "#e9b44c",
+    logo: "",
+    status: "live",
+  },
+  {
+    id: "pb_karen_edge_villas",
+    name: "Karen Edge Villas",
+    developer: "Riverbourne Developments",
+    agentId: "ag_riverbourne",
+    location: "Karen, Nairobi",
+    tagline: "Detached villas on quarter-acre freehold plots",
+    primaryColor: "#2f4a3a",
+    accentColor: "#c97b4a",
+    logo: "",
+    status: "onboarding",
   },
 ];

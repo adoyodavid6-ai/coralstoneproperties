@@ -16,6 +16,7 @@ import {
   Users,
   Mail,
   FileText,
+  Star,
 } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
 
@@ -28,6 +29,7 @@ const NAV = [
   { href: "/admin/documents", label: "Documents", icon: FileText },
   { href: "/admin/agents", label: "Agents", icon: CheckShield },
   { href: "/admin/owners", label: "Owners", icon: Users },
+  { href: "/admin/branding", label: "Project branding", icon: Star },
   { href: "/admin/subscribers", label: "Subscribers", icon: Users },
   { href: "/admin/email", label: "Email", icon: Mail },
   { href: "/admin/settings", label: "Settings", icon: Sliders },
